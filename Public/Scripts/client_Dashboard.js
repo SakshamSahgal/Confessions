@@ -35,3 +35,31 @@ function Logout()
         })
     }
 }
+
+function Validate_Session() //checks if the user is already logged in
+{
+    let Session = {
+        Session_ID : Cookies.get("Session_ID")
+    }
+
+    if(Session.Session_ID != undefined )
+    {
+        loadOverlay.hidden = false; //revealing the load overlay
+
+        SendToServer(Session,"/validate_session_api").then((response)=>{
+
+            loadOverlay.hidden = true; //hiding the load overlay
+
+            console.log(response);
+            if(response.Status == "Invalid Session")
+            {
+                Cookies.remove("Session_ID");
+                location.href = "./index.html";
+            }
+        });
+    }
+    else
+        location.href = "./index.html";
+}
+
+Validate_Session();

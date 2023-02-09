@@ -71,7 +71,7 @@ function Register_Email(req_JSON,response) //email stage
                         Registration_Status : "OnHold" ,
                         OTP_Generated : "",
                         OTP_Generated_Time : 0,
-                        Last_activity : 0,
+                        Last_Activity : 0,
                         Session : []
                     }
                     users.insert(JSON_to_Insert);
@@ -102,7 +102,7 @@ function Register_Email(req_JSON,response) //email stage
                     Registration_Status : "OnHold" ,
                     OTP_Generated : "",
                     OTP_Generated_Time : 0,
-                    last_activity : 0,
+                    Last_Activity : 0,
                     Session : []
                 }
                 users.insert(JSON_to_Insert);
