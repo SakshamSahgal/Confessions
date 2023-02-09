@@ -15,8 +15,10 @@ app.use(express.json({limit : '1mb'} )); //telling that my app will be sending/r
 
 //Other Scripts
 const {Register_Email,Register_Username,Verify_OTP,Register_Password} = require("./Auth/register.js");
-
-
+const {Authorize_User} = require("./Auth/login.js");
+const {Validate_Session} = require("./Auth/validate_session.js")
+const {Logout} = require("./Auth/logout.js");
+const {Return_Users_DB} = require("./Debugging_Scripts/Return_Users.js");
 
 app.post("/Register_Email_api",(request,response) => {
     Register_Email(request.body,response);
@@ -32,4 +34,28 @@ app.post("/Register_OTP_api",(request,response) => {
 
 app.post("/Register_Password_api",(request,response) => {
     Register_Password(request.body,response);
+})
+
+//only for debugging
+app.get("/get_User_DB",(req,res)=>{
+    Return_Users_DB(res);
+})
+
+app.post('/auth_api',async (req,res) => { //Authorizes user[when user logs in]
+    Authorize_User(req.body,res);
+})
+
+app.post('/validate_session_api',(req,res) => { //checks if session cookie is valid
+    Validate_Session(req.body).then((Session_matched)=>{
+        verdict = {}
+        if(Session_matched.length)
+            verdict.Status = "Session Matched";
+        else
+            verdict.Status = "Invalid Session";
+        res.json(verdict);
+    })
+})
+
+app.post('/logout_api',(req,res) => { //Logout user
+    Logout(req.body.Session_ID,res);
 })

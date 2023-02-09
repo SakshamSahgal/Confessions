@@ -36,7 +36,6 @@ async function SendToServer(JSON_to_Send,Route)
 
     function Register_Username()
     {
-        console.log("Register_USERNAME");
         let Register = {
             Email : document.getElementById("register_email").value,
             Username : document.getElementById("register_username").value
@@ -60,7 +59,6 @@ async function SendToServer(JSON_to_Send,Route)
 
     function Register_OTP()
     {
-        console.log("Register_OTP");
         let Register = {
             Email : document.getElementById("register_email").value,
             Username : document.getElementById("register_username").value,
@@ -83,7 +81,6 @@ async function SendToServer(JSON_to_Send,Route)
 
     function Register_Password()
     {
-        console.log("Register_Password");
         let Register = {
             Email : document.getElementById("register_email").value,
             Username : document.getElementById("register_username").value,
@@ -102,3 +99,52 @@ async function SendToServer(JSON_to_Send,Route)
         }) 
 
     }
+
+    function Log_in() //Logs in User
+    {
+        let Login_Credentials = { //getting the crenditials from the input field
+            Email : document.getElementById("login_email").value,
+            Password : document.getElementById("login_pass").value
+        }
+        
+        console.log(Login_Credentials);
+        loadOverlay.hidden = false; //revealing the load overlay
+        let server_response = SendToServer(Login_Credentials,'/auth_api');
+        server_response.then((response)=>{
+            loadOverlay.hidden = true; //hiding the load overlay
+            console.log(response);
+            if(response.Status == "Pass")
+            {
+                Cookies.set("Session_ID",response.Session.Session_ID);
+                location.href = "./Dashboard.html";
+            }
+            else
+                alert(response.Description);                
+        });
+    }
+
+
+    function Validate_Session() //checks if the user is already logged in
+    {
+        let Session = {
+            Session_ID : Cookies.get("Session_ID")
+        }
+
+        if(Session.Session_ID != undefined )
+        {
+            loadOverlay.hidden = false; //revealing the load overlay
+
+            SendToServer(Session,"/validate_session_api").then((response)=>{
+
+                loadOverlay.hidden = true; //hiding the load overlay
+
+                console.log(response);
+                if(response.Status == "Session Matched")
+                    location.href = "./Dashboard.html";
+                else
+                   Cookies.remove("Session_ID");
+            });
+        }
+    }
+
+Validate_Session();

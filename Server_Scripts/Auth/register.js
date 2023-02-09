@@ -50,6 +50,7 @@ function validate_password(str)
 
 function Register_Email(req_JSON,response) //email stage
 {
+    console.log(req_JSON);
     if(validate_email(req_JSON.Email) == "Valid Email")
     {
         users.loadDatabase();
@@ -70,8 +71,8 @@ function Register_Email(req_JSON,response) //email stage
                         Registration_Status : "OnHold" ,
                         OTP_Generated : "",
                         OTP_Generated_Time : 0,
-                        last_activity : 0,
-                        Session_Id : 0
+                        Last_activity : 0,
+                        Session : []
                     }
                     users.insert(JSON_to_Insert);
                     verdict = {
@@ -102,7 +103,7 @@ function Register_Email(req_JSON,response) //email stage
                     OTP_Generated : "",
                     OTP_Generated_Time : 0,
                     last_activity : 0,
-                    Session_Id : 0
+                    Session : []
                 }
                 users.insert(JSON_to_Insert);
                 verdict = {
@@ -125,6 +126,7 @@ function Register_Email(req_JSON,response) //email stage
 
 function Register_Username(req_JSON,response) //username Stage
 {
+    console.log(req_JSON);
     if(validate_username(req_JSON.Username) == "Valid Username")
     {
         users.loadDatabase();
@@ -218,6 +220,7 @@ function Register_Username(req_JSON,response) //username Stage
 
 function Verify_OTP(req_JSON,response)
 {
+    console.log(req_JSON);
     users.loadDatabase();
     users.find({Username : req_JSON.Username , Email : req_JSON.Email},(err,user_matched_array)=>{
 
@@ -294,6 +297,7 @@ function Verify_OTP(req_JSON,response)
 
 function Register_Password(req_JSON,response)
 {
+    console.log(req_JSON);
     if(validate_password(req_JSON.Password) == "Valid Password")
     {
         users.loadDatabase();
