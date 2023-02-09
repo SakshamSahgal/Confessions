@@ -76,7 +76,7 @@ function Delete_Account() //function called when user clicks on delete account
             loadOverlay.hidden = true;
             console.log(response);
             Cookies.remove("Session_ID");
-            if(response.Status == "Invalid Session")
+            if(response.Status == "Fail")
                 location.href = "./logged_out.html";
             else
                 location.href = "./index.html"; //successfully deleted account

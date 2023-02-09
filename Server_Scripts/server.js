@@ -21,7 +21,7 @@ const {Logout} = require("./Auth/logout.js");
 const {Return_Users_DB} = require("./Debugging_Scripts/Return_Users.js");
 const {Fetch_All_Users} = require("./Page_Queries/users.js");
 const {Profile_Page} = require("./Page_Queries/profile.js");
-
+const {Delete_Account} = require("./Auth/Delete_Acc.js");
 
 app.post("/Register_Email_api",(request,response) => {  //for Email Stage of registering
     Register_Email(request.body,response);
@@ -69,4 +69,8 @@ app.post("/Fetch_Users",(req,res)=> { //Fetch all users data to be displayed on 
 
 app.post("/Profile_Page_api",(req,res) => { //Get your own profile page information 
     Profile_Page(req.body,res);
+})
+
+app.post('/Delete_Account',(req,res) => { //Deletes user account
+    Delete_Account(req.body,res);
 })
