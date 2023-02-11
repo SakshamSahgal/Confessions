@@ -115,7 +115,7 @@ async function SendToServer(JSON_to_Send,Route)
             console.log(response);
             if(response.Status == "Pass")
             {
-                Cookies.set("Session_ID",response.Session.Session_ID);
+                Cookies.set("Session_ID",response.Session.Session_ID,{ expires: 7 });
                 location.href = "./Dashboard.html";
             }
             else

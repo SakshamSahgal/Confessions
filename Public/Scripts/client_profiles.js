@@ -1,5 +1,4 @@
 
-
 let loadOverlay = document.getElementById("Load_overlay");
 let Profile_Picture_Pallet =  document.getElementById("profile_picture_pallet");
 
@@ -40,26 +39,7 @@ function Logout() //function called when user logs out
     }
 }
 
-function Update_Username() //function called when user clicks on update username
-{
-    let Session = {
-        Session_ID : Cookies.get("Session_ID"),
-        Edit_Username : document.getElementById("Edit_Username").value,
-    }
 
-    if(Session.Session_ID == undefined)
-        location.href = "./index.html";
-    else
-    {
-        SendToServer(Session,"/Update_Username_api").then((response) => {
-            
-            console.log(response);            
-            
-
-        })
-    }
-
-}
 
 function Delete_Account() //function called when user clicks on delete account
 {
@@ -84,30 +64,6 @@ function Delete_Account() //function called when user clicks on delete account
     }
 }
 
-function Edit_Profile() //function called when user submits in edit profile
-{
-    let Session = {
-        Session_ID : Cookies.get("Session_ID"),
-        Edit_Username : document.getElementById("Edit_Username").value,
-        Edit_Bio : document.getElementById("Edit_Bio").value,
-        Edit_Gender : ( document.getElementById("Edit_Male").checked  == true ) ? "male" : "female"
-    }
-
-    if(Session.Session_ID == undefined)
-        location.href = "./index.html";
-    else
-    {
-        console.log(Session);
-
-        loadOverlay.hidden = false; //revealing the load overlay
-
-        SendToServer(Session,"/Edit_Profile_Data_api").then((response) => {
-            loadOverlay.hidden = true; //hiding the load overlay again
-            console.log(response);
-
-        })
-    }
-}
 
 
 function Get_Profile_Data() //function called at the loading of page [fetches the profile page data]
@@ -225,28 +181,35 @@ function close_Profile_Pallet() //called when close button is pressed
     Profile_Picture_Pallet.hidden = true;
 }
 
+
 function Select_Profile_Picture(profile_picture_path) //function called when user selects a profile picture (clicks on it)
 {
     console.log(profile_picture_path);
     
-    Update={
+    Update = {
         Session_ID : Cookies.get("Session_ID"),
         Profile_Picture : profile_picture_path
     }
 
-    SendToServer(Update,"/update_profile_picture_api").then((response) => {
-        console.log(response);
-        if(response.Status != "Success")
-            location.href = "./logged_out.html";
-        else
-            Refresh_Page();
-    })
+    console.log(Update);
 
-}
-
-function Refresh_Page()//function just refreshes the page
-{
-    location.href = "./Profiles.html";
+    if(Update.Session_ID == undefined) //trying to access via link
+        location.href =  "./index.html";
+    else
+    {
+        SendToServer(Update,"/update_profile_picture_api").then((response) => {
+            console.log(response);
+            if(response.Status == "Fail" && response.Description == "Invalid Session")
+                location.href = "./logged_out.html";
+            else
+            {
+                document.getElementById("Profile_Photo").src = Update.Profile_Picture;
+                document.getElementById("profile_picture").src = Update.Profile_Picture;
+                close_Profile_Pallet();
+                alert(response.Description);
+            }
+        })
+    }
 }
 
 function Remove_Profile_Picture() //function called when user clicks on remove profile picture
@@ -255,13 +218,50 @@ function Remove_Profile_Picture() //function called when user clicks on remove p
         Session_ID : Cookies.get("Session_ID")
     }
 
-    SendToServer(Session,"/Remove_Profile_Picture_api").then((response) => {
-        console.log(response);
-        if(response.Status == "Success")
-                Refresh_Page();
-    })
+    if(Session.Session_ID == undefined) 
+        location.href = "./index.html";
+    else
+    {
+        SendToServer(Session,"/Remove_Profile_Picture_api").then((response) => {
+            
+            console.log(response);
+            
+            if(response.Status == "Pass")
+            {
+                document.getElementById("Profile_Photo").src = "./GUI_Resources/No_photo.gif";
+                document.getElementById("profile_picture").src = "./GUI_Resources/No_photo.gif";
+            }
+    
+            alert(response.Description);
+            
+        })
+    }
 }
 
+function Update_Bio()
+{
+    let Session = {
+        Session_ID : Cookies.get("Session_ID") ,
+        Bio : document.getElementById("Edit_Bio").value
+    }
+
+    if(Session.Session_ID == undefined)
+        location.href = "./index.html";
+    else
+    {
+        SendToServer(Session,"/Update_Bio_api").then((response) => {
+            console.log(response);
+            if(response.Status == "Fail" && response.Description == "Invalid Session")
+                location.href = "./index.html";
+            else
+            {
+                alert(response.Description);
+                window.location.reload();//refresh page
+            }
+        })
+    }
+
+}
 
 function initialize_edit_data(username,bio,gender) //function that sets the initial value of edit data
 {
@@ -269,8 +269,10 @@ function initialize_edit_data(username,bio,gender) //function that sets the init
     document.getElementById("Edit_Bio").value = bio;
     if(gender == "male")
         document.getElementById("Edit_Male").checked = true;
-    else
+    else if(gender == "female")
         document.getElementById("Edit_Female").checked = true;
+    else
+        document.getElementById("Edit_Not_Specified").checked = true;
 }
 
 Get_Profile_Data();
