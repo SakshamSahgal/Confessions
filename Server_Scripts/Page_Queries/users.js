@@ -2,6 +2,9 @@ const {Validate_Session} = require("../Auth/validate_session.js");
 const Datastore = require("nedb"); //including the nedb node package for database 
 const users = new Datastore("Database/users.db");
 
+//Dotenv
+require("dotenv").config();//reading the .env file
+
 function Fetch_All_Users(req_JSON,res)
 {
     let verdict = {}
@@ -25,9 +28,10 @@ function Fetch_All_Users(req_JSON,res)
                         verdict.My_Profile_Picture = element.Profile_Picture;
 
                     
-                    console.log(parseInt(Date.now()) , "-" , parseInt(element.Last_Activity) , " = " , parseInt(Date.now()) - parseInt(element.Last_Activity));
+                    //console.log(parseInt(Date.now()) , "-" , parseInt(element.Last_Activity) , " = " , parseInt(Date.now()) - parseInt(element.Last_Activity));
 
-                    if( (parseInt(Date.now()) - parseInt(element.Last_Activity))  <= 300000 && element.Session.length > 0) //checking the activity status (online if logged-in and last activity less than 5 minutes)
+                    
+                    if( (parseInt(Date.now()) - parseInt(element.Last_Activity))  <= process.env.Activity_Duration && element.Session.length > 0) //checking the activity status (online if logged-in and last activity less than 5 minutes)
                         this_user_json.Activity_Status = "Online";
                     else
                         this_user_json.Activity_Status = "Offline";
@@ -38,6 +42,7 @@ function Fetch_All_Users(req_JSON,res)
                     {
                         verdict.Status = "Pass";
                         verdict.users = users_array;
+                        verdict.Information = "Users Inactive for more than " + (process.env.Activity_Duration/60000)  + " minutes are shown offline";
                         res.json(verdict);
                     }
 

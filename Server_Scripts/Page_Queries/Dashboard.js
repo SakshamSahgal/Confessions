@@ -10,7 +10,7 @@ function Fetch_Dashboard(req_JSON,res)
         {
             let verdict={
                 Status : "Pass",
-                Profile_Picture : Session_Result[0].Profile_Picture
+                Profile_Picture : Session_Result[0].Profile_Picture 
             }
 
             res.json(verdict);

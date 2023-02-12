@@ -104,6 +104,7 @@ let loadOverlay = document.getElementById("Load_overlay");
                 {
                     Display_On_Table(response.users);
                     document.getElementById("profile_picture").src = response.My_Profile_Picture;
+                    document.getElementById("information_modal").textContent = response.Information;
                 }
             })
 

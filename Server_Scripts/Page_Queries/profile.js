@@ -9,6 +9,17 @@ require("dotenv").config();//reading the .env file
 
 const fs = require("fs");
 
+function Get_Activity_Status(Last_Activity) //function returns the activity status of a user
+{
+    let duration = process.env.Activity_Duration;
+    console.log(duration);
+
+    if( parseInt(parseInt(Date.now()) - parseInt(Last_Activity)) > duration )
+        return "Offline";
+    else
+        return "Online";
+}
+
 function Profile_Page(req_JSON,res)
 {
     Validate_Session(req_JSON).then((session_match_array)=>{
@@ -79,6 +90,7 @@ function Update_Profile_Picture(req_JSON,res)
         }
     })
 }
+
 
 
 function Fetch_Profile_Pictures(Session,res)
@@ -335,16 +347,6 @@ function Update_Gender(req_JSON,res)
     })
 }
 
-function Get_Activity_Status(Last_Activity)
-{
-    let duration = process.env.Activity_Duration;
-    console.log(duration);
-
-    if( parseInt(parseInt(Date.now()) - parseInt(Last_Activity)) > duration )
-        return "Offline";
-    else
-        return "Online";
-}
 
 
 
