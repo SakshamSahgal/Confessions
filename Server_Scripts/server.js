@@ -22,7 +22,7 @@ const {Return_Users_DB} = require("./Debugging_Scripts/Return_Users.js");
 const {Fetch_All_Users} = require("./Page_Queries/users.js");
 const {Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo} = require("./Page_Queries/profile.js");
 const {Delete_Account} = require("./Auth/Delete_Acc.js");
-const {Update_Bio,Update_Username} = require("./Page_Queries/profile.js");
+const {Fetch_Static_Profile,Update_Bio,Update_Username,Update_Gender} = require("./Page_Queries/profile.js");
 
 
 app.get("/get_User_DB",(req,res)=>{ //only for debugging
@@ -46,24 +46,27 @@ app.post("/Register_Password_api",(request,response) => { //for Password Stage o
     Register_Password(request.body,response);
 })
 
-app.post("/update_profile_picture_api",(request,response) => {
-    Update_Profile_Picture(request.body,response);
-})
-
 app.post('/auth_api',async (req,res) => { //Authorizes user[when user logs in]
     Authorize_User(req.body,res);
 })
+
+
 
 app.post('/validate_session_api',(req,res) => { //checks if session cookie is valid [if it is valid , it also updates the last activity]
     Validate_Session(req.body).then((Session_matched)=>{
         verdict = {}
         if(Session_matched.length)
-            verdict.Status = "Session Matched";
+        verdict.Status = "Session Matched";
         else
-            verdict.Status = "Invalid Session";
+        verdict.Status = "Invalid Session";
         res.json(verdict);
     })
 })
+
+app.post("/update_profile_picture_api",(request,response) => {
+    Update_Profile_Picture(request.body,response);
+})
+
 
 app.post('/logout_api',(req,res) => { //Logout user
     Logout(req.body.Session_ID,res);
@@ -85,14 +88,22 @@ app.post("/fetch_Profile_Pictures_api",(req,res) => { //fetch all the available 
     Fetch_Profile_Pictures(req.body,res);
 })
 
-app.post("/Remove_Profile_Picture_api",(req,res) => {
+app.post("/Remove_Profile_Picture_api",(req,res) => { //called when user updates profile picture in his proifle
     Remove_Profile_Photo(req.body,res);
 })
 
-app.post("/Update_Bio_api",(req,res) => {
+app.post("/Update_Bio_api",(req,res) => { //called when user updates bio in his proifle
     Update_Bio(req.body,res);
 })
 
-app.post("/Update_Username_api",(req,res) => {
+app.post("/Update_Username_api",(req,res) => { //called when user updates username in his proifle
     Update_Username(req.body,res);
+})
+
+app.post("/Update_Gender_api",(req,res) => { //called when user updates Gender in his proifle
+    Update_Gender(req.body,res);
+})
+
+app.post("/Fetch_Static_Profile_api",(req,res) => { //called when user visits someone else's profile page
+    Fetch_Static_Profile(req.body,res);
 })

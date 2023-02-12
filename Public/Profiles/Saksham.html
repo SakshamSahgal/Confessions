@@ -11,10 +11,18 @@
     <title>USER PROFILE</title>
 </head>
 <body>
-    
+  
+  <div id="links_holder">
+    <a href="../Dashboard.html">Dashboard</a>
+    <a href="../users.html">Users</a>
+    <a href="#" onclick="Logout();return false;">Logout</a>
+    <a href="../Profiles.html">  <img src="../GUI_Resources/No_photo.gif" alt="" id="profile_picture" height="60" class="rounded-circle shadow-4-strong"> </a>           
+  </div>
+
     <div id="Load_overlay" hidden>
         <img src="../GUI_Resources/loading.gif" id="loading_img">
     </div>  
+    <br><br>
     <div class="container py-5">
       <div class="row g-1" >
         <div class="col-12 border bg-light" style="--bs-bg-opacity: .6;">
@@ -33,6 +41,7 @@
           <div class="p-2" align="center"><span id="Username"></span></div>
         </div>
       </div>
+      
       <div class="row g-1">
         <div class="col-12 border bg-light">
           <div class="p-2" align="center">

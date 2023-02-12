@@ -1,4 +1,3 @@
-
 let loadOverlay = document.getElementById("Load_overlay");
 let Profile_Picture_Pallet =  document.getElementById("profile_picture_pallet");
 
@@ -290,10 +289,43 @@ function Update_Username()
         SendToServer(Session,"/Update_Username_api").then((response) => {
             loadOverlay.hidden = true;
             console.log(response);
-            
+            alert(response.Description);
+            window.location.reload();
         })
     }
+}
 
+
+function Get_Gender() //this function returns the selected gender[synchronous function]
+{
+    let register_gender = document.getElementsByName("Edit_gender"); //getting refrence to the group of gender radio button
+    let val;
+    register_gender.forEach((x)=>{ //Iterating over each radio button to get which is checked 
+        if(x.checked == true)
+            val =  x.value;
+    })
+    return val;
 }
 
 Get_Profile_Data();
+
+function Update_Gender()
+{
+    let Session = {
+        Session_ID : Cookies.get("Session_ID") ,
+        Gender : Get_Gender()
+    }
+
+    console.log(Session);
+
+    if(Session.Session_ID == undefined) //tried logging through link
+        location.href = "./index.html";
+    else
+    {
+        SendToServer(Session,"/Update_Gender_api").then((response) => {
+            console.log(response);
+            alert(response.Description);
+            window.location.reload();
+        })
+    }
+}

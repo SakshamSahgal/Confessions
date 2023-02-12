@@ -4,6 +4,8 @@ const users = new Datastore("Database/users.db");
 
 const {Validate_Session} = require("../Auth/validate_session.js");
 
+//Dotenv
+require("dotenv").config();//reading the .env file
 
 const fs = require("fs");
 
@@ -288,4 +290,120 @@ function Update_Username(req_JSON,res)
 }
 
 
-module.exports = {Update_Username,Update_Bio,Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo};
+function Update_Gender(req_JSON,res)
+{
+    Validate_Session(req_JSON).then((Session_Result) => {
+
+        if(Session_Result.length) //session Exists
+        {
+            if(req_JSON.Gender == Session_Result[0].Gender)
+            {
+                let verdict ={
+                    Status : "Fail",
+                    Description : "Selection already same as previous"
+                }
+                res.json(verdict);
+            }
+            else
+            {
+                let Updated_JSON = JSON.parse(JSON.stringify(Session_Result[0]));
+                Updated_JSON.Gender = req_JSON.Gender;
+                users.loadDatabase();
+                users.update(Session_Result[0],Updated_JSON,{},(err,NumReplaced) => {
+
+                    console.log("Successfully Replaced gender of " + NumReplaced + " Entries");
+
+                    let verdict ={
+                        Status : "Pass",
+                        Description : "Gender Updated Successfully"
+                    }
+                    
+                    res.json(verdict);
+                })
+            }
+            
+        }
+        else
+        {
+            let verdict={
+                Status : "Fail",
+                Description : "Invalid Session"
+            }
+            res.json(verdict);
+        }
+
+    })
+}
+
+function Get_Activity_Status(Last_Activity)
+{
+    let duration = process.env.Activity_Duration;
+    console.log(duration);
+
+    if( parseInt(parseInt(Date.now()) - parseInt(Last_Activity)) > duration )
+        return "Offline";
+    else
+        return "Online";
+}
+
+
+
+function Fetch_Static_Profile(req_JSON,res)
+{
+    Validate_Session(req_JSON).then((Session_Result) => {
+        
+        if(Session_Result.length) //if session is valid
+        {
+            if(req_JSON.Username == Session_Result[0].Username)
+            {
+                let verdict={
+                    Status : "Fail",
+                    Description : "You are accessing your Own Profile"
+                }
+                res.json(verdict);
+            }
+            else
+            {
+                users.loadDatabase();
+                users.find({Username :req_JSON.Username},(err,username_match_array) => {
+                    
+                    if(username_match_array.length)
+                    {
+                            let verdict={
+                                Status : "Pass",
+                                My_Profile_Picture : Session_Result[0].Profile_Picture,
+                                His_Profile_Picture : username_match_array[0].Profile_Picture,
+                                Username : username_match_array[0].Username,
+                                Bio : username_match_array[0].Bio,
+                                Gender : username_match_array[0].Gender,
+                                Email : username_match_array[0].Email,
+                                Activity_Status : Get_Activity_Status(username_match_array[0].Last_Activity)
+                            }
+        
+                            res.json(verdict);
+                    }
+                    else
+                    {
+                        let verdict={
+                            Status : "Fail",
+                            Description : "User Not found in DB"
+                        }
+                        res.json(verdict);
+                    }
+    
+                })
+            }
+        }
+        else
+        {
+            let verdict={
+                Status : "Fail",
+                Description : "Invalid Session"
+            }
+            res.json(verdict);
+        }
+
+    })
+}
+
+module.exports = {Fetch_Static_Profile,Update_Gender,Update_Username,Update_Bio,Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo};
