@@ -23,7 +23,7 @@ const {Fetch_All_Users} = require("./Page_Queries/users.js");
 const {Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo} = require("./Page_Queries/profile.js");
 const {Delete_Account} = require("./Auth/Delete_Acc.js");
 const {Fetch_Static_Profile,Update_Bio,Update_Username,Update_Gender} = require("./Page_Queries/profile.js");
-
+const {Fetch_Dashboard} = require("./Page_Queries/Dashboard.js");
 
 app.get("/get_User_DB",(req,res)=>{ //only for debugging
     Return_Users_DB(res);
@@ -106,4 +106,8 @@ app.post("/Update_Gender_api",(req,res) => { //called when user updates Gender i
 
 app.post("/Fetch_Static_Profile_api",(req,res) => { //called when user visits someone else's profile page
     Fetch_Static_Profile(req.body,res);
+})
+
+app.post("/Fetch_Dashboard_api",(req,res) => {
+    Fetch_Dashboard(req.body,res);
 })

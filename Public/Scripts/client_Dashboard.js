@@ -36,30 +36,29 @@ function Logout()
     }
 }
 
-function Validate_Session() //checks if the user is already logged in
+
+function Fetch_Dashboard() //function called at the page load [fetches dashboard content]
 {
     let Session = {
         Session_ID : Cookies.get("Session_ID")
     }
-
-    if(Session.Session_ID != undefined )
-    {
-        loadOverlay.hidden = false; //revealing the load overlay
-
-        SendToServer(Session,"/validate_session_api").then((response)=>{
-
-            loadOverlay.hidden = true; //hiding the load overlay
-
-            console.log(response);
-            if(response.Status == "Invalid Session")
-            {
-                Cookies.remove("Session_ID");
-                location.href = "./index.html";
-            }
-        });
-    }
-    else
+    if(Session.Session_ID == undefined) //accesing via link
         location.href = "./index.html";
+    else
+    {
+        loadOverlay.hidden = false;
+        SendToServer(Session,"/Fetch_Dashboard_api").then( (response)=> {
+            console.log(response);
+            loadOverlay.hidden = true;
+            if(response.Status == "Pass")
+            {
+                document.getElementById("profile_picture").src = response.Profile_Picture;
+            }
+            else
+                alert(response.Description);
+
+        })
+    }
 }
 
-Validate_Session();
+Fetch_Dashboard();
