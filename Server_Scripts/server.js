@@ -22,7 +22,7 @@ const {Return_Users_DB} = require("./Debugging_Scripts/Return_Users.js");
 const {Fetch_All_Users} = require("./Page_Queries/users.js");
 const {Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo} = require("./Page_Queries/profile.js");
 const {Delete_Account} = require("./Auth/Delete_Acc.js");
-const {Update_Bio} = require("./Page_Queries/profile.js");
+const {Update_Bio,Update_Username} = require("./Page_Queries/profile.js");
 
 
 app.get("/get_User_DB",(req,res)=>{ //only for debugging
@@ -91,4 +91,8 @@ app.post("/Remove_Profile_Picture_api",(req,res) => {
 
 app.post("/Update_Bio_api",(req,res) => {
     Update_Bio(req.body,res);
+})
+
+app.post("/Update_Username_api",(req,res) => {
+    Update_Username(req.body,res);
 })

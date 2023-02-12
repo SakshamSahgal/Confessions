@@ -275,4 +275,25 @@ function initialize_edit_data(username,bio,gender) //function that sets the init
         document.getElementById("Edit_Not_Specified").checked = true;
 }
 
+function Update_Username()
+{
+    let Session = {
+        Session_ID : Cookies.get("Session_ID") ,
+        Username : document.getElementById("Edit_Username").value
+    }
+
+    if(Session.Session_ID == undefined)
+        location.href = "./index.html";
+    else
+    {
+        loadOverlay.hidden = false;
+        SendToServer(Session,"/Update_Username_api").then((response) => {
+            loadOverlay.hidden = true;
+            console.log(response);
+            
+        })
+    }
+
+}
+
 Get_Profile_Data();

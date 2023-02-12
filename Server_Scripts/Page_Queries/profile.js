@@ -4,6 +4,9 @@ const users = new Datastore("Database/users.db");
 
 const {Validate_Session} = require("../Auth/validate_session.js");
 
+
+const fs = require("fs");
+
 function Profile_Page(req_JSON,res)
 {
     Validate_Session(req_JSON).then((session_match_array)=>{
@@ -195,4 +198,94 @@ function Update_Bio(req_JSON,res)
     })
 }
 
-module.exports = {Update_Bio,Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo};
+
+function validate_username(str)
+{
+    //The number of characters must be between 5 and 15.
+    //The string should only contain alphanumeric characters and/or underscores (_).
+    //The first character of the string should be alphabetic.
+
+    if(/^[A-Za-z][A-Za-z0-9_]{4,14}$/.test(str))
+        return "Valid Username";
+    else
+        return "Invalid Username";
+}
+
+
+function Update_Username(req_JSON,res)
+{
+       Validate_Session(req_JSON).then((Session_Result) => {
+         
+            if(Session_Result.length) //valid Session
+            {
+                if(validate_username(req_JSON.Username) == "Valid Username")
+                {
+                    users.loadDatabase();
+                    users.find({Username : req_JSON.Username},(err,username_match_array) => {
+
+                        if(username_match_array.length) //found a username match
+                        {
+                            let verdict={
+                                Status : "Fail",
+                                Description : "Username Already Exists"
+                            }
+                            res.json(verdict);
+                        }
+                        else
+                        {
+                            let Old_Username = Session_Result[0].Username;
+                            let New_Username = req_JSON.Username;
+                            
+                            fs.rename( "Public/Profiles/" + Old_Username + ".html" , "Public/Profiles/" + New_Username + ".html", () => { //renaming profile Page
+                                
+                                console.log("Profile Page Renamed!");
+                                // List all the filenames after renaming
+                                
+                                fs.rename("Media/" + Old_Username,"Media/" + New_Username,() => {
+                                    
+                                    console.log("Successfully replaced Media Directory");
+                                    
+                                    let Update_JSON = JSON.parse(JSON.stringify(Session_Result[0]));
+                                    Update_JSON.Username = req_JSON.Username;
+                                    users.loadDatabase();
+                                    users.update(Session_Result[0],Update_JSON,{},(err,NumReplaced) => {
+                                     
+                                         console.log("Updated Username of " + NumReplaced + " Entries ");      
+                                         
+                                         let verdict={
+                                            Status : "Pass",
+                                            Description : "Successfully Updated Username"
+                                         }
+
+                                         res.json(verdict);
+                                         
+                                    })
+
+                                })
+                                
+                              });
+                        }
+                    })
+                }   
+                else
+                {
+                    let verdict={
+                        Status : "Fail",
+                        Description : "Invalid Username"
+                    }
+                    res.json(verdict);
+                }
+            }
+            else
+            {
+                let verdict={
+                    Status : "Fail",
+                    Description : "Invalid Session"
+                }
+                res.json(verdict);
+            }
+       })
+}
+
+
+module.exports = {Update_Username,Update_Bio,Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo};
