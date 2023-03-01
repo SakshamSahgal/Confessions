@@ -22,8 +22,10 @@ const {Return_Users_DB} = require("./Debugging_Scripts/Return_Users.js");
 const {Fetch_All_Users} = require("./Page_Queries/users.js");
 const {Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo} = require("./Page_Queries/profile.js");
 const {Delete_Account} = require("./Auth/Delete_Acc.js");
-const {Fetch_Static_Profile,Update_Bio,Update_Username,Update_Gender} = require("./Page_Queries/profile.js");
+const {Fetch_Static_Profile,Update_Bio,Update_Username,Update_Gender,Update_Password} = require("./Page_Queries/profile.js");
 const {Fetch_Dashboard} = require("./Page_Queries/Dashboard.js");
+const {Verify_Email,Forgot_Verify_OTP,Verify_Password} = require("./Auth/Forgot_Details.js");
+
 
 app.get("/get_User_DB",(req,res)=>{ //only for debugging
     Return_Users_DB(res);
@@ -110,4 +112,20 @@ app.post("/Fetch_Static_Profile_api",(req,res) => { //called when user visits so
 
 app.post("/Fetch_Dashboard_api",(req,res) => {
     Fetch_Dashboard(req.body,res);
+})
+
+app.post("/Forgot_Email_api",(req,res) => {
+    Verify_Email(req.body,res);
+})
+
+app.post("/Forgot_OTP_api",(req,res) => { //api called whem user enters the OTP sent , in forget password page
+    Forgot_Verify_OTP(req.body,res);
+})
+
+app.post("/Forget_Password_api",(req,res) => { //api called when user enters new password in forgot password page
+    Verify_Password(req.body,res);
+})
+
+app.post("/Update_Password_api",(req,res) => { //api called when user requests to change password
+    Update_Password(req.body,res);
 })

@@ -17,7 +17,8 @@
     <div id="Load_overlay" hidden>
         <img src="GUI_Resources/Loading.gif" id="loading_img">
     </div>  
-    
+
+  
     <div id="links_holder">
       <a href="./Dashboard.html">Dashboard</a>
       <a href="./users.html">Users</a>
@@ -38,6 +39,26 @@
               <a href="#Rules" class="nav-link" data-bs-toggle="tab"> Edit Rules </a>
             </li>
         </ul>
+        
+        <!-- Delete Confirmation Modal -->
+
+        <div class="modal" id="Delete_Confirmation_Modal">
+          <div class="modal-dialog">
+            <div class="modal-content"> 
+        
+              <div class="modal-header" align="center">
+                <h3 class="text-center text-secondary"> This Action Can't Be Undone  </h3>
+                <button type="button" class="btn close" data-bs-dismiss="modal"> &times; </button>
+              </div>
+
+              <div class="modal-body" align="center">
+                <p>Do you really want to delete your account ?</p>
+                <button type="button" class="close btn btn-primary btn-sm" data-bs-dismiss="modal"> No </button>
+                <button class="btn btn-danger btn-sm" onclick="Delete_Account()">Yes</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div class="tab-content">
 
@@ -69,7 +90,7 @@
                     <div class="row">
                       <div class="col-12 border bg-light">
                         <div class="p-2" align="center">
-                          <button onclick="Delete_Account()">Delete My Account</button>
+                          <button class="btn btn-warning" data-bs-target="#Delete_Confirmation_Modal" data-bs-toggle="modal">   Delete My Account   </button> 
                         </div>
                       </div>
                     </div>
@@ -81,16 +102,28 @@
                 <br><br>
                 <button id="change_profile_picture" onclick="Change_Profile_Picture()">Change Profile Picture</button>&nbsp; <button id="change_profile_picture" onclick="Remove_Profile_Picture()">Remove Profile Picture</button>
                 <br><br>
-                <form onsubmit="Update_Username();return false">
-                  Username : <input type="text" id="Edit_Username" required>  <input type="submit" value="Update Username">
-                </form>
-                <form onsubmit="Update_Bio();return false">
-                  Bio : <br> <textarea style="resize: none;" id="Edit_Bio" rows="4" cols="30" required> </textarea> <br><br> <input type="submit" value="Update Bio">
-                </form>
+                <div align="center">
+                  <form onsubmit="Update_Username();return false">
+                    Username : <input type="text" id="Edit_Username" required>  <input type="submit" value="Update Username">
+                  </form>
+                  <form onsubmit="Update_Bio();return false">
+                    Bio : <br> <textarea style="resize: none;" id="Edit_Bio" rows="4" cols="30" required> </textarea> <br><br> <input type="submit" value="Update Bio">
+                  </form>
+  
+                  <form onsubmit="Update_Gender();return false">
+                    Gender : <input type="radio" name="Edit_gender" value="male" id="Edit_Male"> Male <input type="radio" name="Edit_gender" value="female" id="Edit_Female"> Female <input type="radio" name="Edit_gender" value="Not_Specified" id="Edit_Not_Specified"> Not_Specified &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="submit" value="Update Gender">
+                  </form>
+                </div>
+                
+                <hr>
+                <div align="center">
+                  <form onsubmit="Update_Password();return false">
+                    Current Passowrd : <input type="password" id="Cur_Password" required> <br> <br>
+                    New Password : <input type="password" id="New_Password" required> <br> <br>
+                    <input type="submit" value="Update Password"> <br>
+                  </form>
 
-                <form onsubmit="Update_Gender();return false">
-                  Gender : <input type="radio" name="Edit_gender" value="male" id="Edit_Male"> Male <input type="radio" name="Edit_gender" value="female" id="Edit_Female"> Female <input type="radio" name="Edit_gender" value="Not_Specified" id="Edit_Not_Specified"> Not_Specified &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="submit" value="Update Gender">
-                </form>
+                </div>
             </div>
           </div>
 

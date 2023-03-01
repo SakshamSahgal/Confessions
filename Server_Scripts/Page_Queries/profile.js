@@ -9,6 +9,8 @@ require("dotenv").config();//reading the .env file
 
 const fs = require("fs");
 
+const bcrypt = require("bcrypt");
+
 function Get_Activity_Status(Last_Activity) //function returns the activity status of a user
 {
     let duration = process.env.Activity_Duration;
@@ -18,6 +20,20 @@ function Get_Activity_Status(Last_Activity) //function returns the activity stat
         return "Offline";
     else
         return "Online";
+}
+
+function validate_password(str)
+{
+    //The minimum number of characters must be 8.
+    //The string must have at least one digit.
+    //The string must have at least one uppercase character.
+    //The string must have at least one lowercase character.
+    //The string must have at least one special character.
+
+    if(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})/.test(str))
+        return "Valid Password";
+    else
+        return "Invalid Password";
 }
 
 function Profile_Page(req_JSON,res)
@@ -408,4 +424,70 @@ function Fetch_Static_Profile(req_JSON,res)
     })
 }
 
-module.exports = {Fetch_Static_Profile,Update_Gender,Update_Username,Update_Bio,Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo};
+function Update_Password(req_JSON,res)
+{
+    console.log(req_JSON);
+    Validate_Session(req_JSON).then((Session_Result) => {
+
+        if(Session_Result.length) //if session is valid
+        {
+            bcrypt.compare(req_JSON.Current_Password,Session_Result[0].Password).then((IsMatched) => {
+
+                if(IsMatched) //password matched
+                {
+                    console.log("Password Matched");
+
+                    if(validate_password(req_JSON.New_Password) == "Valid Password") //if valid new password
+                    {
+                        bcrypt.hash(req_JSON.New_Password,10).then((hashed_password) => {
+                        
+                            console.log("Hashed New Password = " + hashed_password);
+                            
+                            let Update_JSON = JSON.parse(JSON.stringify(Session_Result[0]));
+                            Update_JSON.Password = hashed_password;
+                            users.loadDatabase();
+                            users.update(Session_Result[0],Update_JSON,{},(err,Num_Replaced) => {
+                                console.log("Entries Replaced = " + Num_Replaced);
+                             
+                                let verdict={
+                                    Status : "Pass",
+                                    Description : "Password Updated Successfully!"
+                                }
+                                
+                                res.json(verdict);
+                            })
+                        })
+                    }
+                    else
+                    {   
+                        let verdict={
+                            Status : "Fail",
+                            Description : "Invalid Password"
+                        }
+                        
+                        res.json(verdict);
+                    }
+                }
+                else
+                {
+                    verdict = {
+                        Status : "Fail",
+                        Description : "Wrong Current Password"
+                    }
+                    res.json(verdict);
+                }
+
+            })
+        }
+        else
+        {
+            let verdict={
+                Status : "Fail",
+                Description : "Invalid Session"
+            }
+            res.json(verdict);
+        }
+    })
+}
+
+module.exports = {Fetch_Static_Profile,Update_Gender,Update_Username,Update_Bio,Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo,Update_Password};

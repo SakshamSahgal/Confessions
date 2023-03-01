@@ -302,7 +302,7 @@ function Get_Gender() //this function returns the selected gender[synchronous fu
     let val;
     register_gender.forEach((x)=>{ //Iterating over each radio button to get which is checked 
         if(x.checked == true)
-            val =  x.value;
+        val =  x.value;
     })
     return val;
 }
@@ -315,11 +315,11 @@ function Update_Gender()
         Session_ID : Cookies.get("Session_ID") ,
         Gender : Get_Gender()
     }
-
+    
     console.log(Session);
-
+    
     if(Session.Session_ID == undefined) //tried logging through link
-        location.href = "./index.html";
+    location.href = "./index.html";
     else
     {
         SendToServer(Session,"/Update_Gender_api").then((response) => {
@@ -328,4 +328,30 @@ function Update_Gender()
             window.location.reload();
         })
     }
+}
+
+
+function Update_Password()
+{
+    let Session = {
+        Session_ID : Cookies.get("Session_ID") ,
+        Current_Password : document.getElementById("Cur_Password").value , 
+        New_Password : document.getElementById("New_Password").value
+    }
+    
+    console.log(Session);
+
+    if(Session.Session_ID == undefined) //tried logging through link
+        location.href = "./index.html";
+    else
+    {
+        SendToServer(Session,"/Update_Password_api").then((response) => {
+            console.log(response);
+            if(response.Status == "Fail" && response.Description == "Invalid Session")
+                location.href = "./logged_out.html";
+            else
+                alert(response.Description); 
+        })
+    }
+
 }
