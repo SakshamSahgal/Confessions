@@ -25,6 +25,8 @@ const {Delete_Account} = require("./Auth/Delete_Acc.js");
 const {Fetch_Static_Profile,Update_Bio,Update_Username,Update_Gender,Update_Password} = require("./Page_Queries/profile.js");
 const {Fetch_Dashboard} = require("./Page_Queries/Dashboard.js");
 const {Verify_Email,Forgot_Verify_OTP,Verify_Password} = require("./Auth/Forgot_Details.js");
+const {Confess} = require("./Page_Queries/confessions.js");
+
 
 
 app.get("/get_User_DB",(req,res)=>{ //only for debugging
@@ -110,7 +112,7 @@ app.post("/Fetch_Static_Profile_api",(req,res) => { //called when user visits so
     Fetch_Static_Profile(req.body,res);
 })
 
-app.post("/Fetch_Dashboard_api",(req,res) => {
+app.post("/Fetch_Dashboard_api",(req,res) => { //api fetches 
     Fetch_Dashboard(req.body,res);
 })
 
@@ -128,4 +130,8 @@ app.post("/Forget_Password_api",(req,res) => { //api called when user enters new
 
 app.post("/Update_Password_api",(req,res) => { //api called when user requests to change password
     Update_Password(req.body,res);
+})
+
+app.post("/Confess_api",(req,res) => { //api called when someone confesses to someone else
+    Confess(req.body,res);
 })

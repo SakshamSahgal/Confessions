@@ -103,7 +103,26 @@ let loadOverlay = document.getElementById("Load_overlay");
 
     function Submit_Confession()
     {
-        console.log("Submitting Confession");
+        
+        let Session = {
+            Session_ID : Cookies.get("Session_ID"),
+            Confessed_To : ((window.location.href).split("/")[4]).split(".")[0], //getting the usrename from the URL
+            Confession_Data : document.getElementById("confession_data").value,
+        }
+
+        if(Session.Session_ID == undefined)
+            location.href = "../index.html";
+        else
+        {
+            console.log("Submitting Confession" , Session);
+            loadOverlay.hidden = false;
+            SendToServer(Session,"/Confess_api").then((response) => {
+                loadOverlay.hidden = true;
+                console.log(response);
+                alert(response.Description);
+            })
+        }
+
     }
 
     Fetch_Profile_Page();
