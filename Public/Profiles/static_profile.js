@@ -100,4 +100,10 @@ let loadOverlay = document.getElementById("Load_overlay");
             })
         }
     }
+
+    function Submit_Confession()
+    {
+        console.log("Submitting Confession");
+    }
+
     Fetch_Profile_Page();
