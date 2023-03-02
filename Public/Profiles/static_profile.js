@@ -106,7 +106,7 @@ let loadOverlay = document.getElementById("Load_overlay");
         
         let Session = {
             Session_ID : Cookies.get("Session_ID"),
-            Confessed_To : ((window.location.href).split("/")[4]).split(".")[0], //getting the usrename from the URL
+            Confessed_To_Email : document.getElementById("User_Email").textContent, //getting the username from the URL
             Confession_Data : document.getElementById("confession_data").value,
         }
 

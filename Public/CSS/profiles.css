@@ -43,3 +43,10 @@
     background-color: rgba(255, 255, 255, 0.667);
     border: 2px solid black;
 }
+
+#Confessions_i_got_list,#Confessions_i_sent_list
+{
+    height: auto; 
+    overflow-y:scroll;
+    overflow: auto;
+}

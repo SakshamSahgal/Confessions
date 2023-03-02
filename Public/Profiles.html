@@ -28,6 +28,7 @@
 
     <div class="container mt-5">
         <br><br><br><br>
+        
         <ul class="nav-tabs nav nav-justified bg-light">
             <li class="nav-item">
               <a href="#My_Profile" class="nav-link active" data-bs-toggle="tab"> My Profile </a>
@@ -40,25 +41,6 @@
             </li>
         </ul>
         
-        <!-- Delete Confirmation Modal -->
-
-        <div class="modal" id="Delete_Confirmation_Modal">
-          <div class="modal-dialog">
-            <div class="modal-content"> 
-        
-              <div class="modal-header" align="center">
-                <h3 class="text-center text-secondary"> This Action Can't Be Undone  </h3>
-                <button type="button" class="btn close" data-bs-dismiss="modal"> &times; </button>
-              </div>
-
-              <div class="modal-body" align="center">
-                <p>Do you really want to delete your account ?</p>
-                <button type="button" class="close btn btn-primary btn-sm" data-bs-dismiss="modal"> No </button>
-                <button class="btn btn-danger btn-sm" onclick="Delete_Account()">Yes</button>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <div class="tab-content">
 
@@ -83,33 +65,34 @@
                       <div class="col-12 border bg-light">
                         <div class="p-2" align="center">
                           <span>BIO : </span> <span id="user_bio"></span> <br>
-                        <span>Gender : </span> <span id="User_Gender"></span> <br> <br>
+                          <span>Gender : </span> <span id="User_Gender"></span> <br> <br>
                         </div>
                       </div>
                     </div>
+                    
                     <div class="row">
                       <div class="col-12 border bg-light">
                         <div class="p-2" align="center">
                           <button class="btn btn-warning" data-bs-target="#Delete_Confirmation_Modal" data-bs-toggle="modal">   Delete My Account   </button> 
                         </div>
                       </div>
-                    </div>
+                    </div>                    
                   </div>
-           </div>
-
+          </div>
+                
           <div class="tab-pane fade" id="Edit_Profile">
-            <div class="p-2 bg-light" align="center">     
-                <br><br>
-                <button id="change_profile_picture" onclick="Change_Profile_Picture()">Change Profile Picture</button>&nbsp; <button id="change_profile_picture" onclick="Remove_Profile_Picture()">Remove Profile Picture</button>
-                <br><br>
-                <div align="center">
-                  <form onsubmit="Update_Username();return false">
-                    Username : <input type="text" id="Edit_Username" required>  <input type="submit" value="Update Username">
+                  <div class="p-2 bg-light" align="center">     
+                    <br><br>
+                    <button id="change_profile_picture" onclick="Change_Profile_Picture()">Change Profile Picture</button>&nbsp; <button id="change_profile_picture" onclick="Remove_Profile_Picture()">Remove Profile Picture</button>
+                    <br><br>
+                    <div align="center">
+                      <form onsubmit="Update_Username();return false">
+                        Username : <input type="text" id="Edit_Username" required>  <input type="submit" value="Update Username">
                   </form>
                   <form onsubmit="Update_Bio();return false">
                     Bio : <br> <textarea style="resize: none;" id="Edit_Bio" rows="4" cols="30" required> </textarea> <br><br> <input type="submit" value="Update Bio">
                   </form>
-  
+                  
                   <form onsubmit="Update_Gender();return false">
                     Gender : <input type="radio" name="Edit_gender" value="male" id="Edit_Male"> Male <input type="radio" name="Edit_gender" value="female" id="Edit_Female"> Female <input type="radio" name="Edit_gender" value="Not_Specified" id="Edit_Not_Specified"> Not_Specified &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="submit" value="Update Gender">
                   </form>
@@ -124,33 +107,145 @@
                   </form>
 
                 </div>
-            </div>
+              </div>
           </div>
 
           <div class="tab-pane fade" id="Rules">
             <div class="p-2 bg-light" align="center">
-                  <br>
-                  <h3>Username Rules</h3>
-                  <p>The number of characters must be between 5 and 15.</p>
-                  <p>The string should only contain alphanumeric characters and/or underscores (_). </p>
-                  <p>The first character of the string should be alphabetic.</p>
-                  <h3>Bio Rules</h3>
-                  <p>Length of Bio must not exceed 150 characters</p>
+              <br>
+              <h3>Username Rules</h3>
+              <p>The number of characters must be between 5 and 15.</p>
+              <p>The string should only contain alphanumeric characters and/or underscores (_). </p>
+              <p>The first character of the string should be alphabetic.</p>
+              <h3>Bio Rules</h3>
+              <p>Length of Bio must not exceed 150 characters</p>
             </div>
           </div>
+          
 
         </div>
-    </div>
-
-
-<div id="profile_picture_pallet" hidden>
-      <button type="button" class="btn-close btn-close-white" aria-label="Close" id="profile_pallet_close_btn" onclick="close_Profile_Pallet()"></button>
-      <div id="inner_pallet">
       </div>
-</div> 
 
-</body>
+      <div class="container mt-5">
+
+          <ul class="nav-tabs nav nav-justified bg-light">
+            <li class="nav-item">
+              <a href="#Confessions_Got_div" class="nav-link active" data-bs-toggle="tab"> Confessions I got  </a>
+            </li>
+            <li class="nav-item">
+              <a href="#Confessions_Sent_div" class="nav-link" data-bs-toggle="tab"> Confessions I sent </a>
+            </li>
+          </ul>
+          
+          <div class="tab-content">
+
+              <div class="tab-pane show active bg-light border" id="Confessions_Got_div" >
+                <!-- Add your Content for ID 1 -->
+                  <br><br> 
+                  <div class="container">
+
+                    <div class="list-group" id="Confessions_i_got_list">
+                        
+                        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start list-group-item-info">
+
+                          <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">Anonymous Confession</h5>
+                            <small>3 days ago</small>
+                          </div>
+
+                          <p class="mb-1">content 1</p>
+
+                          <!-- <small>content 1 footer </small> -->
+                        </a>
+
+                        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start list-group-item-info">
+
+                            <div class="d-flex w-100 justify-content-between">
+                              <h5 class="mb-1">Anonymous Confession</h5>
+                              <small>3 days ago</small>
+                            </div>
+
+                            <p class="mb-1">content 2</p>
+
+                            <!-- <small>content 1 footer </small> -->
+                        </a>
+                       
+                    </div>
+                    <br>
+                    
+                  </div>
+                  
+               </div>
+        
+              <div class="tab-pane fade bg-light border" id="Confessions_Sent_div">
+                  <!-- Add your Content for ID 2 -->
+                  <br><br> 
+                  <div class="container">
+
+                    <div class="list-group" id="Confessions_i_sent_list">
+                        
+                        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start list-group-item-danger">
+
+                          <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">To : XYZ</h5>
+                            <small>3 days ago</small>
+                          </div>
+
+                          <p class="mb-1">content 1</p>
+
+                          <!-- <small>content 1 footer </small> -->
+                        </a>
+
+                        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start list-group-item-danger">
+
+                            <div class="d-flex w-100 justify-content-between">
+                              <h5 class="mb-1">To : ABC</h5>
+                              <small>3 days ago</small>
+                            </div>
+
+                            <p class="mb-1">content 2</p>
+
+                            <!-- <small>content 1 footer </small> -->
+                        </a>
+                       
+                    </div>
+                    <br>
+                    
+                  </div>
+              </div>
+          </div>
+               
+      </div>
+
+      
+      <!-- Delete Confirmation Modal -->
+    
+      <div class="modal" id="Delete_Confirmation_Modal">
+        <div class="modal-dialog">
+          <div class="modal-content"> 
+      
+            <div class="modal-header" align="center">
+              <h3 class="text-center text-secondary"> This Action Can't Be Undone  </h3>
+              <button type="button" class="btn close" data-bs-dismiss="modal"> &times; </button>
+            </div>
+    
+            <div class="modal-body" align="center">
+              <p>Do you really want to delete your account ?</p>
+              <button type="button" class="close btn btn-primary btn-sm" data-bs-dismiss="modal"> No </button>
+              <button class="btn btn-danger btn-sm" onclick="Delete_Account()">Yes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="profile_picture_pallet" hidden>
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="profile_pallet_close_btn" onclick="close_Profile_Pallet()"></button>
+        <div id="inner_pallet">
+        </div>
+      </div> 
+
+    </body>
     <!-- importing the JS cookie CDN -->
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
     <script src="./Scripts/client_profiles.js"></script>
-</html>
+    </html>
