@@ -225,6 +225,9 @@ function Fetch_Confessions(req_JSON,res)
 
                     Confessions_sent_db.find({},(err,confessions_sent_array) => {
 
+                        if(confessions_sent_array.length == 0)
+                            res.json(verdict);
+                        
                         confessions_sent_array.forEach(element => {
                             
                             users.loadDatabase(); //loading the database to get corresponding username of each email ID
