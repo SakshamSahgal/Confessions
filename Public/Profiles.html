@@ -69,7 +69,13 @@
                         </div>
                       </div>
                     </div>
-                    
+                    <div class="row">
+                      <div class="col-12 border bg-light">
+                        <div class="p-2" align="center">
+                          <button class="btn btn-primary" onclick="View_Confessions()">  View Confessions   </button> 
+                        </div>
+                      </div>
+                    </div>
                     <div class="row">
                       <div class="col-12 border bg-light">
                         <div class="p-2" align="center">
@@ -79,7 +85,55 @@
                     </div>                    
                   </div>
           </div>
+          
+          <div id="Confessions_Pallet" hidden>
+
+              <button type="button" class="btn-close btn-close-white" aria-label="Close" id="Confessions_Pallet_close_btn" onclick="Close_Confessions_Pallet()"></button>
+              
+              <div class="container mt-5">
+
+                <ul class="nav-tabs nav nav-justified bg-light">
+                  <li class="nav-item">
+                    <a href="#Confessions_Got_div" class="nav-link active" data-bs-toggle="tab"> Confessions I Got  </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#Confessions_Sent_div" class="nav-link" data-bs-toggle="tab"> Confessions I Sent  <img src="./GUI_Resources/Confess_icon.png" alt=""> </a>
+                  </li>
+                </ul>
                 
+                <div class="tab-content">
+      
+                    <div class="tab-pane show active bg-light border" id="Confessions_Got_div" >
+                      <!-- Add your Content for ID 1 -->
+                        <br><br> 
+                        <div class="container">
+      
+                          <div class="list-group" id="Confessions_i_got_list">
+                                                          
+                          </div>
+                          <br>
+                          
+                        </div>
+                        
+                    </div>
+              
+                    <div class="tab-pane fade bg-light border" id="Confessions_Sent_div">
+                        <!-- Add your Content for ID 2 -->
+                        <br><br> 
+                        <div class="container">
+      
+                          <div class="list-group" id="Confessions_i_sent_list">
+                                                          
+                          </div>
+                          <br>
+                          
+                        </div>
+                    </div>
+                </div>
+                    
+            </div>
+          </div>
+
           <div class="tab-pane fade" id="Edit_Profile">
                   <div class="p-2 bg-light" align="center">     
                     <br><br>
@@ -101,7 +155,7 @@
                 <hr>
                 <div align="center">
                   <form onsubmit="Update_Password();return false">
-                    Current Passowrd : <input type="password" id="Cur_Password" required> <br> <br>
+                    Current Password : <input type="password" id="Cur_Password" required> <br> <br>
                     New Password : <input type="password" id="New_Password" required> <br> <br>
                     <input type="submit" value="Update Password"> <br>
                   </form>
@@ -126,96 +180,7 @@
         </div>
       </div>
 
-      <div class="container mt-5">
 
-          <ul class="nav-tabs nav nav-justified bg-light">
-            <li class="nav-item">
-              <a href="#Confessions_Got_div" class="nav-link active" data-bs-toggle="tab"> Confessions I got  </a>
-            </li>
-            <li class="nav-item">
-              <a href="#Confessions_Sent_div" class="nav-link" data-bs-toggle="tab"> Confessions I sent </a>
-            </li>
-          </ul>
-          
-          <div class="tab-content">
-
-              <div class="tab-pane show active bg-light border" id="Confessions_Got_div" >
-                <!-- Add your Content for ID 1 -->
-                  <br><br> 
-                  <div class="container">
-
-                    <div class="list-group" id="Confessions_i_got_list">
-                        
-                        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start list-group-item-info">
-
-                          <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">Anonymous Confession</h5>
-                            <small>3 days ago</small>
-                          </div>
-
-                          <p class="mb-1">content 1</p>
-
-                          <!-- <small>content 1 footer </small> -->
-                        </a>
-
-                        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start list-group-item-info">
-
-                            <div class="d-flex w-100 justify-content-between">
-                              <h5 class="mb-1">Anonymous Confession</h5>
-                              <small>3 days ago</small>
-                            </div>
-
-                            <p class="mb-1">content 2</p>
-
-                            <!-- <small>content 1 footer </small> -->
-                        </a>
-                       
-                    </div>
-                    <br>
-                    
-                  </div>
-                  
-               </div>
-        
-              <div class="tab-pane fade bg-light border" id="Confessions_Sent_div">
-                  <!-- Add your Content for ID 2 -->
-                  <br><br> 
-                  <div class="container">
-
-                    <div class="list-group" id="Confessions_i_sent_list">
-                        
-                        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start list-group-item-danger">
-
-                          <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">To : XYZ</h5>
-                            <small>3 days ago</small>
-                          </div>
-
-                          <p class="mb-1">content 1</p>
-
-                          <!-- <small>content 1 footer </small> -->
-                        </a>
-
-                        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start list-group-item-danger">
-
-                            <div class="d-flex w-100 justify-content-between">
-                              <h5 class="mb-1">To : ABC</h5>
-                              <small>3 days ago</small>
-                            </div>
-
-                            <p class="mb-1">content 2</p>
-
-                            <!-- <small>content 1 footer </small> -->
-                        </a>
-                       
-                    </div>
-                    <br>
-                    
-                  </div>
-              </div>
-          </div>
-               
-      </div>
 
       
       <!-- Delete Confirmation Modal -->

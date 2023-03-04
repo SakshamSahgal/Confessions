@@ -25,7 +25,7 @@ const {Delete_Account} = require("./Auth/Delete_Acc.js");
 const {Fetch_Static_Profile,Update_Bio,Update_Username,Update_Gender,Update_Password} = require("./Page_Queries/profile.js");
 const {Fetch_Dashboard} = require("./Page_Queries/Dashboard.js");
 const {Verify_Email,Forgot_Verify_OTP,Verify_Password} = require("./Auth/Forgot_Details.js");
-const {Confess} = require("./Page_Queries/confessions.js");
+const {Confess,Fetch_Confessions} = require("./Page_Queries/confessions.js");
 
 
 
@@ -134,4 +134,8 @@ app.post("/Update_Password_api",(req,res) => { //api called when user requests t
 
 app.post("/Confess_api",(req,res) => { //api called when someone confesses to someone else
     Confess(req.body,res);
+})
+
+app.post("/fetch_confessions",(req,res) => { //api called when user clicks on fetch confessions in his profile page.
+    Fetch_Confessions(req.body,res);
 })

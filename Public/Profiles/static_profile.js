@@ -101,9 +101,8 @@ let loadOverlay = document.getElementById("Load_overlay");
         }
     }
 
-    function Submit_Confession()
+    function Submit_Confession() //function called when user submits an anonymous confession form
     {
-        
         let Session = {
             Session_ID : Cookies.get("Session_ID"),
             Confessed_To_Email : document.getElementById("User_Email").textContent, //getting the username from the URL
