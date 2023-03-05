@@ -175,11 +175,15 @@ function Change_Profile_Picture() //function called when change profile picture 
     }
 }
 
-function close_Profile_Pallet() //called when close button is pressed
+function Close_Profile_Pallet() //called when close button is pressed
 {
     Profile_Picture_Pallet.hidden = true;
 }
 
+function Close_Confessions_Pallet() //called when close confessions pallet button is clicked
+{
+    document.getElementById("Confessions_Pallet").hidden = true;
+}
 
 function Select_Profile_Picture(profile_picture_path) //function called when user selects a profile picture (clicks on it)
 {
@@ -204,7 +208,7 @@ function Select_Profile_Picture(profile_picture_path) //function called when use
             {
                 document.getElementById("Profile_Photo").src = Update.Profile_Picture;
                 document.getElementById("profile_picture").src = Update.Profile_Picture;
-                close_Profile_Pallet();
+                Close_Profile_Pallet();
                 alert(response.Description);
             }
         })
@@ -322,7 +326,9 @@ function Update_Gender()
     location.href = "./index.html";
     else
     {
+        loadOverlay.hidden = false;
         SendToServer(Session,"/Update_Gender_api").then((response) => {
+            loadOverlay.hidden = true;
             console.log(response);
             alert(response.Description);
             window.location.reload();
@@ -345,7 +351,9 @@ function Update_Password()
         location.href = "./index.html";
     else
     {
+        loadOverlay.hidden = false;
         SendToServer(Session,"/Update_Password_api").then((response) => {
+            loadOverlay.hidden = true;
             console.log(response);
             if(response.Status == "Fail" && response.Description == "Invalid Session")
                 location.href = "./logged_out.html";
@@ -353,5 +361,114 @@ function Update_Password()
                 alert(response.Description); 
         })
     }
+
+}
+
+function View_Confessions()
+{
+    let Session = {
+        Session_ID : Cookies.get("Session_ID") ,
+    }
+
+    if(Session.Session_ID == undefined) //tried accessing through link
+        location.href = "./index.html";
+    else
+    {
+        loadOverlay.hidden = false;
+        SendToServer(Session,"/fetch_confessions").then((response) => {
+            loadOverlay.hidden = true;
+            console.log(response);
+            if(response.Status == "Fail" && response.Description == "Invalid Session")
+                location.href = "./index.html";
+            else
+            {
+                if(response.Status == "Fail")
+                    alert(response.Description);
+                else
+                {
+                    document.getElementById("Confessions_Pallet").hidden = false;
+                    Display_Confessions(response.Confessions_Got,response.Confessions_Sent);
+                }
+            }
+                
+        })
+    }
+}
+
+function Display_Confessions(confessions_got_array,confessions_sent_array)
+{
+    let Confessions_Got_List = document.getElementById("Confessions_i_got_list");
+    Confessions_Got_List.innerHTML = ""; //clearing the previously fetched data
+
+    confessions_got_array.forEach((element) => {
+
+        // anchor tag for list element
+        let this_a = document.createElement("a"); 
+        this_a.href = "#/";
+        this_a.classList.add("list-group-item");  //Adding Bootstrap CSS Classes
+        this_a.classList.add("list-group-item-action");
+        this_a.classList.add("flex-column");
+        this_a.classList.add("align-items-start");
+        this_a.classList.add("list-group-item-info");
+
+        let this_div = document.createElement("div");
+        this_div.classList.add("d-flex");
+        this_div.classList.add("w-100");
+        this_div.classList.add("justify-content-between");
+        
+        let this_h5_content_heading = document.createElement("h5");
+        this_h5_content_heading.classList.add("mb-1");
+        this_h5_content_heading.innerHTML = "Anonymous Confession";
+        
+        let this_small_timestamp = document.createElement("small");
+        this_small_timestamp.innerHTML = element.Timestamp;
+
+        let this_p_content = document.createElement("p");
+        this_p_content.classList.add("mb-1");
+        this_p_content.innerHTML = element.Confession;
+
+        this_div.appendChild(this_h5_content_heading);
+        this_div.appendChild(this_small_timestamp);
+        this_a.appendChild(this_div);
+        this_a.appendChild(this_p_content);
+        Confessions_Got_List.appendChild(this_a); //appending the list anchor to the list
+    })
+
+    let Confessions_Sent_List = document.getElementById("Confessions_i_sent_list");
+    Confessions_Sent_List.innerHTML = ""; //clearing the previously fetched data
+
+    confessions_sent_array.forEach((element) => {
+
+        // anchor tag for list element
+        let this_a = document.createElement("a"); 
+        this_a.href = "/Profiles/" + element.Confessed_To + ".html";
+        this_a.classList.add("list-group-item");  //Adding Bootstrap CSS Classes
+        this_a.classList.add("list-group-item-action");
+        this_a.classList.add("flex-column");
+        this_a.classList.add("align-items-start");
+        this_a.classList.add("list-group-item-danger");
+
+        let this_div = document.createElement("div");
+        this_div.classList.add("d-flex");
+        this_div.classList.add("w-100");
+        this_div.classList.add("justify-content-between");
+        
+        let this_h5_content_heading = document.createElement("h5");
+        this_h5_content_heading.classList.add("mb-1");
+        this_h5_content_heading.innerHTML = "TO : " + element.Confessed_To;
+
+        let this_small_timestamp = document.createElement("small");
+        this_small_timestamp.innerHTML = element.Timestamp;
+
+        let this_p_content = document.createElement("p");
+        this_p_content.classList.add("mb-1");
+        this_p_content.innerHTML = element.Confession;
+
+        this_div.appendChild(this_h5_content_heading);
+        this_div.appendChild(this_small_timestamp);
+        this_a.appendChild(this_div);
+        this_a.appendChild(this_p_content);
+        Confessions_Sent_List.appendChild(this_a); //appending the list anchor to the list
+    })
 
 }
