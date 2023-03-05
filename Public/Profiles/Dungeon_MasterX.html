@@ -24,7 +24,9 @@
         <img src="../GUI_Resources/loading.gif" id="loading_img">
     </div>  
     <br><br>
+
     <div class="container py-5">
+
       <div class="row g-1" >
         <div class="col-12 border bg-light" style="--bs-bg-opacity: .6;">
           <div class="p-2" align="center"><img width="200" src="" id="Profile_Photo" class="rounded-circle shadow-4-strong"/></div>
@@ -38,10 +40,11 @@
       </div>
       <div class="row g-1">
         <div class="col-12 border bg-light" style="--bs-bg-opacity: .6;">
-          <div class="p-2" align="center"> <button class="btn btn-warning" data-bs-target="#Confess_Modal" data-bs-toggle="modal">Confess Anonymously</button> </div>
+          <div class="p-2" align="center"> <button class="btn btn-warning" data-bs-target="#Confess_Modal" data-bs-toggle="modal">Confess Anonymously  <img src="../GUI_Resources/Confess_icon.png" alt=""> </button> </div>
         </div>
       </div>
       <!-- Confess Modal -->
+
       <div class="modal" id="Confess_Modal">
         <div class="modal-dialog">
           <div class="modal-content"> 
@@ -78,8 +81,32 @@
           </div>
         </div>
       </div>
+      <div class="row g-1">
+        <div class="col-12 border bg-light">
+          <div class="p-2" align="center"> 
+            <button class="btn btn-info" onclick="View_Confessions()">View Confessions 👀</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div id="Confessions_Pallet" hidden>
+    <button type="button" class="btn-close btn-close-white" id="Confessions_Pallet_btn" onclick="Close_Confession_Pallet()"></button>
+    <div id="inner_pallet">
+      <br><br>
+      <div class="container">
+
+        <div class="list-group" style=" height: 80vh; overflow-y:scroll;overflow: auto;" id="Confessions_Got_div">
+                
+        </div>
+        
+      </div>
     </div>
   </div>
+
+
+
+
 </body>
     <!-- importing the JS cookie CDN -->
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>

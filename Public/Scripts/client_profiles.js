@@ -175,7 +175,7 @@ function Change_Profile_Picture() //function called when change profile picture 
     }
 }
 
-function close_Profile_Pallet() //called when close button is pressed
+function Close_Profile_Pallet() //called when close button is pressed
 {
     Profile_Picture_Pallet.hidden = true;
 }
@@ -208,7 +208,7 @@ function Select_Profile_Picture(profile_picture_path) //function called when use
             {
                 document.getElementById("Profile_Photo").src = Update.Profile_Picture;
                 document.getElementById("profile_picture").src = Update.Profile_Picture;
-                close_Profile_Pallet();
+                Close_Profile_Pallet();
                 alert(response.Description);
             }
         })
@@ -398,6 +398,7 @@ function View_Confessions()
 function Display_Confessions(confessions_got_array,confessions_sent_array)
 {
     let Confessions_Got_List = document.getElementById("Confessions_i_got_list");
+    Confessions_Got_List.innerHTML = ""; //clearing the previously fetched data
 
     confessions_got_array.forEach((element) => {
 
@@ -434,6 +435,7 @@ function Display_Confessions(confessions_got_array,confessions_sent_array)
     })
 
     let Confessions_Sent_List = document.getElementById("Confessions_i_sent_list");
+    Confessions_Sent_List.innerHTML = ""; //clearing the previously fetched data
 
     confessions_sent_array.forEach((element) => {
 
