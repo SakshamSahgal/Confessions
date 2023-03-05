@@ -18,6 +18,7 @@ const {Register_Email,Register_Username,Verify_OTP,Register_Password} = require(
 const {Authorize_User} = require("./Auth/login.js");
 const {Validate_Session} = require("./Auth/validate_session.js")
 const {Logout} = require("./Auth/logout.js");
+const {Return_ConessionDBs} = require("./Debugging_Scripts/Return_Confessions.js");
 const {Return_Users_DB} = require("./Debugging_Scripts/Return_Users.js");
 const {Fetch_All_Users} = require("./Page_Queries/users.js");
 const {Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo} = require("./Page_Queries/profile.js");
@@ -28,11 +29,24 @@ const {Verify_Email,Forgot_Verify_OTP,Verify_Password} = require("./Auth/Forgot_
 const {Confess,Fetch_Confessions,Fetch_Static_Confessions_Got} = require("./Page_Queries/confessions.js");
 
 
+app.post('/validate_session_api',(req,res) => { //checks if session cookie is valid [if it is valid , it also updates the last activity]
+    Validate_Session(req.body).then((Session_matched)=>{
+        verdict = {}
+        if(Session_matched.length)
+        verdict.Status = "Session Matched";
+        else
+        verdict.Status = "Invalid Session";
+        res.json(verdict);
+    })
+})
 
 app.get("/get_User_DB",(req,res)=>{ //only for debugging
     Return_Users_DB(res);
 })
 
+app.get("/get_Confession_DBs",(req,res) => { //only for debugging [returns confession got and confession sent DB of all users]
+    Return_ConessionDBs(res);
+})
 
 app.post("/Register_Email_api",(request,response) => {  //for Email Stage of registering
     Register_Email(request.body,response);
@@ -54,23 +68,9 @@ app.post('/auth_api',async (req,res) => { //Authorizes user[when user logs in]
     Authorize_User(req.body,res);
 })
 
-
-
-app.post('/validate_session_api',(req,res) => { //checks if session cookie is valid [if it is valid , it also updates the last activity]
-    Validate_Session(req.body).then((Session_matched)=>{
-        verdict = {}
-        if(Session_matched.length)
-        verdict.Status = "Session Matched";
-        else
-        verdict.Status = "Invalid Session";
-        res.json(verdict);
-    })
-})
-
-app.post("/update_profile_picture_api",(request,response) => {
+app.post("/update_profile_picture_api",(request,response) => { //api called when user updates profile picture
     Update_Profile_Picture(request.body,response);
 })
-
 
 app.post('/logout_api',(req,res) => { //Logout user
     Logout(req.body.Session_ID,res);
