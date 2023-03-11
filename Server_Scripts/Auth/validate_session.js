@@ -27,7 +27,7 @@ async function Validate_Session(sesssion) //function validates session and updat
 
                     console.log("Updated last activity of " + NumReplaced + " Entries");
                     let Judgement = [Update_JSON]; //returning updated JSON array
-                    resolve(Judgement);
+                    resolve(Judgement); 
                 })
             }
             else
@@ -39,5 +39,7 @@ async function Validate_Session(sesssion) //function validates session and updat
     });
     return Session_Judgement;    
 }
+
+
 
 module.exports = {Validate_Session}

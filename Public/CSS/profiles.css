@@ -24,12 +24,14 @@
     top: 100%;
 }
 
-#profile_pallet_close_btn /* CSS for the profile pallet top right close button*/
+#profile_pallet_close_btn,#Confessions_Pallet_close_btn /* CSS for the profile pallet top right close button*/
 {
     position: absolute;
     left : 95%;
     top: 2%;
 }
+
+
 
 #links_holder
 {
@@ -42,4 +44,25 @@
     border-radius: 50px;
     background-color: rgba(255, 255, 255, 0.667);
     border: 2px solid black;
+}
+
+#Confessions_i_got_list,#Confessions_i_sent_list
+{
+    height: auto; 
+    overflow-y:scroll;
+    overflow: auto;
+}
+
+#Confessions_Pallet
+{
+    height: 100%;
+    width: 100%;
+    max-height: 100%;
+    z-index: 3;
+    overflow-y: auto;
+    position: fixed; /* Stay in place */
+    left: 0;
+    top: 0;
+    background-color: rgba(7, 7, 7, 0.55); /* Black w/opacity */
+    backdrop-filter: blur(6px);
 }
