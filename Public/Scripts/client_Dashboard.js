@@ -61,4 +61,12 @@ function Fetch_Dashboard() //function called at the page load [fetches dashboard
     }
 }
 
+function Post_it()
+{
+    let JSON_to_Send = {
+        Visibility : document.getElementById("Visibility_Selected").value
+    }
+    console.log(JSON_to_Send);
+}
+
 Fetch_Dashboard();

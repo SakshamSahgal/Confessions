@@ -35,8 +35,6 @@
                 <button data-bs-target="#Write_a_post" data-bs-toggle="modal" class="btn btn-lg btn-primary"> Write a Post</button> 
             </div>
         </div>
-        
-
 
         <div class="modal" id="Write_a_post">
             <div class="modal-dialog">
@@ -52,8 +50,8 @@
                                 </div>
                                 <div class="col">
                                     <select class="form-select" aria-label="Default select example" style="width:auto;" >
-                                        <option selected> Anonymous 👁️ </option>
-                                        <option value="1">Public 👀 </option>
+                                        <option selected value="Anonymous"> Anonymous 👁️ </option>
+                                        <option value="Public">Public 👀 </option>
                                     </select>
                                 </div>
                                 <div class="col text-end">
@@ -65,14 +63,12 @@
                     </div>
                     
                     <div class="modal-body" align="center">
-                        <form onsubmit="">
-                            <textarea name="" id="" cols="35" rows="4   "></textarea> <br> <br>
+                        <form onsubmit="Post_it();return false">
+                            <textarea name="" id="" cols="35" rows="4"></textarea> <br> <br>
                             <input type="submit" value="Post">
                         </form>
                     </div>
-                    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                        Rules
-                    </a>
+                    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">Rules</a>
                     <div class="collapse" id="collapseExample">
                         <div class="card card-body">
                             Allowed Characters : 5 to 280
