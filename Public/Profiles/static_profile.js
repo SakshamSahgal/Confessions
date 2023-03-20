@@ -72,11 +72,19 @@ let Confessions_Pallet =  document.getElementById("Confessions_Pallet");
 
                     if(response.Buddy_Status == "Buddies")
                     {
+                        document.getElementById("buddy_btn").classList.value = ""
+                        document.getElementById("buddy_btn").classList.add("btn")
+                        document.getElementById("buddy_btn").classList.add("btn-danger") 
+                        
                         document.getElementById("buddy_icon_display").src = "../GUI_Resources/Remove_Buddy.png";
                         document.getElementById("Buddy_btn_Text").innerHTML = " Remove Buddy ";
                     }
                     else
                     {
+                        document.getElementById("buddy_btn").classList.value = ""
+                        document.getElementById("buddy_btn").classList.add("btn")
+                        document.getElementById("buddy_btn").classList.add("btn-success") 
+                        
                         document.getElementById("buddy_icon_display").src = "../GUI_Resources/Add_Buddy.png";
                         document.getElementById("Buddy_btn_Text").innerHTML = " Add Buddy ";
                     }
@@ -208,7 +216,7 @@ let Confessions_Pallet =  document.getElementById("Confessions_Pallet");
 
     }
 
-    function Add_Buddy()
+    function Buddy()
     {
         let Session = {
             Session_ID : Cookies.get("Session_ID"),
@@ -227,11 +235,19 @@ let Confessions_Pallet =  document.getElementById("Confessions_Pallet");
                 alert(response.Description);
                 if(response.Status == "Pass" && response.Description == "Successfully Un-Buddied")
                 {
+                    document.getElementById("buddy_btn").classList.value = ""
+                    document.getElementById("buddy_btn").classList.add("btn")
+                    document.getElementById("buddy_btn").classList.add("btn-success") 
+
                     document.getElementById("buddy_icon_display").src = "../GUI_Resources/Add_Buddy.png";
                     document.getElementById("Buddy_btn_Text").innerHTML = " Add Buddy ";
                 }
                 else
                 {
+                    document.getElementById("buddy_btn").classList.value = ""
+                    document.getElementById("buddy_btn").classList.add("btn")
+                    document.getElementById("buddy_btn").classList.add("btn-danger") 
+                    
                     document.getElementById("buddy_icon_display").src = "../GUI_Resources/Remove_Buddy.png";
                     document.getElementById("Buddy_btn_Text").innerHTML = " Remove Buddy ";
                 }
