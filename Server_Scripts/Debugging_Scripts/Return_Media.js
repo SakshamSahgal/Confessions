@@ -46,8 +46,6 @@ function Return_Media_DBs(res)
 
                     if(verdict.length == no_of_files)
                         res.json(verdict);
-
-
                 })
 
             })

@@ -49,7 +49,7 @@ function Add_Buddies(req_JSON,res) {
                                         
                                         let verdict = {
                                             Status : "Pass",
-                                            Description : "Successfully Un-Buddied Him"
+                                            Description : "Successfully Un-Buddied"
                                         }
                                         res.json(verdict);
                                     });
@@ -79,7 +79,7 @@ function Add_Buddies(req_JSON,res) {
 
                                         let verdict = {
                                             Status : "Pass",
-                                            Description : "Successfully Biddied Him"
+                                            Description : "Successfully Buddied"
                                         }
 
                                         res.json(verdict);
