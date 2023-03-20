@@ -18,7 +18,7 @@ const {Register_Email,Register_Username,Verify_OTP,Register_Password} = require(
 const {Authorize_User} = require("./Auth/login.js");
 const {Validate_Session} = require("./Auth/validate_session.js")
 const {Logout} = require("./Auth/logout.js");
-const {Return_ConessionDBs} = require("./Debugging_Scripts/Return_Confessions.js");
+const {Return_Media_DBs} = require("./Debugging_Scripts/Return_Media.js");
 const {Return_Users_DB} = require("./Debugging_Scripts/Return_Users.js");
 const {Fetch_All_Users} = require("./Page_Queries/users.js");
 const {Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo} = require("./Page_Queries/profile.js");
@@ -27,7 +27,7 @@ const {Fetch_Static_Profile,Update_Bio,Update_Username,Update_Gender,Update_Pass
 const {Fetch_Dashboard} = require("./Page_Queries/Dashboard.js");
 const {Verify_Email,Forgot_Verify_OTP,Verify_Password} = require("./Auth/Forgot_Details.js");
 const {Confess,Fetch_Confessions,Fetch_Static_Confessions_Got} = require("./Page_Queries/confessions.js");
-
+const {Add_Buddies} = require("./Page_Queries/Buddies.js");
 
 app.post('/validate_session_api',(req,res) => { //checks if session cookie is valid [if it is valid , it also updates the last activity]
     Validate_Session(req.body).then((Session_matched)=>{
@@ -44,8 +44,8 @@ app.get("/get_User_DB",(req,res)=>{ //only for debugging
     Return_Users_DB(res);
 })
 
-app.get("/get_Confession_DBs",(req,res) => { //only for debugging [returns confession got and confession sent DB of all users]
-    Return_ConessionDBs(res);
+app.get("/get_Media_DBs",(req,res) => { //only for debugging [returns confession got and confession sent DB of all users]
+    Return_Media_DBs(res);
 })
 
 app.post("/Register_Email_api",(request,response) => {  //for Email Stage of registering
@@ -142,4 +142,8 @@ app.post("/fetch_confessions",(req,res) => { //api called when user clicks on fe
 
 app.post("/fetch_static_confessions_got_api",(req,res) => { //api called when user clicks on view confessions in a static profile page.
     Fetch_Static_Confessions_Got(req.body,res);
+})
+
+app.post("/Add_Buddy_api",(req,res) => {
+    Add_Buddies(req.body,res);
 })

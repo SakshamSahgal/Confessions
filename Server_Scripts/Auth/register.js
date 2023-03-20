@@ -72,7 +72,8 @@ function Register_Email(req_JSON,response) //email stage
                         OTP_Generated : "",
                         OTP_Generated_Time : 0,
                         Last_Activity : 0,
-                        Session : []
+                        Session : [],
+                        Buddies : []
                     }
                     users.insert(JSON_to_Insert);
                     verdict = {
@@ -103,7 +104,8 @@ function Register_Email(req_JSON,response) //email stage
                     OTP_Generated : "",
                     OTP_Generated_Time : 0,
                     Last_Activity : 0,
-                    Session : []
+                    Session : [],
+                    Buddies : []
                 }
                 users.insert(JSON_to_Insert);
                 verdict = {

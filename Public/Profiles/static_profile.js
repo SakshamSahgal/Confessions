@@ -195,5 +195,24 @@ let Confessions_Pallet =  document.getElementById("Confessions_Pallet");
 
     }
 
+    function Add_Buddy()
+    {
+        alert("Add Buddy");
+        let Session = {
+            Session_ID : Cookies.get("Session_ID"),
+            Buddied_Email : document.getElementById("User_Email").textContent
+        }
+
+        if(Session.Session_ID == undefined)
+            location.href = "../index.html";
+        else
+        {
+            console.log("Sending" , Session);   
+            SendToServer(Session,"/Add_Buddy_api").then((response) => {
+                console.log(response);
+            })
+
+        }
+    }
 
     Fetch_Profile_Page();

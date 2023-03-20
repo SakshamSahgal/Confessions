@@ -2,7 +2,7 @@
 const Datastore = require("nedb"); //including the nedb node package for database 
 
 
-function Return_ConessionDBs(res)
+function Return_Media_DBs(res)
 {
     let verdict = [];
     const files = fs.readdirSync("./Media");
@@ -19,11 +19,13 @@ function Return_ConessionDBs(res)
         let got_user = {
             Username : filename,
             Confessions_Got_DB : [],
-            Confessions_Sent_DB : []
+            Confessions_Sent_DB : [],
+            Who_Buddied_Me_DB : []
         }
 
         let Confessions_Got_DB_of_this_user = new Datastore("./Media/" + filename + "/Confessions_Got.db");
         let Confessions_Sent_DB_of_this_user = new Datastore("./Media/" + filename + "/Confessions_Sent.db");
+        let Who_Buddied_Me_DB_of_this_users = new Datastore("./Media/" + filename + "/Who_Buddied_Me.db");
 
         Confessions_Got_DB_of_this_user.loadDatabase();
         Confessions_Got_DB_of_this_user.find({},(err,got_array) => {
@@ -34,11 +36,19 @@ function Return_ConessionDBs(res)
             Confessions_Sent_DB_of_this_user.find({},(err,sent_array) => {
 
                 got_user.Confessions_Sent_DB = sent_array;
-                verdict.push(got_user);
 
-                if(verdict.length == no_of_files)
-                    res.json(verdict);
+                Who_Buddied_Me_DB_of_this_users.loadDatabase();
+                Who_Buddied_Me_DB_of_this_users.find({},(err,buddied_me_array) => {
 
+                    got_user.Who_Buddied_Me_DB = buddied_me_array;
+
+                    verdict.push(got_user);
+
+                    if(verdict.length == no_of_files)
+                        res.json(verdict);
+
+
+                })
 
             })
 
@@ -47,4 +57,4 @@ function Return_ConessionDBs(res)
     })
 }
 
-module.exports = {Return_ConessionDBs}
+module.exports = {Return_Media_DBs}
