@@ -36,7 +36,7 @@ let Confessions_Pallet =  document.getElementById("Confessions_Pallet");
         }
     }
 
-    function Fetch_Profile_Page() //funtion fetches the static profile data
+    function Fetch_Profile_Page() //funtion fetches the static profile data and displays it on the UI
     {
         let req_json = {
             Session_ID : Cookies.get("Session_ID") ,
@@ -63,11 +63,32 @@ let Confessions_Pallet =  document.getElementById("Confessions_Pallet");
                     document.getElementById("User_Email").textContent = response.Email;
                     document.getElementById("Activity_Status").textContent = response.Activity_Status;
                     document.getElementById("profile_picture").src = "../" + response.My_Profile_Picture;
-
+                    
                     if(response.Activity_Status == "Online")
                         document.getElementById("Activity_Status").style="color: green;";
                     else
                         document.getElementById("Activity_Status").style="color: red;";
+                                        
+
+                    if(response.Buddy_Status == "Buddies")
+                    {
+                        document.getElementById("buddy_btn").classList.value = ""
+                        document.getElementById("buddy_btn").classList.add("btn")
+                        document.getElementById("buddy_btn").classList.add("btn-danger") 
+                        
+                        document.getElementById("buddy_icon_display").src = "../GUI_Resources/Remove_Buddy.png";
+                        document.getElementById("Buddy_btn_Text").innerHTML = " Remove Buddy ";
+                    }
+                    else
+                    {
+                        document.getElementById("buddy_btn").classList.value = ""
+                        document.getElementById("buddy_btn").classList.add("btn")
+                        document.getElementById("buddy_btn").classList.add("btn-success") 
+                        
+                        document.getElementById("buddy_icon_display").src = "../GUI_Resources/Add_Buddy.png";
+                        document.getElementById("Buddy_btn_Text").innerHTML = " Add Buddy ";
+                    }
+
                 }
                 else
                 {
@@ -195,5 +216,44 @@ let Confessions_Pallet =  document.getElementById("Confessions_Pallet");
 
     }
 
+    function Buddy()
+    {
+        let Session = {
+            Session_ID : Cookies.get("Session_ID"),
+            Buddied_Email : document.getElementById("User_Email").textContent
+        }
+
+        if(Session.Session_ID == undefined)
+            location.href = "../index.html";
+        else
+        {
+            console.log("Sending" , Session);   
+            loadOverlay.hidden = false;
+            SendToServer(Session,"/Buddy_api").then((response) => {
+                console.log(response);
+                loadOverlay.hidden = true;
+                alert(response.Description);
+                if(response.Status == "Pass" && response.Description == "Successfully Un-Buddied")
+                {
+                    document.getElementById("buddy_btn").classList.value = ""
+                    document.getElementById("buddy_btn").classList.add("btn")
+                    document.getElementById("buddy_btn").classList.add("btn-success") 
+
+                    document.getElementById("buddy_icon_display").src = "../GUI_Resources/Add_Buddy.png";
+                    document.getElementById("Buddy_btn_Text").innerHTML = " Add Buddy ";
+                }
+                else
+                {
+                    document.getElementById("buddy_btn").classList.value = ""
+                    document.getElementById("buddy_btn").classList.add("btn")
+                    document.getElementById("buddy_btn").classList.add("btn-danger") 
+                    
+                    document.getElementById("buddy_icon_display").src = "../GUI_Resources/Remove_Buddy.png";
+                    document.getElementById("Buddy_btn_Text").innerHTML = " Remove Buddy ";
+                }
+            })
+
+        }
+    }
 
     Fetch_Profile_Page();

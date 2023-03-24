@@ -21,19 +21,25 @@ function Delete_Account(req_JSON,res)
                         
                         console.log(returned_json_from_erase_confessions_got);
 
-                        users.loadDatabase();
-                        users.remove(session_matched_array[0],{},(err,NumRemoved) => {
-                            
-                            console.log("No of entries removed from DB = " + NumRemoved);
-                            let dir = "Media/" + session_matched_array[0].Username;
-                            console.log(Delete_Directory(dir)); //deleting the media folder
-                            dir = "Public/Profiles/" + session_matched_array[0].Username + ".html";
-                            console.log(Delete_Directory(dir)); //deleting the profile page
-                            let verdict={
-                                Status : "Pass",
-                                Description : "Successfully Deleted Account"
-                            }
-                            res.json(verdict);
+                        Erase_Buddy_List(session_matched_array).then( (returned_json_from_erase_buddy_List) => {
+
+                            console.log(returned_json_from_erase_buddy_List);
+
+                            users.loadDatabase();
+                            users.remove(session_matched_array[0],{},(err,NumRemoved) => {
+                                
+                                console.log("No of entries removed from DB = " + NumRemoved);
+                                let dir = "Media/" + session_matched_array[0].Username;
+                                console.log(Delete_Directory(dir)); //deleting the media folder
+                                dir = "Public/Profiles/" + session_matched_array[0].Username + ".html";
+                                console.log(Delete_Directory(dir)); //deleting the profile page
+                                let verdict={
+                                    Status : "Pass",
+                                    Description : "Successfully Deleted Account"
+                                }
+                                res.json(verdict);
+                            })
+
                         })
                     })
                 })                
@@ -178,5 +184,65 @@ async function Erase_Confessions_Got(session_matched_array)
 		
     return ans;    
 }
+
+async function Erase_Buddy_List(session_matched_array)
+{
+    let ans = await new Promise((resolve, reject) => {
+
+        if(session_matched_array[0].Buddies.length) //if he has any Buddies
+        {
+            session_matched_array[0].Buddies.forEach( buddy_email => { //iterating over my buddy email list 
+            
+                console.log(buddy_email);
+    
+                users.loadDatabase();
+                users.find({Email : buddy_email} , (err,buddy_matched) => { //Querring his Email on the user's DB to get his username
+    
+                    if(buddy_matched.length) //found my Buddy's username
+                    {
+                        let his_who_buddied_me_db_dir = "./Media/" + buddy_matched[0].Username + "/Who_Buddied_Me.db"; //locating his Who_Buddied_Me_DB
+                        let his_who_buddied_me_db = new Datastore(his_who_buddied_me_db_dir);  //locating his Who Buddied Me DB
+                        his_who_buddied_me_db.loadDatabase();  //loading his Who Buddied Me DB
+    
+                        his_who_buddied_me_db.remove({Email : session_matched_array[0].Email},{},(err,NumRemoved) => { //removng my Email from his Who_Buddied_Me_Email
+                            
+                            console.log("Removed " + NumRemoved + " Entries while Deleting entry of " + buddy_matched[0].Username  + "'s who_buddied_me DB");
+                            buddies_covered++;
+                           if(buddies_covered == session_matched_array[0].buddies.length)
+                           {
+                                let verdict = {
+                                    Status : "Pass",
+                                    Description : "Successfully Cleared Buddy List"
+                                }
+                                resolve(verdict);
+                           }
+                        })
+                    }
+                    else
+                    {
+                        let verdict={
+                            Status : "Fail",
+                            Description : "Username corresponding to " + buddy_email + " not found"
+                        }
+                        reject(verdict)
+                    }
+    
+                })
+    
+            })
+        }
+        else
+        {
+            let verdict = {
+                Status : "Pass",
+                Description : "Successfully Cleared Buddy List"
+            }
+            resolve(verdict);
+        }
+    })
+
+    return ans;    
+}
+
 
 module.exports = {Delete_Account}
