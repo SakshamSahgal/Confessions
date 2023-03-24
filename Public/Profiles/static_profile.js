@@ -229,7 +229,7 @@ let Confessions_Pallet =  document.getElementById("Confessions_Pallet");
         {
             console.log("Sending" , Session);   
             loadOverlay.hidden = false;
-            SendToServer(Session,"/Add_Buddy_api").then((response) => {
+            SendToServer(Session,"/Buddy_api").then((response) => {
                 console.log(response);
                 loadOverlay.hidden = true;
                 alert(response.Description);

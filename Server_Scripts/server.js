@@ -28,6 +28,7 @@ const {Fetch_Dashboard} = require("./Page_Queries/Dashboard.js");
 const {Verify_Email,Forgot_Verify_OTP,Verify_Password} = require("./Auth/Forgot_Details.js");
 const {Confess,Fetch_Confessions,Fetch_Static_Confessions_Got} = require("./Page_Queries/confessions.js");
 const {Add_Buddies} = require("./Page_Queries/Buddies.js");
+const {Post_it} = require("./Page_Queries/PostContent.js");
 
 app.post('/validate_session_api',(req,res) => { //checks if session cookie is valid [if it is valid , it also updates the last activity]
     Validate_Session(req.body).then((Session_matched)=>{
@@ -144,6 +145,10 @@ app.post("/fetch_static_confessions_got_api",(req,res) => { //api called when us
     Fetch_Static_Confessions_Got(req.body,res);
 })
 
-app.post("/Add_Buddy_api",(req,res) => {
+app.post("/Buddy_api",(req,res) => { //api called when user add/remove a buddy
     Add_Buddies(req.body,res);
+})
+
+app.post("/Post_it_api",(req,res) => {
+    Post_it(req.body,res);
 })

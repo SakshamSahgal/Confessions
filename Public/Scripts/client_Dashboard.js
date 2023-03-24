@@ -64,9 +64,32 @@ function Fetch_Dashboard() //function called at the page load [fetches dashboard
 function Post_it()
 {
     let JSON_to_Send = {
-        Visibility : document.getElementById("Visibility_Selected").value
+        Session_ID : Cookies.get("Session_ID"),
+        Visibility : document.getElementById("visibility_Select").value,
+        Content : document.getElementById("Post_Content").value
     }
+
     console.log(JSON_to_Send);
+    if(JSON_to_Send.Session_ID == undefined)
+        location.href = "./index.html";
+    else
+    {
+        loadOverlay.hidden = false;
+        SendToServer(JSON_to_Send,"/Post_it_api").then( (response) => {
+            loadOverlay.hidden = true;
+            console.log(response);
+            alert(response.Description);
+        })
+    }
 }
+
+function Update_Info_Details()
+{ 
+   if(document.getElementById("visibility_Select").value == "Public")
+        document.getElementById("visibility_info").innerHTML = "[People who Buddied you, will know you posted this]"
+   else
+        document.getElementById("visibility_info").innerHTML = "[No one will know you posted this]"
+}
+
 
 Fetch_Dashboard();

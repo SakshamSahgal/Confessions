@@ -26,6 +26,7 @@ function Return_Media_DBs(res)
         let Confessions_Got_DB_of_this_user = new Datastore("./Media/" + filename + "/Confessions_Got.db");
         let Confessions_Sent_DB_of_this_user = new Datastore("./Media/" + filename + "/Confessions_Sent.db");
         let Who_Buddied_Me_DB_of_this_users = new Datastore("./Media/" + filename + "/Who_Buddied_Me.db");
+        let posts_DB_of_this_user = new Datastore("./Media/" + filename + "/Posts.db");
 
         Confessions_Got_DB_of_this_user.loadDatabase();
         Confessions_Got_DB_of_this_user.find({},(err,got_array) => {
@@ -42,10 +43,18 @@ function Return_Media_DBs(res)
 
                     got_user.Who_Buddied_Me_DB = buddied_me_array;
 
-                    verdict.push(got_user);
+                    posts_DB_of_this_user.loadDatabase();
+                    posts_DB_of_this_user.find({},(err,posts_array) => {
 
-                    if(verdict.length == no_of_files)
-                        res.json(verdict);
+                        got_user.posts = posts_array;
+
+                        verdict.push(got_user);
+
+                        if(verdict.length == no_of_files)
+                            res.json(verdict);
+
+                    })
+                   
                 })
 
             })
