@@ -363,7 +363,13 @@ function Update_Gender(req_JSON,res)
     })
 }
 
-
+function Get_Buddy_Status(my_Session_JSON,His_email)
+{
+    if(my_Session_JSON.Buddies.includes(His_email))
+        return "Buddies"
+    else
+        return "Strangers"
+}
 
 
 function Fetch_Static_Profile(req_JSON,res)
@@ -387,7 +393,7 @@ function Fetch_Static_Profile(req_JSON,res)
                     
                     if(username_match_array.length)
                     {
-                            let verdict={
+                            let verdict = {
                                 Status : "Pass",
                                 My_Profile_Picture : Session_Result[0].Profile_Picture,
                                 His_Profile_Picture : username_match_array[0].Profile_Picture,
@@ -395,9 +401,10 @@ function Fetch_Static_Profile(req_JSON,res)
                                 Bio : username_match_array[0].Bio,
                                 Gender : username_match_array[0].Gender,
                                 Email : username_match_array[0].Email,
-                                Activity_Status : Get_Activity_Status(username_match_array[0].Last_Activity)
+                                Activity_Status : Get_Activity_Status(username_match_array[0].Last_Activity),
+                                Buddy_Status : Get_Buddy_Status(Session_Result[0],username_match_array[0].Email)
                             }
-        
+
                             res.json(verdict);
                     }
                     else
