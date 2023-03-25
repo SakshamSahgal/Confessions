@@ -146,7 +146,7 @@ app.post("/fetch_static_confessions_got_api",(req,res) => { //api called when us
 })
 
 app.post("/Buddy_api",(req,res) => { //api called when user add/remove a buddy
-    Add_Buddies(req.body,res);
+    Add_Buddies(req.body,res); //function that handles the buddy requests
 })
 
 app.post("/Post_it_api",(req,res) => {
