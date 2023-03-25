@@ -128,4 +128,26 @@ function Add_Buddies(req_JSON,res) {
 
 }
 
+
+// function Buddy_it(req_JSON,res)
+// {
+//     Validate_Session(req_JSON).then( (Session_Result) => {
+
+//         if(Session_Result.length)
+//         {
+
+//         }
+//         else
+//         {
+//             let verdict = {
+//                 Status : "Fail",
+//                 Description : "Invalid Session"
+//             }
+//             res.json(verdict);
+//         }
+
+
+//     })
+// }
+
 module.exports = {Add_Buddies}
