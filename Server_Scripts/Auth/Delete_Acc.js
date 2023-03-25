@@ -2,7 +2,7 @@
 const Datastore = require("nedb"); //including the nedb node package for database 
 const users = new Datastore("Database/users.db");
 //-------------------------------------------------------------------------------------
-const {Validate_Session} = require("../Auth/validate_session.JS")
+const {Validate_Session} = require("./validate_session.js")
 const {Delete_Directory} = require("../directories.js"); //for creating Directories
 
 function Delete_Account(req_JSON,res)
