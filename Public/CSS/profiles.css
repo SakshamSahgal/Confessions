@@ -24,7 +24,7 @@
     top: 100%;
 }
 
-#profile_pallet_close_btn,#Confessions_Pallet_close_btn /* CSS for the profile pallet top right close button*/
+#profile_pallet_close_btn,#Confessions_Pallet_close_btn,#Buddy_Requests_Pallet_close_btn /* CSS for the profile pallet top right close button*/
 {
     position: absolute;
     left : 95%;
@@ -53,7 +53,7 @@
     overflow: auto;
 }
 
-#Confessions_Pallet
+#Confessions_Pallet,#Buddy_Requests_Pallet
 {
     height: 100%;
     width: 100%;

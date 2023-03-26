@@ -1,6 +1,6 @@
 let loadOverlay = document.getElementById("Load_overlay");
 let Profile_Picture_Pallet =  document.getElementById("profile_picture_pallet");
-
+let Buddy_Requests_Pallet = document.getElementById("Buddy_Requests_Pallet");
 
 
 async function SendToServer(JSON_to_Send,Route) //function used to send json to server
@@ -63,6 +63,10 @@ function Delete_Account() //function called when user clicks on delete account
     }
 }
 
+function Close_Buddy_Request_Pallet()
+{
+    Buddy_Requests_Pallet.hidden = true;
+}
 
 
 function Get_Profile_Data() //function called at the loading of page [fetches the profile page data]
@@ -469,6 +473,93 @@ function Display_Confessions(confessions_got_array,confessions_sent_array)
         this_a.appendChild(this_div);
         this_a.appendChild(this_p_content);
         Confessions_Sent_List.appendChild(this_a); //appending the list anchor to the list
+    })
+
+}
+
+function View_Buddy_Requests()
+{
+    let Session = {
+        Session_ID : Cookies.get("Session_ID") ,
+    }
+
+    if(Session.Session_ID == undefined) //tried accessing through link
+        location.href = "./index.html";
+    else
+    {
+        Buddy_Requests_Pallet.hidden = false;
+        
+        let Dummy_Array = [
+            {
+                Reciever : "M",
+                Sender : "Saksham",
+                Timestamp : Date.now(),
+            },
+            {
+                Reciever : "1231M",
+                Sender : "Sakshasdsaam",
+                Timestamp : Date.now(),
+            },
+            
+        ]
+        Display_Buddy_Requests(Dummy_Array);
+        // loadOverlay.hidden = false;
+        // SendToServer(Session,"/fetch_buddy_requests").then((response) => {
+        //     loadOverlay.hidden = true;
+        //     console.log(response);
+        //     if(response.Status == "Fail" && response.Description == "Invalid Session")
+        //         location.href = "./index.html";
+        //     else
+        //     {
+        //         if(response.Status == "Fail")
+        //             alert(response.Description);
+        //         else
+        //         {
+        //             document.getElementById("Buddy_Requests_Pallet").hidden = false;
+        //             Display_Buddy_Requests(response.Buddy_Requests);
+        //         }
+        //     }
+                
+        // })
+    }
+}
+
+function Display_Buddy_Requests(buddy_request_array) {
+
+    let Buddy_Request_list_group = document.getElementById("Buddy_Request_list_group");
+    Buddy_Request_list_group.innerHTML = ""; //clearing the previously fetched data
+    buddy_request_array.forEach((element) => {
+            
+            // anchor tag for list element
+            let this_a = document.createElement("a"); 
+            this_a.href = "#/";
+            this_a.classList.add("list-group-item");  //Adding Bootstrap CSS Classes
+            this_a.classList.add("list-group-item-action");
+            this_a.classList.add("flex-column");
+            this_a.classList.add("align-items-start");
+            this_a.classList.add("list-group-item-info");
+    
+            let this_div = document.createElement("div");
+            this_div.classList.add("d-flex");
+            this_div.classList.add("w-100");
+            this_div.classList.add("justify-content-between");
+            
+            let this_h5_content_heading = document.createElement("h5");
+            this_h5_content_heading.classList.add("mb-1");
+            this_h5_content_heading.innerHTML = element.Sender;
+            
+            let this_small_timestamp = document.createElement("small");
+            this_small_timestamp.innerHTML = element.Timestamp;
+    
+            let this_p_content = document.createElement("p");
+            this_p_content.classList.add("mb-1");
+            this_p_content.innerHTML = "<Button class='btn btn-success' onclick='Accept_Buddy_Request(\"" + element.Sender + "\")'>Accept</Button> <Button class='btn btn-danger' onclick='Reject_Buddy_Request(\"" + element.Sender + "\")'>Reject</Button>";
+    
+            this_div.appendChild(this_h5_content_heading);
+            this_div.appendChild(this_small_timestamp);
+            this_a.appendChild(this_div);
+            this_a.appendChild(this_p_content);
+            Buddy_Request_list_group.appendChild(this_a); //appending the list anchor to the list
     })
 
 }

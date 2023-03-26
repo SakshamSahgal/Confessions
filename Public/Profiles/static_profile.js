@@ -1,6 +1,7 @@
 let loadOverlay = document.getElementById("Load_overlay");
 let Confessions_Pallet =  document.getElementById("Confessions_Pallet");
 
+
     async function SendToServer(JSON_to_Send,Route)
     {
             let send_package_obj = { //packing it in an object
@@ -230,26 +231,32 @@ let Confessions_Pallet =  document.getElementById("Confessions_Pallet");
             console.log("Sending" , Session);   
             loadOverlay.hidden = false;
             SendToServer(Session,"/Buddy_api").then((response) => {
-                console.log(response);
-                loadOverlay.hidden = true;
-                alert(response.Description);
-                if(response.Status == "Pass" && response.Description == "Successfully Un-Buddied")
-                {
-                    document.getElementById("buddy_btn").classList.value = ""
-                    document.getElementById("buddy_btn").classList.add("btn")
-                    document.getElementById("buddy_btn").classList.add("btn-success") 
-
-                    document.getElementById("buddy_icon_display").src = "../GUI_Resources/Add_Buddy.png";
-                    document.getElementById("Buddy_btn_Text").innerHTML = " Add Buddy ";
-                }
+                
+                if(response.Status == "Fail" && response.Description == "Invalid Session")
+                    location.href = "./index.html";
                 else
                 {
-                    document.getElementById("buddy_btn").classList.value = ""
-                    document.getElementById("buddy_btn").classList.add("btn")
-                    document.getElementById("buddy_btn").classList.add("btn-danger") 
-                    
-                    document.getElementById("buddy_icon_display").src = "../GUI_Resources/Remove_Buddy.png";
-                    document.getElementById("Buddy_btn_Text").innerHTML = " Remove Buddy ";
+                    console.log(response);
+                    loadOverlay.hidden = true;
+                    alert(response.Description);
+                    // if(response.Status == "Pass" && response.Description == "Successfully Un-Buddied")
+                    // {
+                    //     document.getElementById("buddy_btn").classList.value = ""
+                    //     document.getElementById("buddy_btn").classList.add("btn")
+                    //     document.getElementById("buddy_btn").classList.add("btn-success") 
+    
+                    //     document.getElementById("buddy_icon_display").src = "../GUI_Resources/Add_Buddy.png";
+                    //     document.getElementById("Buddy_btn_Text").innerHTML = " Add Buddy ";
+                    // }
+                    // else
+                    // {
+                    //     document.getElementById("buddy_btn").classList.value = ""
+                    //     document.getElementById("buddy_btn").classList.add("btn")
+                    //     document.getElementById("buddy_btn").classList.add("btn-danger") 
+                        
+                    //     document.getElementById("buddy_icon_display").src = "../GUI_Resources/Remove_Buddy.png";
+                    //     document.getElementById("Buddy_btn_Text").innerHTML = " Remove Buddy ";
+                    // }
                 }
             })
 
