@@ -38,7 +38,18 @@ function Logout() //function called when user logs out
     }
 }
 
-
+//write a function that converts timestamp to date
+function Convert_Timestamp_To_Date(Timestamp) //function that converts timestamp to date
+{
+    let date = new Date(Timestamp);
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+    let hour = date.getHours();
+    let minute = date.getMinutes();
+    let second = date.getSeconds();
+    return `${day}/${month}/${year} ${hour}:${minute}:${second}`;
+}
 
 function Delete_Account() //function called when user clicks on delete account
 {
@@ -315,8 +326,6 @@ function Get_Gender() //this function returns the selected gender[synchronous fu
     return val;
 }
 
-Get_Profile_Data();
-
 function Update_Gender()
 {
     let Session = {
@@ -425,7 +434,7 @@ function Display_Confessions(confessions_got_array,confessions_sent_array)
         this_h5_content_heading.innerHTML = "Anonymous Confession";
         
         let this_small_timestamp = document.createElement("small");
-        this_small_timestamp.innerHTML = element.Timestamp;
+        this_small_timestamp.innerHTML = Convert_Timestamp_To_Date(element.Timestamp);
 
         let this_p_content = document.createElement("p");
         this_p_content.classList.add("mb-1");
@@ -488,39 +497,26 @@ function View_Buddy_Requests()
     else
     {
         Buddy_Requests_Pallet.hidden = false;
+      
+        loadOverlay.hidden = false;
         
-        let Dummy_Array = [
+        SendToServer(Session,"/fetch_buddy_requests").then((response) => {
+            loadOverlay.hidden = true;
+            console.log(response);
+            if(response.Status == "Fail" && response.Description == "Invalid Session")
+                location.href = "./index.html";
+            else
             {
-                Reciever : "M",
-                Sender : "Saksham",
-                Timestamp : Date.now(),
-            },
-            {
-                Reciever : "1231M",
-                Sender : "Sakshasdsaam",
-                Timestamp : Date.now(),
-            },
-            
-        ]
-        Display_Buddy_Requests(Dummy_Array);
-        // loadOverlay.hidden = false;
-        // SendToServer(Session,"/fetch_buddy_requests").then((response) => {
-        //     loadOverlay.hidden = true;
-        //     console.log(response);
-        //     if(response.Status == "Fail" && response.Description == "Invalid Session")
-        //         location.href = "./index.html";
-        //     else
-        //     {
-        //         if(response.Status == "Fail")
-        //             alert(response.Description);
-        //         else
-        //         {
-        //             document.getElementById("Buddy_Requests_Pallet").hidden = false;
-        //             Display_Buddy_Requests(response.Buddy_Requests);
-        //         }
-        //     }
+                if(response.Status == "Fail")
+                    alert(response.Description);
+                else
+                {
+                    document.getElementById("Buddy_Requests_Pallet").hidden = false;
+                    Display_Buddy_Requests(response.Buddy_Requests);
+                }
+            }
                 
-        // })
+        })
     }
 }
 
@@ -546,10 +542,10 @@ function Display_Buddy_Requests(buddy_request_array) {
             
             let this_h5_content_heading = document.createElement("h5");
             this_h5_content_heading.classList.add("mb-1");
-            this_h5_content_heading.innerHTML = element.Sender;
+            this_h5_content_heading.innerHTML = element.Sender_Username;
             
             let this_small_timestamp = document.createElement("small");
-            this_small_timestamp.innerHTML = element.Timestamp;
+            this_small_timestamp.innerHTML = Convert_Timestamp_To_Date(element.Timestamp);
     
             let this_p_content = document.createElement("p");
             this_p_content.classList.add("mb-1");
@@ -561,5 +557,33 @@ function Display_Buddy_Requests(buddy_request_array) {
             this_a.appendChild(this_p_content);
             Buddy_Request_list_group.appendChild(this_a); //appending the list anchor to the list
     })
-
 }
+
+function Accept_Buddy_Request(sender_email)
+{
+    let Session = {
+        Session_ID : Cookies.get("Session_ID") ,
+        Sender : sender_email,
+    }
+
+    if(Session.Session_ID == undefined) //tried accessing through link
+        location.href = "./index.html";
+    else
+    {  
+        loadOverlay.hidden = false;
+
+        SendToServer(Session,"/accept_buddy_request").then((response) => {
+            loadOverlay.hidden = true;
+            console.log(response);
+            if(response.Status == "Fail" && response.Description == "Invalid Session")
+                location.href = "./index.html";
+            else
+            {
+                    alert(response.Description);
+                    window.location.reload();//refresh page
+            }  
+        })
+    }
+}
+
+Get_Profile_Data();

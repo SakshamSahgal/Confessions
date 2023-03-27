@@ -363,12 +363,29 @@ function Update_Gender(req_JSON,res)
     })
 }
 
-function Get_Buddy_Status(my_Session_JSON,His_email)
-{
-    if(my_Session_JSON.Buddies.includes(His_email))
-        return "Buddies"
-    else
-        return "Strangers"
+async function Get_Buddy_Btn_Status(my_Session_JSON,His_email)
+{   
+    
+    let ans = await new Promise((resolve, reject) => {
+        
+        if(my_Session_JSON.Buddies.includes(His_email))
+            resolve("Remove Buddy")
+        else
+        {
+            let Pending_Buddy_Requests_DB_Dir = "./Database/Buddy_Requests.db";
+            let Pending_Buddy_Requests_DB = new Datastore(Pending_Buddy_Requests_DB_Dir);
+            Pending_Buddy_Requests_DB.loadDatabase();
+            Pending_Buddy_Requests_DB.find({Sender : my_Session_JSON.Email , Receiver : His_email},(err,Pending_Request_Match_Array) => {
+    
+                if(Pending_Request_Match_Array.length)
+                    resolve("Decline Pending Buddy Request")
+                else
+                    resolve("Add Buddy")
+            })
+        }
+
+    });
+    return ans;
 }
 
 
@@ -402,10 +419,12 @@ function Fetch_Static_Profile(req_JSON,res)
                                 Gender : username_match_array[0].Gender,
                                 Email : username_match_array[0].Email,
                                 Activity_Status : Get_Activity_Status(username_match_array[0].Last_Activity),
-                                Buddy_Status : Get_Buddy_Status(Session_Result[0],username_match_array[0].Email)
                             }
 
-                            res.json(verdict);
+                            Get_Buddy_Btn_Status(Session_Result[0],username_match_array[0].Email).then(btn_status => {
+                                verdict.Buddy_Btn_Status = btn_status;
+                                res.json(verdict);
+                            })
                     }
                     else
                     {

@@ -71,25 +71,33 @@ let Confessions_Pallet =  document.getElementById("Confessions_Pallet");
                         document.getElementById("Activity_Status").style="color: red;";
                                         
 
-                    if(response.Buddy_Status == "Buddies")
+                    if(response.Buddy_Btn_Status == "Remove Buddy")
                     {
                         document.getElementById("buddy_btn").classList.value = ""
                         document.getElementById("buddy_btn").classList.add("btn")
                         document.getElementById("buddy_btn").classList.add("btn-danger") 
                         
                         document.getElementById("buddy_icon_display").src = "../GUI_Resources/Remove_Buddy.png";
-                        document.getElementById("Buddy_btn_Text").innerHTML = " Remove Buddy ";
+                        document.getElementById("Buddy_btn_Text").innerHTML = response.Buddy_Btn_Status;
                     }
-                    else
+                    else if(response.Buddy_Btn_Status == "Decline Pending Buddy Request")
+                    {
+                        document.getElementById("buddy_btn").classList.value = ""
+                        document.getElementById("buddy_btn").classList.add("btn")
+                        document.getElementById("buddy_btn").classList.add("btn-warning") 
+                        
+                        document.getElementById("buddy_icon_display").src = "../GUI_Resources/Pending.png";
+                        document.getElementById("Buddy_btn_Text").innerHTML = response.Buddy_Btn_Status
+                    }
+                    else //"Add Buddy"
                     {
                         document.getElementById("buddy_btn").classList.value = ""
                         document.getElementById("buddy_btn").classList.add("btn")
                         document.getElementById("buddy_btn").classList.add("btn-success") 
                         
                         document.getElementById("buddy_icon_display").src = "../GUI_Resources/Add_Buddy.png";
-                        document.getElementById("Buddy_btn_Text").innerHTML = " Add Buddy ";
+                        document.getElementById("Buddy_btn_Text").innerHTML = response.Buddy_Btn_Status
                     }
-
                 }
                 else
                 {
@@ -239,24 +247,24 @@ let Confessions_Pallet =  document.getElementById("Confessions_Pallet");
                     console.log(response);
                     loadOverlay.hidden = true;
                     alert(response.Description);
-                    // if(response.Status == "Pass" && response.Description == "Successfully Un-Buddied")
-                    // {
-                    //     document.getElementById("buddy_btn").classList.value = ""
-                    //     document.getElementById("buddy_btn").classList.add("btn")
-                    //     document.getElementById("buddy_btn").classList.add("btn-success") 
-    
-                    //     document.getElementById("buddy_icon_display").src = "../GUI_Resources/Add_Buddy.png";
-                    //     document.getElementById("Buddy_btn_Text").innerHTML = " Add Buddy ";
-                    // }
-                    // else
-                    // {
-                    //     document.getElementById("buddy_btn").classList.value = ""
-                    //     document.getElementById("buddy_btn").classList.add("btn")
-                    //     document.getElementById("buddy_btn").classList.add("btn-danger") 
+                    if(response.Status == "Pass" && ( response.Description == "Successfully Un-Buddied" || response.Description == "Successfully Removed the Pending Buddy Request") )
+                    {
+                        document.getElementById("buddy_btn").classList.value = ""
+                        document.getElementById("buddy_btn").classList.add("btn")
+                        document.getElementById("buddy_btn").classList.add("btn-success") 
                         
-                    //     document.getElementById("buddy_icon_display").src = "../GUI_Resources/Remove_Buddy.png";
-                    //     document.getElementById("Buddy_btn_Text").innerHTML = " Remove Buddy ";
-                    // }
+                        document.getElementById("buddy_icon_display").src = "../GUI_Resources/Add_Buddy.png";
+                        document.getElementById("Buddy_btn_Text").innerHTML = "Add Buddy"
+                    }
+                    else
+                    {
+                        document.getElementById("buddy_btn").classList.value = ""
+                        document.getElementById("buddy_btn").classList.add("btn")
+                        document.getElementById("buddy_btn").classList.add("btn-warning") 
+                        
+                        document.getElementById("buddy_icon_display").src = "../GUI_Resources/Pending.png";
+                        document.getElementById("Buddy_btn_Text").innerHTML = "Decline Pending Buddy Request";
+                    }
                 }
             })
 

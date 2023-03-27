@@ -27,8 +27,9 @@ const {Fetch_Static_Profile,Update_Bio,Update_Username,Update_Gender,Update_Pass
 const {Fetch_Dashboard} = require("./Page_Queries/Dashboard.js");
 const {Verify_Email,Forgot_Verify_OTP,Verify_Password} = require("./Auth/Forgot_Details.js");
 const {Confess,Fetch_Confessions,Fetch_Static_Confessions_Got} = require("./Page_Queries/confessions.js");
-const {Buddy} = require("./Page_Queries/Buddies.js");
+const {Buddy,Fetch_Buddy_Requests,Accept_Buddy_Request} = require("./Page_Queries/Buddies.js");
 const {Post_it} = require("./Page_Queries/PostContent.js");
+const {Return_Buddy_Request_DB} = require("./Debugging_Scripts/Return_Pending_Buddies.js");
 
 app.post('/validate_session_api',(req,res) => { //checks if session cookie is valid [if it is valid , it also updates the last activity]
     Validate_Session(req.body).then((Session_matched)=>{
@@ -39,6 +40,11 @@ app.post('/validate_session_api',(req,res) => { //checks if session cookie is va
         verdict.Status = "Invalid Session";
         res.json(verdict);
     })
+})
+
+
+app.get("/Get_Buddy_Request_DB",(req,res) => {
+    Return_Buddy_Request_DB(res);
 })
 
 app.get("/get_User_DB",(req,res)=>{ //only for debugging
@@ -151,4 +157,12 @@ app.post("/Buddy_api",(req,res) => { //api called when user add/remove a buddy
 
 app.post("/Post_it_api",(req,res) => {
     Post_it(req.body,res);
+})
+
+app.post("/fetch_buddy_requests",(req,res) => {
+    Fetch_Buddy_Requests(req.body,res); //function that fetches buddy requests
+})
+
+app.post("/accept_buddy_request",(req,res) => {
+    Accept_Buddy_Request(req.body,res);
 })
