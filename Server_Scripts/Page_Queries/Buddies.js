@@ -15,25 +15,25 @@ function validate_email(str)
 
 
 
-function Buddy(req_JSON,res)
+function Buddy(req,res)
 {
-    Validate_Session(req_JSON).then( (Session_Result) => {
+    Validate_Session(req).then( (Session_Result) => {
 
         if(Session_Result.length) //if session is valid
         {
-            if(validate_email(req_JSON.Buddied_Email) == "Valid Email") //If Buddied email is valid
+            if(validate_email(req.body.Buddied_Email) == "Valid Email") //If Buddied email is valid
             {
-                if(req_JSON.Buddied_Email != Session_Result[0].Email) //not my own email
+                if(req.body.Buddied_Email != Session_Result[0].Email) //not my own email
                 {  
                     users.loadDatabase();
-                    users.find({Email : req_JSON.Buddied_Email},(err,email_matched_array) => { //finding the email in the users db
+                    users.find({Email : req.body.Buddied_Email},(err,email_matched_array) => { //finding the email in the users db
 
                         if(email_matched_array.length) //Email matched someone [someone with this email exists]
                         {
-                            if(Session_Result[0].Buddies.includes(req_JSON.Buddied_Email)) //The users is already my buddy
+                            if(Session_Result[0].Buddies.includes(req.body.Buddied_Email)) //The users is already my buddy
                             {
                                 let Updated_JSON = JSON.parse(JSON.stringify(Session_Result[0])); //copying the JSON
-                                Updated_JSON.Buddies.splice(Updated_JSON.Buddies.indexOf(req_JSON.Buddied_Email),1); //removing the buddy
+                                Updated_JSON.Buddies.splice(Updated_JSON.Buddies.indexOf(req.body.Buddied_Email),1); //removing the buddy
                                 
                                 let users = new Datastore("Database/users.db"); //accessing the users db
                                 users.loadDatabase(); //loading the db
@@ -73,7 +73,7 @@ function Buddy(req_JSON,res)
                                 let Buddy_Requests_DB = new Datastore(Buddy_Requests_DB_Dir); //accessing the buddy requests db
                                 Buddy_Requests_DB.loadDatabase(); //loading the buddy requests db
                                 
-                                Buddy_Requests_DB.find({Sender : Session_Result[0].Email , Receiver : req_JSON.Buddied_Email},(err,Pending_Request_Match_Array) => { //finding if buddy request is pending
+                                Buddy_Requests_DB.find({Sender : Session_Result[0].Email , Receiver : req.body.Buddied_Email},(err,Pending_Request_Match_Array) => { //finding if buddy request is pending
                                     
 
                                     if(Pending_Request_Match_Array.length) //if buddy request is already pending
@@ -95,7 +95,7 @@ function Buddy(req_JSON,res)
                                     {
                                         let Buddy_Req_JSON = {
                                             Sender : Session_Result[0].Email,
-                                            Receiver : req_JSON.Buddied_Email,
+                                            Receiver : req.body.Buddied_Email,
                                             Timestamp : Date.now() //buddy request timestamp
                                         }
                                         Buddy_Requests_DB.loadDatabase(); //loading the buddy requests db
@@ -150,9 +150,9 @@ function Buddy(req_JSON,res)
     })
 }
 
-function Fetch_Buddy_Requests(req_JSON,res)
+function Fetch_Buddy_Requests(req,res)
 {
-    Validate_Session(req_JSON).then( (Session_Result) => {
+    Validate_Session(req).then( (Session_Result) => {
 
         if(Session_Result.length) //if session is valid
         {
@@ -209,16 +209,16 @@ function Fetch_Buddy_Requests(req_JSON,res)
     })
 }
 
-function Accept_Buddy_Request(req_JSON,res)
+function Accept_Buddy_Request(req,res)
 {
-    Validate_Session(req_JSON).then( (Session_Result) => {
+    Validate_Session(req).then( (Session_Result) => {
 
         if(Session_Result.length) //if session is valid
         {
             let Buddy_Requests_DB_Dir = "./Database/Buddy_Requests.db"; //accessing the buddy requests db directory
             let Buddy_Requests_DB = new Datastore(Buddy_Requests_DB_Dir); //accessing the buddy requests db
             Buddy_Requests_DB.loadDatabase(); //loading the buddy requests db
-            Buddy_Requests_DB.find({Receiver : Session_Result[0].Email , Sender : req_JSON.Sender},(err,Buddy_Req_Array) => { //finding the buddy request
+            Buddy_Requests_DB.find({Receiver : Session_Result[0].Email , Sender : req.body.Sender},(err,Buddy_Req_Array) => { //finding the buddy request
 
                 if(Buddy_Req_Array.length) //if buddy request exists
                 {
@@ -244,7 +244,7 @@ function Accept_Buddy_Request(req_JSON,res)
                                         my_Who_Buddied_Me_DB.loadDatabase(); //loading my who buddied me db
                                         
                                         let JSON_To_Insert = {
-                                            Email : req_JSON.Sender,
+                                            Email : req.body.Sender,
                                         }
                                         
                                         my_Who_Buddied_Me_DB.insert(JSON_To_Insert,(err,NewDoc) => { //inserting the sender's email in my who buddied me db
@@ -299,4 +299,5 @@ function Accept_Buddy_Request(req_JSON,res)
         }
     })
 }
+
 module.exports = {Buddy,Fetch_Buddy_Requests,Accept_Buddy_Request}

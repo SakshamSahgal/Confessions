@@ -5,10 +5,10 @@ const users = new Datastore("Database/users.db");
 //Dotenv
 require("dotenv").config();//reading the .env file
 
-function Fetch_All_Users(req_JSON,res)
+function Fetch_All_Users(req,res)
 {
     let verdict = {}
-    Validate_Session(req_JSON,res).then((session_match_array) => {
+    Validate_Session(req,res).then((session_match_array) => {
 
         if(session_match_array.length)
         {
@@ -36,13 +36,13 @@ function Fetch_All_Users(req_JSON,res)
                     else
                         this_user_json.Activity_Status = "Offline";
 
-                        users_array.push(this_user_json);
+                    users_array.push(this_user_json);
 
-                    if(users_array.length == users_matched_array.length)
+                    if(users_array.length == users_matched_array.length) //if covered all users
                     {
                         verdict.Status = "Pass";
                         verdict.users = users_array;
-                        verdict.Information = "Users Inactive for more than " + (process.env.Activity_Duration/60000)  + " minutes are shown offline";
+                        verdict.Information = "Users Inactive for more than " + (process.env.Activity_Duration/60000)  + " minutes are shown offline"; //telling what information to display
                         res.json(verdict);
                     }
 

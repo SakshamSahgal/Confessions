@@ -5,12 +5,13 @@ const users = new Datastore("Database/users.db");
 const {Validate_Session} = require("./validate_session.js")
 const {Delete_Directory} = require("../directories.js"); //for creating Directories
 
-function Delete_Account(req_JSON,res)
+function Delete_Account(req,res)
 {
         console.log("searching for session -> ");
-        console.log(req_JSON.Session_ID);
+        console.log(req);
         
-        Validate_Session(req_JSON).then((session_matched_array) => {
+        Validate_Session(req).then((session_matched_array) => {
+            
             if(session_matched_array.length) //valid Session
             {
                 Erase_Confessions_Sent(session_matched_array).then((returned_json_from_erase_confessions_sent) => {
@@ -35,8 +36,8 @@ function Delete_Account(req_JSON,res)
                                     console.log("No of entries removed from DB = " + NumRemoved);
                                     let dir = "Media/" + session_matched_array[0].Username;
                                     console.log(Delete_Directory(dir)); //deleting the media folder
-                                    dir = "Public/Profiles/" + session_matched_array[0].Username + ".html";
-                                    console.log(Delete_Directory(dir)); //deleting the profile page
+                                    // dir = "Public/Profiles/" + session_matched_array[0].Username + ".html";
+                                    // console.log(Delete_Directory(dir)); //deleting the profile page
                                     let verdict={
                                         Status : "Pass",
                                         Description : "Successfully Deleted Account"

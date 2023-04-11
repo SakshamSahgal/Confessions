@@ -23,7 +23,7 @@ const {Return_Users_DB} = require("./Debugging_Scripts/Return_Users.js");
 const {Fetch_All_Users} = require("./Page_Queries/users.js");
 const {Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo} = require("./Page_Queries/profile.js");
 const {Delete_Account} = require("./Auth/Delete_Acc.js");
-const {Fetch_Static_Profile,Update_Bio,Update_Username,Update_Gender,Update_Password} = require("./Page_Queries/profile.js");
+const {Return_Static_Profile_Page,Fetch_Static_Profile,Update_Bio,Update_Username,Update_Gender,Update_Password} = require("./Page_Queries/profile.js");
 const {Fetch_Dashboard} = require("./Page_Queries/Dashboard.js");
 const {Verify_Email,Forgot_Verify_OTP,Verify_Password} = require("./Auth/Forgot_Details.js");
 const {Confess,Fetch_Confessions,Fetch_Static_Confessions_Got} = require("./Page_Queries/confessions.js");
@@ -31,8 +31,9 @@ const {Buddy,Fetch_Buddy_Requests,Accept_Buddy_Request} = require("./Page_Querie
 const {Post_it} = require("./Page_Queries/PostContent.js");
 const {Return_Buddy_Request_DB} = require("./Debugging_Scripts/Return_Pending_Buddies.js");
 
-app.post('/validate_session_api',(req,res) => { //checks if session cookie is valid [if it is valid , it also updates the last activity]
-    Validate_Session(req.body).then((Session_matched)=>{
+
+app.put('/validate_session_api',(req,res) => { //Checks if session cookie is valid [if it is valid , it also updates the last activity]
+    Validate_Session(req).then((Session_matched)=>{
         verdict = {}
         if(Session_matched.length)
         verdict.Status = "Session Matched";
@@ -59,110 +60,114 @@ app.post("/Register_Email_api",(request,response) => {  //for Email Stage of reg
     Register_Email(request.body,response);
 })
 
-app.post("/Register_Username_api",(request,response) => {  //for Username Stage of registering
+app.put("/Register_Username_api",(request,response) => {  //for Username Stage of registering
     Register_Username(request.body,response);
 })
 
-app.post("/Register_OTP_api",(request,response) => { //for OTP Stage of registering
+app.put("/Register_OTP_api",(request,response) => { //for OTP Stage of registering
     Verify_OTP(request.body,response);
 })
 
-app.post("/Register_Password_api",(request,response) => { //for Password Stage of registering
+app.put("/Register_Password_api",(request,response) => { //for Password Stage of registering
     Register_Password(request.body,response);
 })
 
-app.post('/auth_api',async (req,res) => { //Authorizes user[when user logs in]
+app.put('/auth_api',async (req,res) => { //Authorizes user[when user logs in]
     Authorize_User(req.body,res);
 })
 
-app.post("/update_profile_picture_api",(request,response) => { //api called when user updates profile picture
-    Update_Profile_Picture(request.body,response);
+app.put("/update_profile_picture_api",(request,response) => { //api called when user updates profile picture
+    Update_Profile_Picture(request,response);
 })
 
-app.post('/logout_api',(req,res) => { //Logout user
-    Logout(req.body.Session_ID,res);
+app.put('/logout_api',(req,res) => { //Logout user
+    Logout(req,res);
 })
 
-app.post("/Fetch_Users",(req,res)=> { //Fetch all users data to be displayed on users.html
-    Fetch_All_Users(req.body,res);
+app.get("/Fetch_Users",(req,res)=> { //Fetch all users data to be displayed on users.html
+    Fetch_All_Users(req,res);
 })
 
-app.post("/Profile_Page_api",(req,res) => { //Get your own profile page information 
-    Profile_Page(req.body,res);
+app.get("/Profile_Page_api",(req,res) => { //Get your own profile page information 
+    Profile_Page(req,res);
 })
 
-app.post('/Delete_Account',(req,res) => { //Deletes user account
-    Delete_Account(req.body,res);
+app.delete('/Delete_Account',(req,res) => { //Deletes user account
+    Delete_Account(req,res);
 })
 
-app.post("/fetch_Profile_Pictures_api",(req,res) => { //fetch all the available profile picture paths
-    Fetch_Profile_Pictures(req.body,res);
+app.get("/fetch_Profile_Pictures_api",(req,res) => { //fetch all the available profile picture paths
+    Fetch_Profile_Pictures(req,res);
 })
 
-app.post("/Remove_Profile_Picture_api",(req,res) => { //called when user updates profile picture in his proifle
-    Remove_Profile_Photo(req.body,res);
+app.put("/Remove_Profile_Picture_api",(req,res) => { //called when user updates profile picture in his proifle
+    Remove_Profile_Photo(req,res);
 })
 
-app.post("/Update_Bio_api",(req,res) => { //called when user updates bio in his proifle
-    Update_Bio(req.body,res);
+app.put("/Update_Bio_api",(req,res) => { //called when user updates bio in his proifle
+    Update_Bio(req,res);
 })
 
-app.post("/Update_Username_api",(req,res) => { //called when user updates username in his proifle
-    Update_Username(req.body,res);
+app.put("/Update_Username_api",(req,res) => { //called when user updates username in his proifle
+    Update_Username(req,res);
 })
 
-app.post("/Update_Gender_api",(req,res) => { //called when user updates Gender in his proifle
-    Update_Gender(req.body,res);
+app.put("/Update_Gender_api",(req,res) => { //called when user updates Gender in his proifle
+    Update_Gender(req,res);
 })
 
-app.post("/Fetch_Static_Profile_api",(req,res) => { //called when user visits someone else's profile page
-    Fetch_Static_Profile(req.body,res);
+app.get("/Profiles/:username",(req,res) => { //called when user visits someone else's profile page
+   
+   if(req.headers.authorization == undefined) //if accessing through link [therefore without auth header] (just returning the HTML template)
+       Return_Static_Profile_Page(req.params.username,res); 
+   else
+       Fetch_Static_Profile(req,res,req.params.username) //then template will send a get request to fetch the data with authorization header
 })
 
-app.post("/Fetch_Dashboard_api",(req,res) => { //api fetches 
-    Fetch_Dashboard(req.body,res);
+app.get("/Fetch_Dashboard_api",(req,res) => { //api fetches 
+    Fetch_Dashboard(req,res);
 })
 
-app.post("/Forgot_Email_api",(req,res) => {
+app.put("/Forgot_Email_api",(req,res) => {
     Verify_Email(req.body,res);
 })
 
-app.post("/Forgot_OTP_api",(req,res) => { //api called whem user enters the OTP sent , in forget password page
+app.put("/Forgot_OTP_api",(req,res) => { //api called whem user enters the OTP sent , in forget password page
     Forgot_Verify_OTP(req.body,res);
 })
 
-app.post("/Forget_Password_api",(req,res) => { //api called when user enters new password in forgot password page
+app.put("/Forget_Password_api",(req,res) => { //api called when user enters new password in forgot password page
     Verify_Password(req.body,res);
 })
 
-app.post("/Update_Password_api",(req,res) => { //api called when user requests to change password
-    Update_Password(req.body,res);
+app.put("/Update_Password_api",(req,res) => { //api called when user requests to change password
+    Update_Password(req,res);
 })
 
 app.post("/Confess_api",(req,res) => { //api called when someone confesses to someone else
-    Confess(req.body,res);
+    Confess(req,res);
 })
 
-app.post("/fetch_confessions",(req,res) => { //api called when user clicks on fetch confessions in his profile page.
-    Fetch_Confessions(req.body,res);
+app.get("/fetch_confessions",(req,res) => { //api called when user clicks on fetch confessions in his profile page.
+    Fetch_Confessions(req,res);
 })
 
-app.post("/fetch_static_confessions_got_api",(req,res) => { //api called when user clicks on view confessions in a static profile page.
-    Fetch_Static_Confessions_Got(req.body,res);
+app.get("/fetch_static_confessions/:username",(req,res) => { //api called when user clicks on view confessions in a static profile page.
+    Fetch_Static_Confessions_Got(req,res,req.params.username);
 })
 
-app.post("/Buddy_api",(req,res) => { //api called when user add/remove a buddy
-    Buddy(req.body,res); //function that handles the buddy requests
+app.put("/Buddy_api",(req,res) => { //api called when user add/remove a buddy
+    Buddy(req,res); //function that handles the buddy requests
 })
 
 app.post("/Post_it_api",(req,res) => {
-    Post_it(req.body,res);
+    Post_it(req,res);
 })
 
-app.post("/fetch_buddy_requests",(req,res) => {
-    Fetch_Buddy_Requests(req.body,res); //function that fetches buddy requests
+app.get("/fetch_buddy_requests",(req,res) => {
+    Fetch_Buddy_Requests(req,res); //function that fetches buddy requests
 })
 
-app.post("/accept_buddy_request",(req,res) => {
-    Accept_Buddy_Request(req.body,res);
+app.put("/accept_buddy_request",(req,res) => {
+    Accept_Buddy_Request(req,res);
 })

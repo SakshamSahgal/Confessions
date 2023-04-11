@@ -51,7 +51,7 @@ function validate_password(str)
 function Register_Email(req_JSON,response) //email stage
 {
     console.log(req_JSON);
-    if(validate_email(req_JSON.Email) == "Valid Email")
+    if(validate_email(req_JSON.Email) == "Valid Email") //if email is valid
     {
         users.loadDatabase();
         users.find({Email : req_JSON.Email},(err,email_querry_result_array) => {
@@ -102,6 +102,7 @@ function Register_Email(req_JSON,response) //email stage
                     Bio : "",
                     Registration_Status : "OnHold" ,
                     OTP_Generated : "",
+                    Registered_On : Date.now(),
                     OTP_Generated_Time : 0,
                     Last_Activity : 0,
                     Session : [],
@@ -139,17 +140,18 @@ function Register_Username(req_JSON,response) //username Stage
                 users.loadDatabase();
                 users.find({Email : req_JSON.Email},(err,email_querry_result_array) => {
 
-                    if(email_querry_result_array.length)
+                    if(email_querry_result_array.length) //if email exists [that means either registration is in progress or already registered user is try to re-register]
                     {
-                        if(email_querry_result_array[0].Registration_Status == "OnHold")
+                        if(email_querry_result_array[0].Registration_Status == "OnHold") //registration is in progress
                         {
                             let Update_JSON = JSON.parse(JSON.stringify(email_querry_result_array[0]));
-                            Update_JSON.Username = req_JSON.Username;
+                            Update_JSON.Username = req_JSON.Username; //set the Username
                             
                             Update_JSON.OTP_Generated_Time = Date.now();
                             Update_JSON.OTP_Generated = (Update_JSON.OTP_Generated_Time)%1000000007; //generating a OTP
                             users.loadDatabase();
                             users.update(email_querry_result_array[0],Update_JSON,{},(err,Num_Replaced) => { //updating the email matched entry with username
+                                
                                 console.log("Successfully updated " + Num_Replaced + " Entries");
                                 
                                 email_info = {
@@ -165,7 +167,6 @@ function Register_Username(req_JSON,response) //username Stage
                                 }
                                 response.json(verdict);
                             })
-
                         }
                         else
                         {
@@ -320,7 +321,7 @@ function Register_Password(req_JSON,response)
                         users.update(user_matched_array[0],Update_JSON,{},(err,Num_Replaced) => {
                             console.log("Entries Replaced = " + Num_Replaced);
                             console.log(Create_Directory("Media/" + req_JSON.Username)); //creating a directory with his username
-                            fs.copyFileSync("Public/Profiles/Profile_HTML_Template.html","Public/Profiles/" + req_JSON.Username + ".html"); //creating his personal profile page (just copying from the template html)
+                            // fs.copyFileSync("Public/Profiles/Profile_HTML_Template.html","Public/Profiles/" + req_JSON.Username + ".html"); //creating his personal profile page (just copying from the template html)
                             
                             let verdict={
                                 Status : "Pass",

@@ -145,7 +145,6 @@ function Verify_Password(req_JSON,res)
 {
     console.log(req_JSON);
 
-
     if(validate_password(req_JSON.Password) == "Valid Password")
     {
         users.loadDatabase();

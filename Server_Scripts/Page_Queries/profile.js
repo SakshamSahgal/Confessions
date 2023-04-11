@@ -36,9 +36,9 @@ function validate_password(str)
         return "Invalid Password";
 }
 
-function Profile_Page(req_JSON,res)
+function Profile_Page(req,res)
 {
-    Validate_Session(req_JSON).then((session_match_array)=>{
+    Validate_Session(req).then((session_match_array)=>{
         
         if(session_match_array.length) //session Matched
         {
@@ -63,16 +63,16 @@ function Profile_Page(req_JSON,res)
     })
 }
 
-function Update_Profile_Picture(req_JSON,res)
+function Update_Profile_Picture(req,res)
 {
-    Validate_Session(req_JSON).then( (Session_Result) => {
+    Validate_Session(req).then( (Session_Result) => {
         console.log("got Session Entry = ");
         console.log(Session_Result);
         if(Session_Result.length)
         {
-            if(Session_Result[0].Profile_Picture == req_JSON.Profile_Picture)
+            if(Session_Result[0].Profile_Picture == req.body.Profile_Picture) //if already same
             {
-                let verdict={
+                let verdict = {
                     Status : "Fail",
                     Description : "Profile Photo already Selected"
                 }
@@ -81,9 +81,9 @@ function Update_Profile_Picture(req_JSON,res)
             else
             {
                 let Updated_JSON = JSON.parse(JSON.stringify(Session_Result[0]));
-                Updated_JSON.Profile_Picture = req_JSON.Profile_Picture;
-                
+                Updated_JSON.Profile_Picture = req.body.Profile_Picture;
                 users.loadDatabase();
+
                 users.update(Session_Result[0],Updated_JSON,{},(err,NumReplaced) => {
 
                     console.log("Profile Picture replaced = " + NumReplaced);
@@ -109,61 +109,61 @@ function Update_Profile_Picture(req_JSON,res)
 
 
 
-function Fetch_Profile_Pictures(Session,res)
+function Fetch_Profile_Pictures(req,res)
 {
-        Validate_Session(Session).then((Session_Result) => {
+    Validate_Session(req).then((Session_Result) => {
 
-            if(Session_Result.length)
-            {
-                const files = fs.readdirSync("./Public/GUI_Resources/Profile_Pictures");
+        if(Session_Result.length)
+        {
+            const files = fs.readdirSync("./Public/GUI_Resources/Profile_Pictures");
 
-                let paths = []
+            let paths = []
 
-                try {
-                    files.forEach( filename => {
-                        //console.log(file);
-                        this_path = "./GUI_Resources/Profile_Pictures/" + filename;
-                        paths.push(this_path);
-                    })
+            try {
 
-                    let verdict = {
-                        Status : "Pass",
-                        Current_Profile_Picture : Session_Result[0].Profile_Picture,
-                        Paths : paths
-                    }
+                files.forEach( filename => {
+                    //console.log(file);
+                    this_path = "./GUI_Resources/Profile_Pictures/" + filename;
+                    paths.push(this_path);
+                })
 
-                    res.json(verdict);
-
+                let verdict = {
+                    Status : "Pass",
+                    Current_Profile_Picture : Session_Result[0].Profile_Picture,
+                    Paths : paths
                 }
-                catch (error)
-                {
-                    let verdict = {
-                        Status : "Fail",
-                        Description : "Cannot fetch files in Directory",
-                    }
-                    console.log(error);
-                    res.json(verdict);
-                }
+
+                res.json(verdict);
+
             }
-            else
+            catch (error)
             {
-                let verdict={
+                let verdict = {
                     Status : "Fail",
-                    Description : "Invalid Session"
+                    Description : "Cannot fetch files in Directory",
                 }
+                console.log(error);
                 res.json(verdict);
             }
+        }
+        else
+        {
+            let verdict={
+                Status : "Fail",
+                Description : "Invalid Session"
+            }
+            res.json(verdict);
+        }
 
-        });
+    });
 }
 
-function Remove_Profile_Photo(req_JSON,res)
+function Remove_Profile_Photo(req,res)
 {
-    Validate_Session(req_JSON).then((Session_Result) => {
+    Validate_Session(req).then((Session_Result) => {
 
         if(Session_Result.length) //If session is valid [last activity is already updated]
         {
-
             if(Session_Result[0].Profile_Picture == "./GUI_Resources/No_photo.gif")
             {
                 let verdict={
@@ -174,7 +174,7 @@ function Remove_Profile_Photo(req_JSON,res)
             }
             else
             {
-                let Updated_JSON = JSON.parse(JSON.stringify(Session_Result[0]));
+                let Updated_JSON = JSON.parse(JSON.stringify(Session_Result[0])); //copyng matched session
                 Updated_JSON.Profile_Picture = "./GUI_Resources/No_photo.gif"; //overriding the profile picture
                 
                 users.loadDatabase();
@@ -200,13 +200,13 @@ function Remove_Profile_Photo(req_JSON,res)
     })
 }
 
-function Update_Bio(req_JSON,res)
+function Update_Bio(req,res)
 {
-    Validate_Session(req_JSON).then((Session_Result) => {
+    Validate_Session(req).then((Session_Result) => {
         if(Session_Result.length)
         {
             let Update_JSON = JSON.parse(JSON.stringify(Session_Result[0]));
-            Update_JSON.Bio = req_JSON.Bio;
+            Update_JSON.Bio = req.body.Bio;
             users.loadDatabase();
             users.update(Session_Result[0],Update_JSON,{},(err,NumReplaced) => {
                 console.log("No of entries Updated = " + NumReplaced);
@@ -242,16 +242,16 @@ function validate_username(str)
 }
 
 
-function Update_Username(req_JSON,res)
+function Update_Username(req,res)
 {
-       Validate_Session(req_JSON).then((Session_Result) => {
+       Validate_Session(req).then((Session_Result) => {
          
             if(Session_Result.length) //valid Session
             {
-                if(validate_username(req_JSON.Username) == "Valid Username")
+                if(validate_username(req.body.Username) == "Valid Username") //if new username is valid
                 {
                     users.loadDatabase();
-                    users.find({Username : req_JSON.Username},(err,username_match_array) => {
+                    users.find({Username : req.body.Username},(err,username_match_array) => {
 
                         if(username_match_array.length) //found a username match
                         {
@@ -264,19 +264,19 @@ function Update_Username(req_JSON,res)
                         else
                         {
                             let Old_Username = Session_Result[0].Username;
-                            let New_Username = req_JSON.Username;
+                            let New_Username = req.body.Username;
                             
-                            fs.rename( "Public/Profiles/" + Old_Username + ".html" , "Public/Profiles/" + New_Username + ".html", () => { //renaming profile Page
+                            // fs.rename( "Public/Profiles/" + Old_Username + ".html" , "Public/Profiles/" + New_Username + ".html", () => { //renaming profile Page
                                 
-                                console.log("Profile Page Renamed!");
+                                // console.log("Profile Page Renamed!");
                                 // List all the filenames after renaming
                                 
-                                fs.rename("Media/" + Old_Username,"Media/" + New_Username,() => {
+                                fs.rename("Media/" + Old_Username,"Media/" + New_Username,() => { //renaming the media directory
                                     
-                                    console.log("Successfully replaced Media Directory");
+                                    console.log("Successfully renamed Media Directory of " + Session_Result[0].Email);
                                     
                                     let Update_JSON = JSON.parse(JSON.stringify(Session_Result[0]));
-                                    Update_JSON.Username = req_JSON.Username;
+                                    Update_JSON.Username = req.body.Username;
                                     users.loadDatabase();
                                     users.update(Session_Result[0],Update_JSON,{},(err,NumReplaced) => {
                                      
@@ -288,12 +288,12 @@ function Update_Username(req_JSON,res)
                                          }
 
                                          res.json(verdict);
-                                         
+                                
                                     })
 
                                 })
                                 
-                              });
+                            //   });
                         }
                     })
                 }   
@@ -318,13 +318,13 @@ function Update_Username(req_JSON,res)
 }
 
 
-function Update_Gender(req_JSON,res)
+function Update_Gender(req,res)
 {
-    Validate_Session(req_JSON).then((Session_Result) => {
+    Validate_Session(req).then((Session_Result) => {
 
         if(Session_Result.length) //session Exists
         {
-            if(req_JSON.Gender == Session_Result[0].Gender)
+            if(req.body.Gender == Session_Result[0].Gender)
             {
                 let verdict ={
                     Status : "Fail",
@@ -335,7 +335,7 @@ function Update_Gender(req_JSON,res)
             else
             {
                 let Updated_JSON = JSON.parse(JSON.stringify(Session_Result[0]));
-                Updated_JSON.Gender = req_JSON.Gender;
+                Updated_JSON.Gender = req.body.Gender;
                 users.loadDatabase();
                 users.update(Session_Result[0],Updated_JSON,{},(err,NumReplaced) => {
 
@@ -388,14 +388,25 @@ async function Get_Buddy_Btn_Status(my_Session_JSON,His_email)
     return ans;
 }
 
-
-function Fetch_Static_Profile(req_JSON,res)
+function Return_Static_Profile_Page(username,res)
 {
-    Validate_Session(req_JSON).then((Session_Result) => {
+    users.loadDatabase();
+    users.find({Username : username},(err,username_match_Array) => {
+
+        if(username_match_Array.length)
+            res.send(fs.readFileSync("./Public/Profiles/profileTemplate.html","ascii"));
+        else
+            res.send(fs.readFileSync("./Public/invalidResource.html","ascii"));
+    })
+}
+
+function Fetch_Static_Profile(req,res,username)
+{
+    Validate_Session(req).then(Session_Result => {
         
         if(Session_Result.length) //if session is valid
         {
-            if(req_JSON.Username == Session_Result[0].Username)
+            if(username == Session_Result[0].Username) //if this is your own profile page
             {
                 let verdict={
                     Status : "Fail",
@@ -406,7 +417,7 @@ function Fetch_Static_Profile(req_JSON,res)
             else
             {
                 users.loadDatabase();
-                users.find({Username :req_JSON.Username},(err,username_match_array) => {
+                users.find({Username : username},(err,username_match_array) => {
                     
                     if(username_match_array.length)
                     {
@@ -446,26 +457,26 @@ function Fetch_Static_Profile(req_JSON,res)
             }
             res.json(verdict);
         }
-
     })
+        
 }
 
-function Update_Password(req_JSON,res)
+function Update_Password(req,res)
 {
-    console.log(req_JSON);
-    Validate_Session(req_JSON).then((Session_Result) => {
+    console.log(req.body);
+    Validate_Session(req).then((Session_Result) => {
 
         if(Session_Result.length) //if session is valid
         {
-            bcrypt.compare(req_JSON.Current_Password,Session_Result[0].Password).then((IsMatched) => {
+            bcrypt.compare(req.body.Current_Password,Session_Result[0].Password).then((IsMatched) => {
 
                 if(IsMatched) //password matched
                 {
                     console.log("Password Matched");
 
-                    if(validate_password(req_JSON.New_Password) == "Valid Password") //if valid new password
+                    if(validate_password(req.body.New_Password) == "Valid Password") //if valid new password
                     {
-                        bcrypt.hash(req_JSON.New_Password,10).then((hashed_password) => {
+                        bcrypt.hash(req.body.New_Password,10).then((hashed_password) => {
                         
                             console.log("Hashed New Password = " + hashed_password);
                             
@@ -516,4 +527,4 @@ function Update_Password(req_JSON,res)
     })
 }
 
-module.exports = {Fetch_Static_Profile,Update_Gender,Update_Username,Update_Bio,Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo,Update_Password};
+module.exports = {Return_Static_Profile_Page,Fetch_Static_Profile,Update_Gender,Update_Username,Update_Bio,Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo,Update_Password};

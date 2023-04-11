@@ -2,20 +2,21 @@ const { Validate_Session } = require("../Auth/validate_session.js");
 const Datastore = require("nedb"); //including the nedb node package for database 
 
 
-function Post_it(req_JSON,res)
+function Post_it(req,res)
 {
-    Validate_Session(req_JSON).then( (SessionResult) => {
+    console.log(req.body)
+    Validate_Session(req).then( (SessionResult) => {
 
         if(SessionResult.length)
         {
-            if(req_JSON.Visibility == "Anonymous" || req_JSON.Visibility == "Public")
+            if(req.body.Visibility == "Anonymous" || req.body.Visibility == "Public")
             {
-                if(req_JSON.Content.length >= 5 && req_JSON.Content.length <= 280)
+                if(req.body.Content.length >= 5 && req.body.Content.length <= 280)
                 {
                     let json_to_post = {
                         Timestamp : Date.now(),
-                        Content : req_JSON.Content,
-                        Visibility : req_JSON.Visibility
+                        Content : req.body.Content,
+                        Visibility : req.body.Visibility
                     }
 
                     let posts_db_dir = "./Media/" + SessionResult[0].Username + "/Posts.db";
@@ -30,7 +31,7 @@ function Post_it(req_JSON,res)
                 }
                 else
                 {
-                    if(req_JSON.Content.length < 5)
+                    if(req.body.Content.length < 5)
                     {
                         let verdict = {
                             Status : "Fail",
@@ -63,7 +64,7 @@ function Post_it(req_JSON,res)
                 Status : "Fail",
                 Description : "Invalid Session"
             }
-            res.req_JSON(verdict);
+            res.json(verdict);
         }
 
 

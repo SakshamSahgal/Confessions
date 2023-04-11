@@ -4,7 +4,6 @@ const Datastore = require("nedb"); //including the nedb node package for databas
 
 function Return_Media_DBs(res)
 {
-   
     const files = fs.readdirSync("./Media");
     
     let no_of_files = 0;

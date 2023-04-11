@@ -2,9 +2,9 @@
 const {Validate_Session} = require("../Auth/validate_session.js");
 
 
-function Fetch_Dashboard(req_JSON,res)
+function Fetch_Dashboard(req,res)
 {
-    Validate_Session(req_JSON).then( (Session_Result) => {
+    Validate_Session(req).then( (Session_Result) => {
         
         if(Session_Result.length) //session Exists
         {

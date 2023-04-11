@@ -1,34 +1,19 @@
 let loadOverlay = document.getElementById("Load_overlay");
 
 
-async function SendToServer(JSON_to_Send,Route)
-{
-        let send_package_obj = { //packing it in an object
-        method : 'POST' ,
-        headers : {
-            'Content-Type' : 'application/json' //telling that i am sending a JSON
-        } ,
-        body : JSON.stringify(JSON_to_Send)
-        }
-    
-        let server_response = await fetch(Route,send_package_obj);
-        return await server_response.json()
-}
-
 function Logout()
 {
-        if(Cookies.get("Session_ID") == undefined)
-            location.href = "./index.html";
-        else
-        {
-            let Session_Data = {
-                Session_ID : Cookies.get("Session_ID")
-            }
+    if(Cookies.get("Session_ID") == undefined)
+        location.href = "./index.html";
+    else
+    {    
         loadOverlay.hidden = false;  //Revealing the load overlay
-        let Server_Response = SendToServer(Session_Data,"/logout_api");
-        Server_Response.then((response)=>{
+        
+        axios.put('/logout_api',{},{headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID") }}).then(response => {
+            
+            console.log(response.data);
             loadOverlay.hidden = true; //hiding load overlay
-            console.log(response);
+
             if(Cookies.get("Session_ID") != undefined)
                 Cookies.remove("Session_ID");
             location.href = "./index.html";
@@ -39,46 +24,41 @@ function Logout()
 
 function Fetch_Dashboard() //function called at the page load [fetches dashboard content]
 {
-    let Session = {
-        Session_ID : Cookies.get("Session_ID")
-    }
-    if(Session.Session_ID == undefined) //accesing via link
+    if(Cookies.get("Session_ID") == undefined) //accesing via link
         location.href = "./index.html";
     else
     {
         loadOverlay.hidden = false;
-        SendToServer(Session,"/Fetch_Dashboard_api").then( (response)=> {
-            console.log(response);
-            loadOverlay.hidden = true;
-            if(response.Status == "Pass")
-            {
-                document.getElementById("profile_picture").src = response.Profile_Picture;
-            }
-            else
-                alert(response.Description);
 
+        axios.get('/Fetch_Dashboard_api',{headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+            console.log(response.data);
+            loadOverlay.hidden = true;
+            if(response.data.Status == "Pass")
+                document.getElementById("profile_picture").src = response.data.Profile_Picture;
+            else
+                alert(response.data.Description);
         })
     }
 }
 
 function Post_it()
 {
-    let JSON_to_Send = {
-        Session_ID : Cookies.get("Session_ID"),
-        Visibility : document.getElementById("visibility_Select").value,
-        Content : document.getElementById("Post_Content").value
-    }
-
-    console.log(JSON_to_Send);
-    if(JSON_to_Send.Session_ID == undefined)
+    
+    if(Cookies.get("Session_ID") == undefined)
         location.href = "./index.html";
     else
     {
         loadOverlay.hidden = false;
-        SendToServer(JSON_to_Send,"/Post_it_api").then( (response) => {
+
+        let JSON_to_Send = {
+            Visibility : document.getElementById("visibility_Select").value,
+            Content : document.getElementById("Post_Content").value
+        }
+
+        axios.post('/Post_it_api', JSON_to_Send, {headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+            console.log(response.data);
             loadOverlay.hidden = true;
-            console.log(response);
-            alert(response.Description);
+            alert(response.data.Description);
         })
     }
 }
