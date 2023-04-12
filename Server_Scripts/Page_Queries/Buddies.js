@@ -26,7 +26,7 @@ function Buddy(req,res)
                 if(req.body.Buddied_Email != Session_Result[0].Email) //not my own email
                 {  
                     users.loadDatabase();
-                    users.find({Email : req.body.Buddied_Email},(err,email_matched_array) => { //finding the email in the users db
+                    users.find({Email : req.body.Buddied_Email},(err,email_matched_array) => { //Finding the email in the users db
 
                         if(email_matched_array.length) //Email matched someone [someone with this email exists]
                         {
@@ -75,7 +75,6 @@ function Buddy(req,res)
                                 
                                 Buddy_Requests_DB.find({Sender : Session_Result[0].Email , Receiver : req.body.Buddied_Email},(err,Pending_Request_Match_Array) => { //finding if buddy request is pending
                                     
-
                                     if(Pending_Request_Match_Array.length) //if buddy request is already pending
                                     {
                                         console.log("Buddy Request is Pending");
@@ -150,7 +149,7 @@ function Buddy(req,res)
     })
 }
 
-function Fetch_Buddy_Requests(req,res)
+function Fetch_Buddy_Requests(req,res) //fetch all buddy requests with you as a reciever
 {
     Validate_Session(req).then( (Session_Result) => {
 
@@ -176,7 +175,13 @@ function Fetch_Buddy_Requests(req,res)
                             users.loadDatabase(); //loading the users db
                             users.find({Email : element.Sender},(err,Sender_Array) => { //Finding the username of the sender from his email
                                 
-                                let this_obj = JSON.parse(JSON.stringify(element));
+                                let this_obj = JSON.parse(JSON.stringify(element)); //copying the element json
+                                delete this_obj.Receiver;
+                                //renaming Sender to Sender Email
+                                this_obj.Sender_Email = this_obj.Sender;
+                                
+                                delete this_obj.Sender;
+                                delete this_obj._id;
 
                                 if(Sender_Array.length)
                                     this_obj.Sender_Username = Sender_Array[0].Username;
@@ -209,7 +214,7 @@ function Fetch_Buddy_Requests(req,res)
     })
 }
 
-function Accept_Buddy_Request(req,res)
+function Accept_Buddy_Request(req,res) 
 {
     Validate_Session(req).then( (Session_Result) => {
 
@@ -231,8 +236,7 @@ function Accept_Buddy_Request(req,res)
                         users.find({Email : Buddy_Req.Sender},(err,Sender_Match_Array) => { //finding the sender from his email
                             if(Sender_Match_Array.length) //if sender exists
                             {   
-                              
-                                if(Sender_Match_Array[0].Buddies.includes(Session_Result[0].Email) == false)   //if sender doesnt already has me in his buddy list
+                                if(Sender_Match_Array[0].Buddies.includes(Session_Result[0].Email) == false)   //if sender doesn't already has me in his buddy list
                                 {
                                     let Updated_JSON = JSON.parse(JSON.stringify(Sender_Match_Array[0]));
                                     Updated_JSON.Buddies.push(Session_Result[0].Email); //Adding the My Email to the sender's buddy list
@@ -300,4 +304,50 @@ function Accept_Buddy_Request(req,res)
     })
 }
 
-module.exports = {Buddy,Fetch_Buddy_Requests,Accept_Buddy_Request}
+function Reject_Buddy_Request(req,res)
+{
+    Validate_Session(req).then(Session_Result => {
+
+        if(Session_Result.length)
+        {
+            let Buddy_Requests_DB_Dir = "./Database/Buddy_Requests.db"; //accessing the buddy requests db directory
+            let Buddy_Requests_DB = new Datastore(Buddy_Requests_DB_Dir); //accessing the buddy requests db
+            Buddy_Requests_DB.loadDatabase();
+            Buddy_Requests_DB.find({Receiver : Session_Result[0].Email, Sender : req.body.Sender_Email },(err,Buddy_Match_Array) => {
+                
+                if(Buddy_Match_Array.length)
+                {
+                    Buddy_Requests_DB.remove(Buddy_Match_Array[0],(err,num_removed) => {
+
+                        console.log("Successfully Removed " + num_removed + " Entries");
+                        let verdict = {
+                            Status : "Success",
+                            Description : "Successfully Rejected Buddy Request"
+                        }
+                        res.json(verdict)
+                    })
+                }
+                else
+                {
+                    let verdict = {
+                        Status : "Fail",
+                        Description : "No Such Buddy Request"
+                    }
+                    res.json(verdict);
+                }
+
+            })
+        }
+        else
+        {
+            let verdict = {
+                Status : "Fail",
+                Description : "Invalid Session"
+            }
+            res.json(verdict);
+        }
+
+    })
+}
+
+module.exports = {Reject_Buddy_Request,Buddy,Fetch_Buddy_Requests,Accept_Buddy_Request}

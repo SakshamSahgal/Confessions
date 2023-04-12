@@ -510,7 +510,7 @@ function Display_Buddy_Requests(buddy_request_array) {
     
             let this_p_content = document.createElement("p");
             this_p_content.classList.add("mb-1");
-            this_p_content.innerHTML = "<Button class='btn btn-success' onclick='Accept_Buddy_Request(\"" + element.Sender + "\")'>Accept</Button> <Button class='btn btn-danger' onclick='Reject_Buddy_Request(\"" + element.Sender + "\")'>Reject</Button>";
+            this_p_content.innerHTML = "<Button class='btn btn-success' onclick='Accept_Buddy_Request(\"" + element.Sender_Email + "\")'>Accept</Button> <Button class='btn btn-danger' onclick='Reject_Buddy_Request(\"" + element.Sender_Email + "\")'>Reject</Button>";
     
             this_div.appendChild(this_h5_content_heading);
             this_div.appendChild(this_small_timestamp);
@@ -548,5 +548,34 @@ function Accept_Buddy_Request(sender_email)
         })
     }
 }
+
+function Reject_Buddy_Request(sender_email) {
+
+    if(Cookies.get("Session_ID") == undefined) //tried accessing through link
+        location.href = "./index.html";
+    else
+    {  
+        loadOverlay.hidden = false;
+        
+        let Session = {
+            Sender_Email : sender_email
+        }
+
+        axios.put('/reject_buddy_request',Session,{headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+            
+            console.log(response.data);
+            loadOverlay.hidden = true;
+
+            if(response.data.Status == "Fail" && response.data.Description == "Invalid Session")
+                location.href = "./index.html";
+            else
+            {
+                    alert(response.data.Description);
+                    window.location.reload();//refresh page
+            }  
+        })
+    }
+
+  }
 
 Get_Profile_Data();

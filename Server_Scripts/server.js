@@ -27,7 +27,7 @@ const {Return_Static_Profile_Page,Fetch_Static_Profile,Update_Bio,Update_Usernam
 const {Fetch_Dashboard} = require("./Page_Queries/Dashboard.js");
 const {Verify_Email,Forgot_Verify_OTP,Verify_Password} = require("./Auth/Forgot_Details.js");
 const {Confess,Fetch_Confessions,Fetch_Static_Confessions_Got} = require("./Page_Queries/confessions.js");
-const {Buddy,Fetch_Buddy_Requests,Accept_Buddy_Request} = require("./Page_Queries/Buddies.js");
+const {Reject_Buddy_Request,Buddy,Fetch_Buddy_Requests,Accept_Buddy_Request} = require("./Page_Queries/Buddies.js");
 const {Post_it} = require("./Page_Queries/PostContent.js");
 const {Return_Buddy_Request_DB} = require("./Debugging_Scripts/Return_Pending_Buddies.js");
 
@@ -170,4 +170,8 @@ app.get("/fetch_buddy_requests",(req,res) => {
 
 app.put("/accept_buddy_request",(req,res) => {
     Accept_Buddy_Request(req,res);
+})
+
+app.put("/reject_buddy_request",(req,res) => {
+    Reject_Buddy_Request(req,res);
 })
