@@ -5,12 +5,13 @@ const users = new Datastore("Database/users.db");
 const {Validate_Session} = require("./validate_session.js")
 const {Delete_Directory} = require("../directories.js"); //for creating Directories
 
-function Delete_Account(req_JSON,res)
+function Delete_Account(req,res)
 {
         console.log("searching for session -> ");
-        console.log(req_JSON.Session_ID);
+        console.log(req);
         
-        Validate_Session(req_JSON).then((session_matched_array) => {
+        Validate_Session(req).then((session_matched_array) => {
+            
             if(session_matched_array.length) //valid Session
             {
                 Erase_Confessions_Sent(session_matched_array).then((returned_json_from_erase_confessions_sent) => {
@@ -25,19 +26,25 @@ function Delete_Account(req_JSON,res)
 
                             console.log(returned_json_from_erase_buddy_List);
 
-                            users.loadDatabase();
-                            users.remove(session_matched_array[0],{},(err,NumRemoved) => {
-                                
-                                console.log("No of entries removed from DB = " + NumRemoved);
-                                let dir = "Media/" + session_matched_array[0].Username;
-                                console.log(Delete_Directory(dir)); //deleting the media folder
-                                dir = "Public/Profiles/" + session_matched_array[0].Username + ".html";
-                                console.log(Delete_Directory(dir)); //deleting the profile page
-                                let verdict={
-                                    Status : "Pass",
-                                    Description : "Successfully Deleted Account"
-                                }
-                                res.json(verdict);
+                            Erase_Pending_Requests(session_matched_array).then( (returned_json_from_erase_pending_requests) => {
+
+                                console.log(returned_json_from_erase_pending_requests);
+
+                                users.loadDatabase();
+                                users.remove(session_matched_array[0],{},(err,NumRemoved) => {
+                                    
+                                    console.log("No of entries removed from DB = " + NumRemoved);
+                                    let dir = "Media/" + session_matched_array[0].Username;
+                                    console.log(Delete_Directory(dir)); //deleting the media folder
+                                    // dir = "Public/Profiles/" + session_matched_array[0].Username + ".html";
+                                    // console.log(Delete_Directory(dir)); //deleting the profile page
+                                    let verdict={
+                                        Status : "Pass",
+                                        Description : "Successfully Deleted Account"
+                                    }
+                                    res.json(verdict);
+                                })
+
                             })
 
                         })
@@ -191,6 +198,7 @@ async function Erase_Buddy_List(session_matched_array)
 
         if(session_matched_array[0].Buddies.length) //if he has any Buddies
         {
+            let buddies_covered = 0;
             session_matched_array[0].Buddies.forEach( buddy_email => { //iterating over my buddy email list 
             
                 console.log(buddy_email);
@@ -208,7 +216,7 @@ async function Erase_Buddy_List(session_matched_array)
                             
                             console.log("Removed " + NumRemoved + " Entries while Deleting entry of " + buddy_matched[0].Username  + "'s who_buddied_me DB");
                             buddies_covered++;
-                           if(buddies_covered == session_matched_array[0].buddies.length)
+                           if(buddies_covered == session_matched_array[0].Buddies.length)
                            {
                                 let verdict = {
                                     Status : "Pass",
@@ -244,5 +252,37 @@ async function Erase_Buddy_List(session_matched_array)
     return ans;    
 }
 
+
+async  function Erase_Pending_Requests(session_matched_array)
+{
+    let ans = await new Promise((resolve, reject) => {
+        
+        let Buddy_Request_Dir = "./Database/Buddy_Requests.db"; //accessing the Buddy_Request DB Dir
+        let Buddy_Request_DB = new Datastore(Buddy_Request_Dir); //fetching the Buddy_Request DB
+        Buddy_Request_DB.loadDatabase(); //loading the Buddy_Request DB
+
+        Buddy_Request_DB.remove({Sender : session_matched_array[0].Email},{multi : true},(err,NumRemoved) => { 
+            
+            console.log("Removed " + NumRemoved + " pending requests with him as sender");   
+            
+            Buddy_Request_DB.loadDatabase();
+
+            Buddy_Request_DB.remove({Receiver : session_matched_array[0].Email},{multi : true},(err,NumRemoved) => {
+                
+                console.log("Removed " + NumRemoved + "  pending requests with him as receiver");
+                
+                let verdict = {
+                    Status : "Pass",
+                    Description : "Successfully Cleared Pending Requests"
+                }
+                
+                resolve(verdict);
+            })
+
+        });
+
+    });
+    return ans;
+}
 
 module.exports = {Delete_Account}

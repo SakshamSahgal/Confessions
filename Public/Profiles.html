@@ -45,46 +45,105 @@
 
           <div class="tab-pane show active" id="My_Profile">
                   <div class="container" align="center">
-                    <div class="row">
-                      <div class="col-12 border bg-light" style="--bs-bg-opacity: .6;">
-                        <div class="p-2" align="center"><img width="200" src="" id="Profile_Photo" class="rounded-circle shadow-4-strong" /></div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-12 border bg-light" style="--bs-bg-opacity: .8;">
-                        <div class="p-2" align="center"></div>
-                      </div>
-                    </div>
-                    <div class="row" >
-                      <div class="col-12 border bg-light" style="--bs-bg-opacity: .6;">
-                        <div class="p-2" align="center"><span id="Username"></span></div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-12 border bg-light">
-                        <div class="p-2" align="center">
-                          <span>BIO : </span> <span id="user_bio"></span> <br>
-                          <span>Gender : </span> <span id="User_Gender"></span> <br> <br>
+                      <div class="row">
+                        <div class="col-12 border bg-light" style="--bs-bg-opacity: .6;">
+                          <div class="p-2" align="center"><img width="200" src="" id="Profile_Photo" class="rounded-circle shadow-4-strong" /></div>
                         </div>
                       </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-12 border bg-light">
-                        <div class="p-2" align="center">
-                          <button class="btn btn-primary" onclick="View_Confessions()">  View Confessions   </button> 
+                      <div class="row">
+                        <div class="col-12 border bg-light" style="--bs-bg-opacity: .8;">
+                          <div class="p-2" align="center"></div>
                         </div>
                       </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-12 border bg-light">
-                        <div class="p-2" align="center">
-                          <button class="btn btn-warning" data-bs-target="#Delete_Confirmation_Modal" data-bs-toggle="modal">   Delete My Account   </button> 
+                      <div class="row" >
+                        <div class="col-12 border bg-light" style="--bs-bg-opacity: .6;">
+                          <div class="p-2" align="center"><span id="Username"></span></div>
                         </div>
                       </div>
-                    </div>                    
+                      <div class="row">
+                        <div class="col-12 border bg-light">
+                          <div class="p-2" align="center">
+                            <span>BIO : </span> <span id="user_bio"></span> <br>
+                            <span>Gender : </span> <span id="User_Gender"></span> <br> <br>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-12 border bg-light">
+                          <div class="p-2" align="center">
+                            <button class="btn btn-primary" onclick="View_Confessions()">  View Confessions </button> <button class="btn btn-primary" onclick="View_Buddy_Requests()">  View Buddy Requests </button> 
+                          </div>
+                        </div>
+                      </div>
+                        <div class="row">
+                          <div class="col-12 border bg-light">
+                            <div class="p-2" align="center">
+                              <button class="btn btn-warning" data-bs-target="#Delete_Confirmation_Modal" data-bs-toggle="modal">   Delete My Account   </button> 
+                            </div>
+                          </div>
+                        </div>                    
                   </div>
           </div>
+
+          <div class="tab-pane fade" id="Edit_Profile">
+                  <div class="p-2 bg-light" align="center">     
+                    <br><br>
+                    <button id="change_profile_picture" onclick="Change_Profile_Picture()">Change Profile Picture</button>&nbsp; <button id="change_profile_picture" onclick="Remove_Profile_Picture()">Remove Profile Picture</button>
+                    <br><br>
+                    <div align="center">
+                      <form onsubmit="Update_Username();return false">
+                        Username : <input type="text" id="Edit_Username" required>  <input type="submit" value="Update Username">
+                  </form>
+                  <form onsubmit="Update_Bio();return false">
+                    Bio : <br> <textarea style="resize: none;" id="Edit_Bio" rows="4" cols="30" required> </textarea> <br><br> <input type="submit" value="Update Bio">
+                  </form>
+                  
+                  <form onsubmit="Update_Gender();return false">
+                    Gender : <input type="radio" name="Edit_gender" value="male" id="Edit_Male"> Male <input type="radio" name="Edit_gender" value="female" id="Edit_Female"> Female <input type="radio" name="Edit_gender" value="Not_Specified" id="Edit_Not_Specified"> Not_Specified &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="submit" value="Update Gender">
+                  </form>
+                </div>
+                
+                <hr>
+                <div align="center">
+                  <form onsubmit="Update_Password();return false">
+                    Current Password : <input type="password" id="Cur_Password" required> <br> <br>
+                    New Password : <input type="password" id="New_Password" required> <br> <br>
+                    <input type="submit" value="Update Password"> <br>
+                  </form>
+
+                </div>
+              </div>
+          </div>
+
+          <div class="tab-pane fade" id="Rules">
+            <div class="p-2 bg-light" align="center">
+              <br>
+              <h3>Username Rules</h3>
+              <p>The number of characters must be between 5 and 15.</p>
+              <p>The string should only contain alphanumeric characters and/or underscores (_). </p>
+              <p>The first character of the string should be alphabetic.</p>
+              <h3>Bio Rules</h3>
+              <p>Length of Bio must not exceed 150 characters</p>
+            </div>
+          </div>
           
+
+        </div>
+
+
+        <div id="Buddy_Requests_Pallet" hidden>
+          <br><br>
+          <button type="button" class="btn-close btn-close-white" aria-label="Close" id="Buddy_Requests_Pallet_close_btn" onclick="Close_Buddy_Request_Pallet()"></button>
+            <div class="container">
+              <div class="list-group" style=" height: 80vh; overflow-y:scroll;overflow: auto;" id="Buddy_Request_list_group">
+                  
+                
+              </div>
+              
+            </div>
+
+        </div>
+
           <div id="Confessions_Pallet" hidden>
 
               <button type="button" class="btn-close btn-close-white" aria-label="Close" id="Confessions_Pallet_close_btn" onclick="Close_Confessions_Pallet()"></button>
@@ -133,53 +192,6 @@
             </div>
           </div>
 
-          <div class="tab-pane fade" id="Edit_Profile">
-                  <div class="p-2 bg-light" align="center">     
-                    <br><br>
-                    <button id="change_profile_picture" onclick="Change_Profile_Picture()">Change Profile Picture</button>&nbsp; <button id="change_profile_picture" onclick="Remove_Profile_Picture()">Remove Profile Picture</button>
-                    <br><br>
-                    <div align="center">
-                      <form onsubmit="Update_Username();return false">
-                        Username : <input type="text" id="Edit_Username" required>  <input type="submit" value="Update Username">
-                  </form>
-                  <form onsubmit="Update_Bio();return false">
-                    Bio : <br> <textarea style="resize: none;" id="Edit_Bio" rows="4" cols="30" required> </textarea> <br><br> <input type="submit" value="Update Bio">
-                  </form>
-                  
-                  <form onsubmit="Update_Gender();return false">
-                    Gender : <input type="radio" name="Edit_gender" value="male" id="Edit_Male"> Male <input type="radio" name="Edit_gender" value="female" id="Edit_Female"> Female <input type="radio" name="Edit_gender" value="Not_Specified" id="Edit_Not_Specified"> Not_Specified &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="submit" value="Update Gender">
-                  </form>
-                </div>
-                
-                <hr>
-                <div align="center">
-                  <form onsubmit="Update_Password();return false">
-                    Current Password : <input type="password" id="Cur_Password" required> <br> <br>
-                    New Password : <input type="password" id="New_Password" required> <br> <br>
-                    <input type="submit" value="Update Password"> <br>
-                  </form>
-
-                </div>
-              </div>
-          </div>
-
-          <div class="tab-pane fade" id="Rules">
-            <div class="p-2 bg-light" align="center">
-              <br>
-              <h3>Username Rules</h3>
-              <p>The number of characters must be between 5 and 15.</p>
-              <p>The string should only contain alphanumeric characters and/or underscores (_). </p>
-              <p>The first character of the string should be alphabetic.</p>
-              <h3>Bio Rules</h3>
-              <p>Length of Bio must not exceed 150 characters</p>
-            </div>
-          </div>
-          
-
-        </div>
-      </div>
-
-
 
       
       <!-- Delete Confirmation Modal -->
@@ -208,8 +220,13 @@
         </div>
       </div> 
 
-    </body>
+</body>
     <!-- importing the JS cookie CDN -->
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+ 
+    <!-- importing axios -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js" integrity="sha512-LUKzDoJKOLqnxGWWIBM4lzRBlxcva2ZTztO8bTcWPmDSpkErWx0bSP4pdsjNH8kiHAUPaT06UXcb+vOEZH+HpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
     <script src="./Scripts/client_profiles.js"></script>
-    </html>
+</html>

@@ -34,10 +34,10 @@ function Authorize_User(req_JSON,response) //called when user is logs in
         if(validate_email(req_JSON.Email) == "valid Email" && validate_password(req_JSON.Password) == "Valid Password")
         {
             users.loadDatabase();
-            users.find({Email : req_JSON.Email},(err,user_matched_array) => {
+            users.find({Email : req_JSON.Email},(err,user_matched_array) => { //searching for email in DB
                 if(user_matched_array.length)
                 {
-                    bcrypt.compare(req_JSON.Password,user_matched_array[0].Password).then((IsMatched) => {
+                    bcrypt.compare(req_JSON.Password,user_matched_array[0].Password).then((IsMatched) => { //comparing password and stored HASH
 
                         if(IsMatched)
                         {

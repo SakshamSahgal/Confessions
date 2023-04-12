@@ -1,94 +1,92 @@
 let loadOverlay = document.getElementById("Load_overlay");
 let Profile_Picture_Pallet =  document.getElementById("profile_picture_pallet");
+let Buddy_Requests_Pallet = document.getElementById("Buddy_Requests_Pallet");
 
 
-
-async function SendToServer(JSON_to_Send,Route) //function used to send json to server
+function Logout()
 {
-        let send_package_obj = { //packing it in an object
-        method : 'POST' ,
-        headers : {
-            'Content-Type' : 'application/json' //telling that i am sending a JSON
-        } ,
-        body : JSON.stringify(JSON_to_Send)
-        }
-    
-        let server_response = await fetch(Route,send_package_obj);
-        return await server_response.json()
-}
-
-function Logout() //function called when user logs out
-{
-        if(Cookies.get("Session_ID") == undefined)
-            location.href = "./index.html";
-        else
-        {
-            let Session_Data = {
-                Session_ID : Cookies.get("Session_ID")
-            }
-            loadOverlay.hidden = false;  //Revealing the load overlay
-            let Server_Response = SendToServer(Session_Data,"/logout_api");
-            Server_Response.then((response)=>{
-                loadOverlay.hidden = true; //hiding load overlay
-                console.log(response);
-                if(Cookies.get("Session_ID") != undefined)
-                    Cookies.remove("Session_ID");
-                location.href = "./index.html";
-            })
-    }
-}
-
-
-
-function Delete_Account() //function called when user clicks on delete account
-{
-    let Session = {
-        Session_ID : Cookies.get("Session_ID")
-    }
-
-    if(Session.Session_ID == undefined)
+    if(Cookies.get("Session_ID") == undefined)
         location.href = "./index.html";
     else
-    {
-        loadOverlay.hidden = false;
-        SendToServer(Session,"/Delete_Account").then((response)=>{
-            loadOverlay.hidden = true;
-            console.log(response);
-            Cookies.remove("Session_ID");
-            if(response.Status == "Fail")
-                location.href = "./logged_out.html";
-            else
-                location.href = "./index.html"; //successfully deleted account
+    {    
+        loadOverlay.hidden = false;  //Revealing the load overlay
+        
+        axios.put('/logout_api',{},{headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID") }}).then(response => {
+            
+            console.log(response.data);
+            loadOverlay.hidden = true; //hiding load overlay
+
+            if(Cookies.get("Session_ID") != undefined)
+                Cookies.remove("Session_ID");
+            location.href = "./index.html";
         })
     }
 }
 
-
-
-function Get_Profile_Data() //function called at the loading of page [fetches the profile page data]
+//write a function that converts timestamp to date
+function Convert_Timestamp_To_Date(Timestamp) //function that converts timestamp to date
 {
-    let Session = {
-        Session_ID : Cookies.get("Session_ID")
-    }
+    let date = new Date(Timestamp);
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+    let hour = date.getHours();
+    let minute = date.getMinutes();
+    let second = date.getSeconds();
+    return `${day}/${month}/${year} ${hour}:${minute}:${second}`;
+}
 
-    if(Session.Session_ID == undefined)
+function Delete_Account() //function called when user clicks on delete account
+{
+    if(Cookies.get("Session_ID")== undefined)
         location.href = "./index.html";
     else
     {
         loadOverlay.hidden = false;
-        SendToServer(Session,"/Profile_Page_api").then((response) => {
+
+        axios.delete('/Delete_Account',{headers: {'Authorization': Cookies.get("Session_ID")}}).then(response => {
+            
+            console.log(response.data);
             loadOverlay.hidden = true;
-            console.log(response);
-            if(response.Status != "Pass")
+        
+            Cookies.remove("Session_ID");
+            if(response.data.Status == "Fail")
+                location.href = "./logged_out.html";
+            else
+                location.href = "./index.html"; //successfully deleted account
+
+        })
+    }
+}
+
+function Close_Buddy_Request_Pallet()
+{
+    Buddy_Requests_Pallet.hidden = true;
+}
+
+
+function Get_Profile_Data() //function called at the loading of page [fetches the profile page data]
+{
+    if(Cookies.get("Session_ID") == undefined)
+        location.href = "./index.html";
+    else
+    {
+        loadOverlay.hidden = false;
+
+        axios.get('/Profile_Page_api', {headers: {'Authorization': Cookies.get("Session_ID")}}).then(response => {
+            console.log(response.data);
+            loadOverlay.hidden = true;
+
+            if(response.data.Status != "Pass")
                 location.href = "./logged_out.html";
             else
             {
-                document.getElementById("Profile_Photo").src = response.Profile_Picture;
-                document.getElementById("user_bio").textContent = response.Bio;
-                document.getElementById("User_Gender").textContent = response.Gender;
-                document.getElementById("Username").textContent = response.Username;
-                document.getElementById("profile_picture").src = response.Profile_Picture; //top right photo
-                initialize_edit_data(response.Username,response.Bio,response.Gender);
+                document.getElementById("Profile_Photo").src = response.data.Profile_Picture;
+                document.getElementById("user_bio").textContent = response.data.Bio;
+                document.getElementById("User_Gender").textContent = response.data.Gender;
+                document.getElementById("Username").textContent = response.data.Username;
+                document.getElementById("profile_picture").src = response.data.Profile_Picture; //top right photo
+                initialize_edit_data(response.data.Username,response.data.Bio,response.data.Gender);
             }
         })
     }
@@ -97,21 +95,20 @@ function Get_Profile_Data() //function called at the loading of page [fetches th
 
 function Change_Profile_Picture() //function called when change profile picture is clicked [function displays the list of available profile pictures]
 {
-    let Session = {
-        Session_ID : Cookies.get("Session_ID")
-    }
-    
-    if(Session.Session_ID == undefined)
+   
+    if(Cookies.get("Session_ID") == undefined)
         location.href = "./index.html";
     else
     {
         Profile_Picture_Pallet.hidden = false;
         loadOverlay.hidden = false; //revealing the loadOverlay
-        SendToServer(Session,"/fetch_Profile_Pictures_api").then((response) => {
-            loadOverlay.hidden = true; //Hiding the loadOverlay
-            console.log(response);
 
-            if(response.Status != "Pass")
+        axios.get('/fetch_Profile_Pictures_api', {headers: {'Authorization': Cookies.get("Session_ID")}}).then(response => {
+            
+            console.log(response.data);
+            loadOverlay.hidden = true; //Hiding the loadOverlay
+
+            if(response.data.Status != "Pass")
                 location.href = "./logged_out.html";
             else
             {
@@ -126,7 +123,7 @@ function Change_Profile_Picture() //function called when change profile picture 
                 this_row.classList.add("row");
                 this_row.classList.add("g-3");
 
-                for(var i=0;i<response.Paths.length;i++)
+                for(var i=0;i<response.data.Paths.length;i++)
                 {
                     let this_col = document.createElement("div"); //creating a col div
                     this_col.classList.add("col-md-4"); //Adding Bootstrap CSS
@@ -138,7 +135,7 @@ function Change_Profile_Picture() //function called when change profile picture 
                     img_holder_div.classList.add("border");
                     img_holder_div.classList.add("rounded");
 
-                    if(response.Paths[i] == response.Current_Profile_Picture) //changing the background color for the already selected profile picture
+                    if(response.data.Paths[i] == response.data.Current_Profile_Picture) //changing the background color for the already selected profile picture
                         img_holder_div.style.backgroundColor = "rgba(122, 255, 168, 0.237)";
                     else
                         img_holder_div.style.backgroundColor = "rgba(255, 255, 255, 0.237)";
@@ -146,14 +143,14 @@ function Change_Profile_Picture() //function called when change profile picture 
                     img_holder_div.align = "center";
 
                     let this_img = document.createElement("img");
-                    this_img.src = response.Paths[i];
+                    this_img.src = response.data.Paths[i];
 
 
 
                     this_img.style.maxWidth = "100%";
                     this_img.style.maxHeight = "100%";
 
-                    this_img.addEventListener("click",Select_Profile_Picture.bind(null,response.Paths[i])); //Adding click event listener to image
+                    this_img.addEventListener("click",Select_Profile_Picture.bind(null,response.data.Paths[i])); //Adding click event listener to image
                     
                     img_holder_div.appendChild(this_img);
                     this_col.appendChild(img_holder_div);
@@ -171,7 +168,7 @@ function Change_Profile_Picture() //function called when change profile picture 
                 }
                 Inner_Profile_Pallet.appendChild(this_container);
             }
-        });
+        })
     }
 }
 
@@ -189,81 +186,73 @@ function Select_Profile_Picture(profile_picture_path) //function called when use
 {
     console.log(profile_picture_path);
     
-    Update = {
-        Session_ID : Cookies.get("Session_ID"),
-        Profile_Picture : profile_picture_path
-    }
-
-    console.log(Update);
-
-    if(Update.Session_ID == undefined) //trying to access via link
+    if(Cookies.get("Session_ID") == undefined) //trying to access via link
         location.href =  "./index.html";
     else
     {
-        SendToServer(Update,"/update_profile_picture_api").then((response) => {
-            console.log(response);
-            if(response.Status == "Fail" && response.Description == "Invalid Session")
+        Update = {
+            Profile_Picture : profile_picture_path
+        }
+
+        axios.put('/update_profile_picture_api',Update,{headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+            
+            console.log(response.data);
+            if(response.data.Status == "Fail" && response.data.Description == "Invalid Session")
                 location.href = "./logged_out.html";
             else
             {
                 document.getElementById("Profile_Photo").src = Update.Profile_Picture;
                 document.getElementById("profile_picture").src = Update.Profile_Picture;
                 Close_Profile_Pallet();
-                alert(response.Description);
+                alert(response.data.Description);
             }
+
         })
     }
 }
 
 function Remove_Profile_Picture() //function called when user clicks on remove profile picture
 {
-    let Session = {
-        Session_ID : Cookies.get("Session_ID")
-    }
-
-    if(Session.Session_ID == undefined) 
+    if(Cookies.get("Session_ID") == undefined) 
         location.href = "./index.html";
     else
     {
-        SendToServer(Session,"/Remove_Profile_Picture_api").then((response) => {
-            
-            console.log(response);
-            
-            if(response.Status == "Pass")
+        axios.put('/Remove_Profile_Picture_api',{},{headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+            console.log(response.data);
+            if(response.data.Status == "Pass")
             {
                 document.getElementById("Profile_Photo").src = "./GUI_Resources/No_photo.gif";
                 document.getElementById("profile_picture").src = "./GUI_Resources/No_photo.gif";
             }
     
-            alert(response.Description);
-            
+            alert(response.data.Description);
         })
     }
 }
 
 function Update_Bio()
 {
-    let Session = {
-        Session_ID : Cookies.get("Session_ID") ,
-        Bio : document.getElementById("Edit_Bio").value
-    }
-
-    if(Session.Session_ID == undefined)
+    if(Cookies.get("Session_ID") == undefined)
         location.href = "./index.html";
     else
     {
-        SendToServer(Session,"/Update_Bio_api").then((response) => {
-            console.log(response);
-            if(response.Status == "Fail" && response.Description == "Invalid Session")
+        let Session = {
+            Bio : document.getElementById("Edit_Bio").value
+        }
+
+        axios.put('/Update_Bio_api',Session,{headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+            
+            console.log(response.data);
+
+            if(response.data.Status == "Fail" && response.data.Description == "Invalid Session")
                 location.href = "./index.html";
             else
             {
-                alert(response.Description);
+                alert(response.data.Description);
                 window.location.reload();//refresh page
             }
         })
     }
-
 }
 
 function initialize_edit_data(username,bio,gender) //function that sets the initial value of edit data
@@ -280,20 +269,18 @@ function initialize_edit_data(username,bio,gender) //function that sets the init
 
 function Update_Username()
 {
-    let Session = {
-        Session_ID : Cookies.get("Session_ID") ,
-        Username : document.getElementById("Edit_Username").value
-    }
-
-    if(Session.Session_ID == undefined)
-        location.href = "./index.html";
+    if(Cookies.get("Session_ID") == undefined)
+    location.href = "./index.html";
     else
     {
+        let Session = {
+            Username : document.getElementById("Edit_Username").value
+        }
         loadOverlay.hidden = false;
-        SendToServer(Session,"/Update_Username_api").then((response) => {
+        axios.put('/Update_Username_api',Session,{headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID") }}).then(response => {  
+            console.log(response.data);
             loadOverlay.hidden = true;
-            console.log(response);
-            alert(response.Description);
+            alert(response.data.Description);
             window.location.reload();
         })
     }
@@ -311,26 +298,23 @@ function Get_Gender() //this function returns the selected gender[synchronous fu
     return val;
 }
 
-Get_Profile_Data();
-
 function Update_Gender()
 {
-    let Session = {
-        Session_ID : Cookies.get("Session_ID") ,
-        Gender : Get_Gender()
-    }
     
-    console.log(Session);
     
-    if(Session.Session_ID == undefined) //tried logging through link
-    location.href = "./index.html";
+    if(Cookies.get("Session_ID") == undefined) //tried logging through link
+        location.href = "./index.html";
     else
     {
+        let Session = {
+            Gender : Get_Gender()
+        }
         loadOverlay.hidden = false;
-        SendToServer(Session,"/Update_Gender_api").then((response) => {
+
+        axios.put('/Update_Gender_api',Session,{headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+            console.log(response.data);
             loadOverlay.hidden = true;
-            console.log(response);
-            alert(response.Description);
+            alert(response.data.Description);
             window.location.reload();
         })
     }
@@ -339,58 +323,51 @@ function Update_Gender()
 
 function Update_Password()
 {
-    let Session = {
-        Session_ID : Cookies.get("Session_ID") ,
-        Current_Password : document.getElementById("Cur_Password").value , 
-        New_Password : document.getElementById("New_Password").value
-    }
-    
-    console.log(Session);
-
-    if(Session.Session_ID == undefined) //tried logging through link
-        location.href = "./index.html";
+    if(Cookies.get("Session_ID") == undefined) //tried logging through link
+    location.href = "./index.html";
     else
     {
         loadOverlay.hidden = false;
-        SendToServer(Session,"/Update_Password_api").then((response) => {
+        let Session = {
+            Current_Password : document.getElementById("Cur_Password").value , 
+            New_Password : document.getElementById("New_Password").value
+        }
+
+        axios.put('/Update_Password_api',Session,{headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+            
             loadOverlay.hidden = true;
-            console.log(response);
-            if(response.Status == "Fail" && response.Description == "Invalid Session")
+            console.log(response.data);
+            if(response.data.Status == "Fail" && response.data.Description == "Invalid Session")
                 location.href = "./logged_out.html";
             else
-                alert(response.Description); 
+                alert(response.data.Description);
         })
     }
-
 }
 
 function View_Confessions()
 {
-    let Session = {
-        Session_ID : Cookies.get("Session_ID") ,
-    }
-
-    if(Session.Session_ID == undefined) //tried accessing through link
+    if(Cookies.get("Session_ID") == undefined) //tried accessing through link
         location.href = "./index.html";
     else
     {
         loadOverlay.hidden = false;
-        SendToServer(Session,"/fetch_confessions").then((response) => {
+
+        axios.get('/fetch_confessions', {headers: {'Authorization': Cookies.get("Session_ID")}}).then(response => {
+            console.log(response.data);
             loadOverlay.hidden = true;
-            console.log(response);
-            if(response.Status == "Fail" && response.Description == "Invalid Session")
+            if(response.data.Status == "Fail" && response.data.Description == "Invalid Session")
                 location.href = "./index.html";
             else
             {
-                if(response.Status == "Fail")
-                    alert(response.Description);
+                if(response.data.Status == "Fail")
+                    alert(response.data.Description);
                 else
                 {
                     document.getElementById("Confessions_Pallet").hidden = false;
-                    Display_Confessions(response.Confessions_Got,response.Confessions_Sent);
+                    Display_Confessions(response.data.Confessions_Got,response.data.Confessions_Sent);
                 }
             }
-                
         })
     }
 }
@@ -421,7 +398,7 @@ function Display_Confessions(confessions_got_array,confessions_sent_array)
         this_h5_content_heading.innerHTML = "Anonymous Confession";
         
         let this_small_timestamp = document.createElement("small");
-        this_small_timestamp.innerHTML = element.Timestamp;
+        this_small_timestamp.innerHTML = Convert_Timestamp_To_Date(element.Timestamp);
 
         let this_p_content = document.createElement("p");
         this_p_content.classList.add("mb-1");
@@ -441,7 +418,7 @@ function Display_Confessions(confessions_got_array,confessions_sent_array)
 
         // anchor tag for list element
         let this_a = document.createElement("a"); 
-        this_a.href = "/Profiles/" + element.Confessed_To + ".html";
+        this_a.href = "/Profiles/" + element.Confessed_To;
         this_a.classList.add("list-group-item");  //Adding Bootstrap CSS Classes
         this_a.classList.add("list-group-item-action");
         this_a.classList.add("flex-column");
@@ -472,3 +449,133 @@ function Display_Confessions(confessions_got_array,confessions_sent_array)
     })
 
 }
+
+function View_Buddy_Requests()
+{
+    if(Cookies.get("Session_ID") == undefined) //tried accessing through link
+        location.href = "./index.html";
+    else
+    {
+        Buddy_Requests_Pallet.hidden = false;
+      
+        loadOverlay.hidden = false;
+        
+        axios.get('/fetch_buddy_requests', {headers: {'Authorization': Cookies.get("Session_ID") }}).then(response => {
+            
+            loadOverlay.hidden = true;
+            console.log(response.data);
+
+            if(response.data.Status == "Fail" && response.data.Description == "Invalid Session")
+                location.href = "./index.html";
+            else
+            {
+                if(response.data.Status == "Fail")
+                    alert(response.data.Description);
+                else
+                {
+                    document.getElementById("Buddy_Requests_Pallet").hidden = false;
+                    Display_Buddy_Requests(response.data.Buddy_Requests);
+                }
+            }
+        })
+    }
+}
+
+function Display_Buddy_Requests(buddy_request_array) {
+
+    let Buddy_Request_list_group = document.getElementById("Buddy_Request_list_group");
+    Buddy_Request_list_group.innerHTML = ""; //clearing the previously fetched data
+    buddy_request_array.forEach((element) => {
+            
+            // anchor tag for list element
+            let this_a = document.createElement("a"); 
+            this_a.href = "#/";
+            this_a.classList.add("list-group-item");  //Adding Bootstrap CSS Classes
+            this_a.classList.add("list-group-item-action");
+            this_a.classList.add("flex-column");
+            this_a.classList.add("align-items-start");
+            this_a.classList.add("list-group-item-info");
+    
+            let this_div = document.createElement("div");
+            this_div.classList.add("d-flex");
+            this_div.classList.add("w-100");
+            this_div.classList.add("justify-content-between");
+            
+            let this_h5_content_heading = document.createElement("h5");
+            this_h5_content_heading.classList.add("mb-1");
+            this_h5_content_heading.innerHTML = element.Sender_Username;
+            
+            let this_small_timestamp = document.createElement("small");
+            this_small_timestamp.innerHTML = Convert_Timestamp_To_Date(element.Timestamp);
+    
+            let this_p_content = document.createElement("p");
+            this_p_content.classList.add("mb-1");
+            this_p_content.innerHTML = "<Button class='btn btn-success' onclick='Accept_Buddy_Request(\"" + element.Sender_Email + "\")'>Accept</Button> <Button class='btn btn-danger' onclick='Reject_Buddy_Request(\"" + element.Sender_Email + "\")'>Reject</Button>";
+    
+            this_div.appendChild(this_h5_content_heading);
+            this_div.appendChild(this_small_timestamp);
+            this_a.appendChild(this_div);
+            this_a.appendChild(this_p_content);
+            Buddy_Request_list_group.appendChild(this_a); //appending the list anchor to the list
+    })
+}
+
+function Accept_Buddy_Request(sender_email)
+{
+    
+    if(Cookies.get("Session_ID") == undefined) //tried accessing through link
+        location.href = "./index.html";
+    else
+    {  
+        loadOverlay.hidden = false;
+        
+        let Session = {
+            Sender : sender_email,
+        }
+
+        axios.put('/accept_buddy_request',Session,{headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+            
+            console.log(response.data);
+            loadOverlay.hidden = true;
+
+            if(response.data.Status == "Fail" && response.data.Description == "Invalid Session")
+                location.href = "./index.html";
+            else
+            {
+                    alert(response.data.Description);
+                    window.location.reload();//refresh page
+            }  
+        })
+    }
+}
+
+function Reject_Buddy_Request(sender_email) {
+
+    if(Cookies.get("Session_ID") == undefined) //tried accessing through link
+        location.href = "./index.html";
+    else
+    {  
+        loadOverlay.hidden = false;
+        
+        let Session = {
+            Sender_Email : sender_email
+        }
+
+        axios.put('/reject_buddy_request',Session,{headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+            
+            console.log(response.data);
+            loadOverlay.hidden = true;
+
+            if(response.data.Status == "Fail" && response.data.Description == "Invalid Session")
+                location.href = "./index.html";
+            else
+            {
+                    alert(response.data.Description);
+                    window.location.reload();//refresh page
+            }  
+        })
+    }
+
+  }
+
+Get_Profile_Data();

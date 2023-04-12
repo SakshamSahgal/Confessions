@@ -4,17 +4,17 @@ const fs = require("fs");
 const users = new Datastore("Database/users.db");
 
 
-function Confess(req_JSON,res)
+function Confess(req,res)
 {
-    console.log(req_JSON);
-    Validate_Session(req_JSON).then( (Session_Result) => {
+    console.log(req.body);
+    Validate_Session(req).then( (Session_Result) => {
         
         if(Session_Result.length)
         {
-            if(req_JSON.Confession_Data.length >= 0 && req_JSON.Confession_Data.length <= 500) //if data is of correct length
+            if(req.body.Confession_Data.length >= 0 && req.body.Confession_Data.length <= 500) //if data is of correct length
             {
                 users.loadDatabase();
-                users.find({Email : req_JSON.Confessed_To_Email},(err,email_match_array) => {
+                users.find({Email : req.body.Confessed_To_Email},(err,email_match_array) => {
 
                     if(email_match_array.length)
                     {
@@ -31,13 +31,13 @@ function Confess(req_JSON,res)
                             let Recipient_Entry_JSON = {
                                 Confessed_by : Session_Result[0].Email,
                                 Timestamp : Date.now(),
-                                Confession : req_JSON.Confession_Data ,
+                                Confession : req.body.Confession_Data ,
                             }
                             
                             let Sender_Entry_JSON = {
-                                Confessed_To : req_JSON.Confessed_To_Email,
+                                Confessed_To : req.body.Confessed_To_Email,
                                 Timestamp : Recipient_Entry_JSON.Timestamp,
-                                Confession : req_JSON.Confession_Data ,
+                                Confession : req.body.Confession_Data ,
                             }
 
                             console.log("Submitting " , Recipient_Entry_JSON);
@@ -88,7 +88,7 @@ function Confess(req_JSON,res)
                 res.json(verdict);
             }
 
-            let Entry_JSON = req_JSON;
+            let Entry_JSON = req.body;
             Entry_JSON.Po
         }
         else
@@ -105,10 +105,10 @@ function Confess(req_JSON,res)
 }
 
 
-function Fetch_Confessions(req_JSON,res)
+function Fetch_Confessions(req,res) //fetch his confesstions data
 {
-    console.log(req_JSON);
-     Validate_Session(req_JSON).then((Session_Result) => {
+    console.log(req.body);
+     Validate_Session(req).then((Session_Result) => {
 
         if(Session_Result.length) //valid session
         {
@@ -194,13 +194,12 @@ function Fetch_Confessions(req_JSON,res)
 
 }
 
-function Fetch_Static_Confessions_Got(req_JSON,res)
+function Fetch_Static_Confessions_Got(req,res,Username_To_Fetch)
 {
-    console.log(req_JSON);
-    Validate_Session(req_JSON).then((Session_Result) => {
+    Validate_Session(req).then((Session_Result) => {
         if(Session_Result.length)
         {
-            let dir = "Media/" + req_JSON.Username_To_Fetch;
+            let dir = "Media/" + Username_To_Fetch;
             if(fs.existsSync(dir))
             {
                 console.log("Direcory Exists");
