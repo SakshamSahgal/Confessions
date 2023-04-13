@@ -43,7 +43,6 @@ function Fetch_Dashboard() //function called at the page load [fetches dashboard
 
 function Post_it()
 {
-    
     if(Cookies.get("Session_ID") == undefined)
         location.href = "./index.html";
     else
@@ -67,8 +66,11 @@ function Update_Info_Details()
 { 
    if(document.getElementById("visibility_Select").value == "Public")
         document.getElementById("visibility_info").innerHTML = "[People who Buddied you, will know you posted this]"
+   else if(document.getElementById("visibility_Select").value == "Global")
+        document.getElementById("visibility_info").innerHTML = "[Post is visible to everyone]"
    else
         document.getElementById("visibility_info").innerHTML = "[No one will know you posted this]"
+   
 }
 
 
