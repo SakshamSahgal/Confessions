@@ -11,3 +11,60 @@
     border: 2px solid black;
 }
 
+#Post_Overlay,#themesOverlay/*CSS for load overlay div */
+{
+    height: 100%;
+    width: 100%;
+    max-height: 100%;
+    z-index: 3;
+    overflow-y: auto;
+    position: fixed; /* Stay in place */
+    left: 0;
+    top: 0;
+    background-color: rgba(7, 7, 7, 0.55); /* Black w/opacity */
+    backdrop-filter: blur(6px);
+}
+
+    .row , .col {
+    border: 0px solid white;
+}
+
+.postTextPreviewPlaceHolder {
+    text-align: center;
+    font-size: 30px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: gray;
+    max-width: 100em;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.postTextPreviewContent {
+    text-align: center;
+    font-size: 30px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: rgb(0, 0, 0);
+    max-width: 100em;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+#previewPostCardHeader{
+    /* background-image: url("Backgrounds/Dark/bulbAtNight.jpg"); */
+    background-size: cover;
+}
+
+.previewThemeHeader{
+    
+}
+
+
+.headerText{
+    color: rgb(0, 0, 0);
+}
+
+#themesOverlayCloseBtn,#postOverlayCloseBtn{
+    position: absolute;
+    left : 95%;
+    top: 2%;
+}

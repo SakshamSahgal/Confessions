@@ -35,53 +35,151 @@
         <br>
         <div class="container mt-5" style="width: 55%">
             <div class="row">
-                <button data-bs-target="#Write_a_post" data-bs-toggle="modal" class="btn btn-lg btn-primary"> Write a Post</button> 
-            </div>
-        </div>
-
-        <div class="modal" id="Write_a_post">
-            <div class="modal-dialog">
-                <div class="modal-content"> 
-
-                    <div class="modal-header">
-                    <!-- ADD ANYTHIING FOR HEADER HERE -->
-                    
-                        <div class="container">
-                            <div class="row align-items-center">
-                                <div class="col text-end">
-                                  <span style="font-size: 14px;">Visibility : </span>  
-                                </div>
-                                <div class="col">
-                                    <select id="visibility_Select" onchange="Update_Info_Details()" class="form-select" style="width:auto;" >
-                                        <option selected value="Anonymous"> Anonymous 👁️ </option>
-                                        <option value="Public">Public 👀 </option>
-                                    </select>
-                                </div>
-                                <div class="col text-end">
-                                    <button type="button" class="btn close" data-bs-dismiss="modal"> &times; </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="modal-body" align="center">
-                        <form onsubmit="Post_it();return false">
-                            <p style="font-style: italic;opacity: 0.6;" id="visibility_info">[No one will know you posted this]</p>
-                            <textarea required name="" id="Post_Content" cols="35" rows="4"></textarea> <br> <br>
-                            <input type="submit" value="Post">
-                        </form>
-                    </div>
-                    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">Rules</a>
-                    <div class="collapse" id="collapseExample">
-                        <div class="card card-body">
-                            Allowed Characters : 5 to 280
-                        </div>
-                    </div>
-                </div>
+                <button class="btn btn-lg btn-primary" onclick="viewPostOverlay()"> Write a Post</button> 
             </div>
         </div>
   
     </div>
+      
+    <div id="Post_Overlay" hidden>
+        
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="postOverlayCloseBtn" onclick="closePostOverlay()"></button>
+
+        <div class="container mt-5">
+
+            <div class="row my-3">
+                
+                <div class="col">
+                    <table>
+                        <tr>
+                            <td>
+                                <span style="font-size: 25px; color: aliceblue;">Visibility : &nbsp;</span>   
+                            </td>
+                            <td>
+                                <select id="visibility_Select" onchange="Update_Info_Details()" class="form-select" style="width:auto;" >
+                                    <option value="Anonymous"> Anonymous 👁️ </option>
+                                    <option value="Public"> Public 👀 </option>
+                                    <option selected value="Global"> Global 🌏 </option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table> 
+                </div>  
+                
+                <div class="col">
+                    <button class="btn btn-warning" onclick="FetchHeaders()">Choose Header Themes 👽 </button>
+                </div>
+                
+            </div>
+
+            <div class="row my-2">
+                <div class="col d-flex justify-content-center">
+                    <p style="font-style: italic;opacity: 1; color: antiquewhite;" id="visibility_info">[Post is visible to everyone]</p>
+                </div>
+            </div>
+
+          
+            <div class="row">
+
+                <div class="col">
+
+                    <div class="container d-flex justify-content-center align-items-center">
+
+                        <div id="Post" class="d-flex justify-content-center align-items-center">
+                               
+                            <div class="card" style="max-width: 80vw;min-width: 300px">
+                                
+                                <div class="card-header" id="previewPostCardHeader">
+                                    <div class="d-flex align-items-center">
+                                        <img id="previewProfilePicture" src="./GUI_Resources/No_photo.gif" alt="Profile Picture" class="rounded-circle me-3" width="50">
+                                        <div>
+                                            <h5 class="m-0 headerText" id="previewName">John Doe</h5>
+                                            <small class="headerText" id="previewEmail">@johndoe</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <p class="card-text postTextPreviewPlaceHolder" id="postTextPreview" contentEditable="true">I am feeling happy today....</p>
+                                </div>
+
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <button type="button" class="btn btn-primary me-3"><i class="bi bi-hand-thumbs-up"></i> Like</button>
+                                            <button type="button" class="btn btn-secondary"><i class="bi bi-chat"></i> Comment</button>
+                                        </div>
+                                        <small class="text-muted">&nbsp; Posted 2 hours ago</small>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+              </div>
+              
+              
+        </div>
+    </div>
+
+    <div id="themesOverlay" hidden>
+        
+        <div class="container my-5">
+                
+            <button type="button" class="btn-close btn-close-white" aria-label="Close" id="themesOverlayCloseBtn" onclick="closeThemesOverlayPallet()"></button>
+            
+            <ul class="nav-tabs nav nav-justified bg-light" id="themeTabList">
+                <!-- <li class="nav-item">
+                  <a href="#darkList" class="nav-link active" data-bs-toggle="tab"> DARK  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="#lightList" class="nav-link" data-bs-toggle="tab"> LIGHT </a>
+                </li> -->
+            </ul>
+            
+            
+            <div class="tab-content" id="themeTabContent">
+
+                 <!-- <div class="tab-pane show active justify-content-center align-items-center" id="darkList">
+
+                            <div class="row my-3">
+
+                                <div class="col">
+                                    
+                                    <div class="card" style="min-width: 300px">
+                                
+                                        <div class="card-header" class="previewThemeHeader" style="background-image: url('./GUI_Resources/Backgrounds/Dark/bulbAtNight.jpg');">
+                                            <div class="d-flex align-items-center">
+                                                <img src="./GUI_Resources/No_photo.gif" alt="Profile Picture" class="rounded-circle me-3 previewThemeProfilePicture" width="50">
+                                                <div>
+                                                    <h5 class="m-0 headerText" id="previewName">John Doe</h5>
+                                                    <small class="headerText" id="previewEmail">@johndoe</small>
+                                                </div>
+                                            </div>
+                                        </div>   
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                </div>  -->
+            
+                <!-- <div class="tab-pane fade" id="lightList">
+                    <div id="LightThemesListDiv">
+
+                    </div>
+                </div> -->
+            
+            </div>
+        </div>
+    </div>
+
 
 </body>
 </html>
