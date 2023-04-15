@@ -3,8 +3,16 @@ let loadOverlay = document.getElementById("Load_overlay");
 let dashboardFetchedData;
 
 let headerThemes = {
+    themePallet : document.getElementById("themesOverlay"),
     themeTabList : document.getElementById("themeTabList"),
     themeTabContent : document.getElementById("themeTabContent")
+}
+
+let previewPost = {
+    previewHeader : document.getElementById("previewPostCardHeader"),
+    previewProfilePicture : document.getElementById("previewProfilePicture"),
+    previewName : document.getElementById("previewName"),
+    previewEmail : document.getElementById("previewEmail"),
 }
 
 function Logout()
@@ -42,9 +50,11 @@ function Fetch_Dashboard() //function called at the page load [fetches dashboard
             dashboardFetchedData = response.data;
             if(response.data.Status == "Pass")
             {
-                document.getElementById("profile_picture").src = response.data.Profile_Picture;
-                document.getElementById("previewProfilePicture").src = response.data.Profile_Picture;
-                document.getElementsByClassName("previewThemeProfilePicture").src = response.data.Profile_Picture;
+                document.getElementById("profile_picture").src = response.data.Profile_Picture; //setting the top right profile picture
+                previewPost.previewProfilePicture.src = response.data.Profile_Picture; //setting the preview post profile picture
+                previewPost.previewName.textContent = response.data.Username;
+                previewPost.previewEmail.textContent = response.data.Email;
+                // document.getElementsByClassName("previewThemeProfilePicture").src = response.data.Profile_Picture;
             }
             else
                 alert(response.data.Description);
@@ -227,12 +237,27 @@ function displayHeaders(headersJSON){
         themeBackgrounds.forEach( thisThemeBackground => { //iterating over backgrounds
             
             console.log(thisThemeBackground)
-            
-            let thisHeaderStyle = "<div class='row my-3'><div class='col'><div class='card' style='min-width: 300px'><div class='card-header' style=' background-size: cover; background-image: url( "  + thisThemeBackground.path + ");'><div class='d-flex align-items-center'><img src=" + dashboardFetchedData.Profile_Picture  + " alt='Profile Picture' class='rounded-circle me-3 previewThemeProfilePicture' width='50'><div><h5 class='m-0 headerText' style='color: " + thisThemeBackground.HeaderFontColor  +";'> " + dashboardFetchedData.Username + " </h5><small class='headerText' style=' color: " + thisThemeBackground.HeaderFontColor  + ";'>" +  dashboardFetchedData.Email + "</small></div> </div> </div> </div> </div> </div>";
+
+            let thisHeaderStyle = "<div class='row my-3'><div class='col' onclick='selectHeader(" + JSON.stringify(thisThemeBackground) + ")' ><div class='card' style='min-width: 300px'><div class='card-header' style=' background-size: cover; background-image: url( "  + thisThemeBackground.path + ");'><div class='d-flex align-items-center'><img src=" + dashboardFetchedData.Profile_Picture  + " alt='Profile Picture' class='rounded-circle me-3 previewThemeProfilePicture' width='50'><div><h5 class='m-0 headerText' style='color: " + thisThemeBackground.HeaderFontColor  +";'> " + dashboardFetchedData.Username + " </h5><small class='headerText' style=' color: " + thisThemeBackground.HeaderFontColor  + ";'>" +  dashboardFetchedData.Email + "</small></div> </div> </div> </div> </div> </div>";
             document.getElementById(ThemeName).innerHTML += thisHeaderStyle;
 
 
         })
       }
+
+}
+
+function selectHeader(headerData) { 
+    //selectedHeaderData = JSON.parse(headerData)
+    console.log(headerData.path)
+    previewPost.previewHeader.style.backgroundImage = "url('" + headerData.path + "')";
+    previewPost.previewName.style.color = headerData.HeaderFontColor;
+    previewPost.previewEmail.style.color = headerData.HeaderFontColor;
+    headerThemes.themePallet.hidden = true;
+ }
+
+
+function fetchMoods()
+{
 
 }
