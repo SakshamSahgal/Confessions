@@ -71,7 +71,7 @@
                 </div>
                 
                 <div class="col py-3 d-flex justify-content-center">
-                    <button class="btn btn-success" onclick="fetchMoods()">Choose Mood 🤪 </button>
+                    <button class="btn btn-success" onclick="fetchMoods()">Choose Mood Badge 🤪 </button>
                 </div>
 
             </div>
@@ -133,20 +133,20 @@
     </div>
 
     <div id="themesOverlay" hidden>
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="themesOverlayCloseBtn" onclick="closeThemesOverlayPallet()"></button>
         <div class="container">
             <div class="row">
                 <div class="col"><br></div>
             </div>
             <div class="row">
                 <div class="col d-flex justify-content-center">
-                    <button class="btn btn-danger">Remove Theme</button>
+                    <button class="btn btn-danger" onclick="removeThemes()">Remove Theme</button>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
                     <div class="container my-3">
                 
-                        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="themesOverlayCloseBtn" onclick="closeThemesOverlayPallet()"></button>
                         
                         <ul class="nav-tabs nav nav-justified bg-light" id="themeTabList">
                             <!-- <li class="nav-item">
@@ -201,6 +201,63 @@
         
     </div>
 
+    <div id="moodOverlay" hidden>
+
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="moodOverlayCloseBtn" onclick="closeMoodOverlayPallet()"></button>
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col"><br></div>
+            </div>
+
+            <div class="row">
+                <div class="col d-flex justify-content-center">
+                    <button class="btn btn-danger" onclick="removeMoodBadge()">Remove Mood Badge</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="container my-3">
+                
+                        
+                         <ul class="nav-tabs nav nav-justified bg-light" id="moodTabList">
+                            <!-- <li class="nav-item">
+                              <a href="#happy" class="nav-link active" data-bs-toggle="tab"> HAPPY  </a>
+                            </li>
+                            <li class="nav-item">
+                              <a href="#sad" class="nav-link" data-bs-toggle="tab"> SAD </a>
+                            </li> -->
+                        </ul> 
+                                               
+                        <div class='tab-content' id='moodTabContent'>
+            
+                             <!-- <div class='tab-pane show active justify-content-center align-items-center' id='happy'>
+            
+                                        <!-- <div class= 'row my-3 bg-secondary d-flex justify-content-center align-items-center' >
+
+                                             <div class='col d-flex justify-content-center align-items-center' >
+                                                <span class="badge badge-secondary" style="font-size: 32px;" title="moodStatus"> 😄 </span> &nbsp; <span>Happy Happy</span>
+                                            </div> 
+            
+                                        </div> 
+                            </div>
+                        
+                            <div class="tab-pane fade" id="sad">
+                                <div id="LightThemesListDiv">
+            
+                                </div>
+                            </div> -->
+                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
 
 </body>
 </html>

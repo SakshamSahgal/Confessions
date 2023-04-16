@@ -24,7 +24,7 @@ const {Fetch_All_Users} = require("./Page_Queries/users.js");
 const {Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo} = require("./Page_Queries/profile.js");
 const {Delete_Account} = require("./Auth/Delete_Acc.js");
 const {Return_Static_Profile_Page,Fetch_Static_Profile,Update_Bio,Update_Username,Update_Gender,Update_Password} = require("./Page_Queries/profile.js");
-const {Fetch_Dashboard,Fetch_All_Themes} = require("./Page_Queries/Dashboard.js");
+const {FetchMoods,Fetch_Dashboard,Fetch_All_Themes} = require("./Page_Queries/Dashboard.js");
 const {Verify_Email,Forgot_Verify_OTP,Verify_Password} = require("./Auth/Forgot_Details.js");
 const {Confess,Fetch_Confessions,Fetch_Static_Confessions_Got} = require("./Page_Queries/confessions.js");
 const {Reject_Buddy_Request,Buddy,Fetch_Buddy_Requests,Accept_Buddy_Request} = require("./Page_Queries/Buddies.js");
@@ -178,4 +178,8 @@ app.put("/reject_buddy_request",(req,res) => {
 
 app.get("/fetch_themes",(req,res) => {
     Fetch_All_Themes(req,res);
+})
+
+app.get("/fetchMoods",(req,res) => {
+    FetchMoods(req,res);
 })

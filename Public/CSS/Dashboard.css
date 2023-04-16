@@ -11,7 +11,7 @@
     border: 2px solid black;
 }
 
-#Post_Overlay,#themesOverlay/*CSS for load overlay div */
+#Post_Overlay,#themesOverlay,#moodOverlay/*CSS for load overlay div */
 {
     height: 100%;
     width: 100%;
@@ -63,7 +63,7 @@
     color: rgb(0, 0, 0);
 }
 
-#themesOverlayCloseBtn,#postOverlayCloseBtn{
+#themesOverlayCloseBtn,#postOverlayCloseBtn,#moodOverlayCloseBtn{
     position: absolute;
     left : 95%;
     top: 2%;

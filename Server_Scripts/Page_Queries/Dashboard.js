@@ -1,4 +1,5 @@
 
+const { response } = require("express");
 const {Validate_Session} = require("../Auth/validate_session.js");
 const fs = require("fs")
 
@@ -38,7 +39,7 @@ function Fetch_All_Themes(req,res) {
             
             let headers = { } //object that contains all the info of this theme
             
-            let HeaderThemesTextColor = JSON.parse(fs.readFileSync("./Public/GUI_Resources/Backgrounds.json","ascii")) //reading font color json 
+            let HeaderThemesTextColor = JSON.parse(fs.readFileSync("./Customization_Datasets/Backgrounds.json","ascii")) //reading font color json 
             const headerThemes = fs.readdirSync("./Public/GUI_Resources/Backgrounds"); //reading all the theme names
             
             headerThemes.forEach( themeName => { //iterating over theme names
@@ -84,4 +85,29 @@ function Fetch_All_Themes(req,res) {
      })
 }
 
-module.exports = {Fetch_All_Themes,Fetch_Dashboard}
+function FetchMoods(req,res)
+{
+    Validate_Session(req).then( Session_Result => {
+       
+        if(Session_Result.length)
+        {
+            let moods = JSON.parse(fs.readFileSync("./Customization_Datasets/Moods.json","ascii"));
+            let verdict = {
+                Status : "Pass",
+                moods : moods
+            }
+            res.json(verdict);
+        }
+        else
+        {
+            let verdict={
+                Status : "Fail",
+                Description : "Invalid Session"
+            }
+            res.json(verdict);
+        }
+
+    })
+}
+
+module.exports = {FetchMoods,Fetch_All_Themes,Fetch_Dashboard}
