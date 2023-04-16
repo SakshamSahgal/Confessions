@@ -76,3 +76,8 @@
     border-radius: 10px;
     border: 3px solid white;
 }
+
+.highlight-on-hover:hover {
+    background-color: rgb(94, 255, 0);
+    opacity: 0.8;
+  }

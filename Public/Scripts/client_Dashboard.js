@@ -12,13 +12,15 @@ let previewPost = {
     previewHeader : document.getElementById("previewPostCardHeader"),
     previewProfilePicture : document.getElementById("previewProfilePicture"),
     previewName : document.getElementById("previewName"),
-    previewEmail : document.getElementById("previewEmail")
+    previewEmail : document.getElementById("previewEmail"),
+    moodBadge : document.getElementById("moodBadge")
 }
 
 let Moods = {
     moodPallet : document.getElementById("moodOverlay"),
     moodTabList : document.getElementById("moodTabList"),
-    moodTabContent : document.getElementById("moodTabContent")
+    moodTabContent : document.getElementById("moodTabContent"),
+    moodBadgeHolderDiv : document.getElementById("moodBadgeHolderDiv")
 }
 
 function Logout()
@@ -231,7 +233,7 @@ function displayHeaders(headersJSON){
         else
         {
             headerTabs = "<li class='nav-item'> <a href='#" + ThemeName + "' class='nav-link' data-bs-toggle='tab'> " + ThemeName  + " </a> </li>"
-            tabContentDiv = "<div class='tab-pane show   justify-content-center align-items-center' id='" + ThemeName  + "'> </div>"
+            tabContentDiv = "<div class='tab-pane show justify-content-center align-items-center' id='" + ThemeName  + "'> </div>"
         }
 
         
@@ -244,7 +246,7 @@ function displayHeaders(headersJSON){
             
             console.log(thisThemeBackground)
 
-            let thisHeaderStyle = "<div class='row my-3'><div class='col' onclick='selectHeader(" + JSON.stringify(thisThemeBackground) + ")' ><div class='card'><div class='card-header' style=' background-size: cover; background-image: url( "  + thisThemeBackground.path + ");'><div class='d-flex align-items-center'><img src=" + dashboardFetchedData.Profile_Picture  + " alt='Profile Picture' class='rounded-circle me-3 previewThemeProfilePicture' width='50'><div><h5 class='m-0 headerText' style='color: " + thisThemeBackground.HeaderFontColor  +";'> " + dashboardFetchedData.Username + " </h5><small class='headerText' style=' color: " + thisThemeBackground.HeaderFontColor  + ";'>" +  dashboardFetchedData.Email + "</small></div> </div> </div> </div> </div> </div>";
+            let thisHeaderStyle = "<div class='row my-3'><div class='col' onclick='selectHeader(" + JSON.stringify(thisThemeBackground) + ")' ><div class='card highlight-on-hover'><div class='card-header' style=' background-size: cover; background-image: url( "  + thisThemeBackground.path + ");'><div class='d-flex align-items-center'><img src=" + dashboardFetchedData.Profile_Picture  + " alt='Profile Picture' class='rounded-circle me-3 previewThemeProfilePicture' width='50'><div><h5 class='m-0 headerText' style='color: " + thisThemeBackground.HeaderFontColor  +";'> " + dashboardFetchedData.Username + " </h5><small class='headerText' style=' color: " + thisThemeBackground.HeaderFontColor  + ";'>" +  dashboardFetchedData.Email + "</small></div> </div> </div> </div> </div> </div>";
             document.getElementById(ThemeName).innerHTML += thisHeaderStyle;
 
 
@@ -298,6 +300,9 @@ function displayMoodPallet(moods)
 {
     let active = false; ///used as a active flag
 
+    Moods.moodTabList.innerHTML = "";
+    Moods.moodTabContent.innerHTML = "";
+
     for (let [moodName, entriesOfThatMood] of Object.entries(moods)) {
 
         console.log(moodName + ": ");
@@ -307,13 +312,13 @@ function displayMoodPallet(moods)
 
         if(active == false){
             MoodTabs = "<li class='nav-item'> <a href='#" + moodName  +"' class='nav-link active' data-bs-toggle='tab'> " + moodName  + " </a> </li>"
-            tabContentDiv =  "<div class='tab-pane show justify-content-center align-items-center' id='" + moodName +"'></div>"
+            tabContentDiv =  "<div class='tab-pane show active justify-content-center align-items-center' id='" + moodName +"'></div>"
             active = true
         }
         else
         {
             MoodTabs = "<li class='nav-item'> <a href='#" + moodName + "' class='nav-link' data-bs-toggle='tab'> " + moodName  + " </a> </li>"
-            tabContentDiv = "<div class='tab-pane show active justify-content-center align-items-center' id='" + moodName +"'></div>"
+            tabContentDiv = "<div class='tab-pane show justify-content-center align-items-center' id='" + moodName +"'></div>"
         }
      
         
@@ -324,7 +329,7 @@ function displayMoodPallet(moods)
         entriesOfThatMood.forEach( thisMood => { //iterating over Entries in this mood
             
             console.log(thisMood)
-            thisMoodBadge = "<div class= 'row my-3 bg-secondary d-flex justify-content-center align-items-center' ><div class='col d-flex justify-content-center align-items-center' ><span class='badge badge-secondary' style='font-size: 32px;' title='moodStatus'> " + thisMood.emoji +" </span> &nbsp; <span>" + thisMood.name +"</span></div> </div>"
+            thisMoodBadge = "<div class= 'row my-3 bg-secondary d-flex justify-content-center align-items-center' ><div class='col highlight-on-hover d-flex justify-content-center align-items-center' onclick='selectMood(" + JSON.stringify(thisMood) + ")' ><span class='badge' style='font-size: 32px;' title='moodStatus'> " + thisMood.emoji +" </span> &nbsp; <span>" + thisMood.name +"</span></div> </div>"
             document.getElementById(moodName).innerHTML += thisMoodBadge;
 
         })
@@ -333,4 +338,16 @@ function displayMoodPallet(moods)
 
 function removeMoodBadge( ) {
 
-  }
+    previewPost.moodBadge.title = "N/A";
+    previewPost.moodBadge.innerHTML = "";
+    Moods.moodBadgeHolderDiv.hidden = false;
+    Moods.moodPallet.hidden = true;
+}
+
+function selectMood(thisMoodJSON) { //function called when user selects a mood badge
+    console.log(thisMoodJSON);
+    Moods.moodBadgeHolderDiv.hidden = false;
+    previewPost.moodBadge.title = thisMoodJSON.name;
+    previewPost.moodBadge.innerHTML = thisMoodJSON.emoji;
+    Moods.moodPallet.hidden = true;
+}
