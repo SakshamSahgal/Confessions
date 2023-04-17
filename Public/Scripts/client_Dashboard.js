@@ -204,13 +204,45 @@ function Fetch_Dashboard() //function called at the page load [fetches dashboard
     }
 }
 
-function viewPostOverlay() {
-    document.getElementById("Post_Overlay").hidden = false;
+
+
+
+
+function selectHeader(headerData) { 
+    //selectedHeaderData = JSON.parse(headerData)
+    console.log(headerData.path)
+    previewPost.previewHeader.style.backgroundImage = "url('" + headerData.path + "')";
+    previewPost.previewName.style.color = headerData.HeaderFontColor;
+    previewPost.previewEmail.style.color = headerData.HeaderFontColor;
+    headerThemes.themePallet.hidden = true;
+ }
+
+
+function fetchMoods()
+{
+    Moods.moodPallet.hidden = false;
+    if(Cookies.get("Session_ID") == undefined) //accesing via link
+        location.href = "./index.html";
+    else
+    {
+        loadOverlay.hidden = false;
+
+        axios.get('/fetchMoods',{headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+            
+            loadOverlay.hidden = true;
+            console.log(response.data)
+            displayMoodPallet(response.data.moods)
+
+        })
+    }
 }
 
-
-Fetch_Dashboard();
-
+function removeThemes() { //function called when someone presses remove header button
+    previewPost.previewHeader.style.backgroundImage = "none"; //removing background image from previewa header
+    previewPost.previewEmail.style.color = "Black"; //setting back to default color
+    previewPost.previewName.style.color = "Black"; //setting back to default color
+    headerThemes.themePallet.hidden = true;
+}
 
 
 function displayHeaders(headersJSON){
@@ -278,43 +310,6 @@ function displayHeaders(headersJSON){
 
 }
 
-function selectHeader(headerData) { 
-    //selectedHeaderData = JSON.parse(headerData)
-    console.log(headerData.path)
-    previewPost.previewHeader.style.backgroundImage = "url('" + headerData.path + "')";
-    previewPost.previewName.style.color = headerData.HeaderFontColor;
-    previewPost.previewEmail.style.color = headerData.HeaderFontColor;
-    headerThemes.themePallet.hidden = true;
- }
-
-
-function fetchMoods()
-{
-    Moods.moodPallet.hidden = false;
-    if(Cookies.get("Session_ID") == undefined) //accesing via link
-        location.href = "./index.html";
-    else
-    {
-        loadOverlay.hidden = false;
-
-        axios.get('/fetchMoods',{headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
-            
-            loadOverlay.hidden = true;
-            console.log(response.data)
-            displayMoodPallet(response.data.moods)
-
-        })
-    }
-}
-
-function removeThemes() { //function called when someone presses remove header button
-    previewPost.previewHeader.style.backgroundImage = "none"; //removing background image from previewa header
-    previewPost.previewEmail.style.color = "Black"; //setting back to default color
-    previewPost.previewName.style.color = "Black"; //setting back to default color
-    headerThemes.themePallet.hidden = true;
-}
-
-  
 function displayMoodPallet(moods)
 {
     let active = false; ///used as a active flag
@@ -390,3 +385,46 @@ function closePallet(id) //function to close overlay pallets by id passed to it
 {
     document.getElementById(id).hidden = true;
 }
+
+function viewPallet(id) //function that reveals the pallet by id passed to it
+{
+    document.getElementById(id).hidden = false;
+}
+
+//poll
+
+let poll = {
+    pollOptions : document.getElementById("pollOptions")
+}
+
+var pollOptionCount = 3;
+
+function addPollOption() {
+  var newPollOptionHtml = `
+    <div class="form-group" id='formOptions${pollOptionCount}'>
+      <label for="poll-option${pollOptionCount}" class="poll-option-label">Option ${pollOptionCount}:</label>
+      <input type="text" class="form-control poll-option" id="poll-option${pollOptionCount}" placeholder="Enter option">
+    </div>`;
+
+  poll.pollOptions.innerHTML += newPollOptionHtml;
+  pollOptionCount++;
+}
+
+function ReducePollOptions()
+{
+    if(pollOptionCount == 3)
+        alert("cannot Remove Anymore Options")
+    else
+    {
+        pollOptionCount--;
+        var divToDelete = document.getElementById("formOptions" + pollOptionCount);
+        divToDelete.remove();
+    }
+}
+
+function submitPoll()
+{
+    
+}
+
+Fetch_Dashboard();

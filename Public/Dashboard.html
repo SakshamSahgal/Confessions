@@ -35,12 +35,39 @@
         <br>
         <div class="container mt-5" style="width: 55%">
             <div class="row">
-                <button class="btn btn-lg btn-primary" onclick="viewPostOverlay()"> Write a Post</button> 
+                <button class="btn btn-lg btn-primary" onclick="viewPallet('createPallet')"> Create </button> 
             </div>
         </div>
   
     </div>
       
+    <div id="createPallet" hidden>
+
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="postOverlayCloseBtn" onclick="closePallet('createPallet')"></button>
+        <br><br><br><br><br><br><br>
+        <div class="container">
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="col">
+                    <div class="container mt-5" style="width: 55%">
+                        <div class="row">
+                            <button class="btn btn-lg btn-primary" onclick="viewPallet('Post_Overlay')"> Write a Post ✏️ </button> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="col">
+                    <div class="container mt-5" style="width: 55%">
+                        <div class="row">
+                            <button class="btn btn-lg btn-primary" onclick="viewPallet('PollOverlay')"> Create a Poll 📊 </button> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
     <div id="Post_Overlay" hidden>
         
         <button type="button" class="btn-close btn-close-white" aria-label="Close" id="postOverlayCloseBtn" onclick="closePallet('Post_Overlay')"></button>
@@ -150,48 +177,12 @@
                 
                         
                         <ul class="nav-tabs nav nav-justified bg-light" id="themeTabList">
-                            <!-- <li class="nav-item">
-                              <a href="#darkList" class="nav-link active" data-bs-toggle="tab"> DARK  </a>
-                            </li>
-                            <li class="nav-item">
-                              <a href="#lightList" class="nav-link" data-bs-toggle="tab"> LIGHT </a>
-                            </li> -->
+
                         </ul>
                         
                         
                         <div class="tab-content" id="themeTabContent">
-            
-                             <!-- <div class="tab-pane show active justify-content-center align-items-center" id="darkList">
-            
-                                        <div class="row my-3">
-            
-                                            <div class="col">
-                                                
-                                                <div class="card" style="min-width: 300px">
-                                            
-                                                    <div class="card-header" class="previewThemeHeader" style="background-image: url('./GUI_Resources/Backgrounds/Dark/bulbAtNight.jpg');">
-                                                        <div class="d-flex align-items-center">
-                                                            <img src="./GUI_Resources/No_photo.gif" alt="Profile Picture" class="rounded-circle me-3 previewThemeProfilePicture" width="50">
-                                                            <div>
-                                                                <h5 class="m-0 headerText" id="previewName">John Doe</h5>
-                                                                <small class="headerText" id="previewEmail">@johndoe</small>
-                                                            </div>
-                                                        </div>
-                                                    </div>   
-            
-                                                </div>
-            
-                                            </div>
-            
-                                        </div>
-                            </div>  -->
-                        
-                            <!-- <div class="tab-pane fade" id="lightList">
-                                <div id="LightThemesListDiv">
-            
-                                </div>
-                            </div> -->
-                        
+                                    
                         </div>
                     </div>
                 </div>
@@ -224,33 +215,11 @@
                 
                         
                          <ul class="nav-tabs nav nav-justified bg-light" id="moodTabList">
-                            <!-- <li class="nav-item">
-                              <a href="#happy" class="nav-link active" data-bs-toggle="tab"> HAPPY  </a>
-                            </li>
-                            <li class="nav-item">
-                              <a href="#sad" class="nav-link" data-bs-toggle="tab"> SAD </a>
-                            </li> -->
+
                         </ul> 
                                                
                         <div class='tab-content' id='moodTabContent'>
-            
-                             <!-- <div class='tab-pane show active justify-content-center align-items-center' id='happy'>
-            
-                                        <!-- <div class= 'row my-3 bg-secondary d-flex justify-content-center align-items-center' >
-
-                                             <div class='col d-flex justify-content-center align-items-center' >
-                                                <span class="badge badge-secondary" style="font-size: 32px;" title="moodStatus"> 😄 </span> &nbsp; <span>Happy Happy</span>
-                                            </div> 
-            
-                                        </div> 
-                            </div>
-                        
-                            <div class="tab-pane fade" id="sad">
-                                <div id="LightThemesListDiv">
-            
-                                </div>
-                            </div> -->
-                        
+                                    
                         </div>
                     </div>
                 </div>
@@ -260,35 +229,48 @@
 
     </div>
 
-    <div id="PollOverlay">
+    <div id="PollOverlay" hidden>
         <button type="button" class="btn-close btn-close-white" aria-label="Close" id="moodOverlayCloseBtn" onclick="closePallet('PollOverlay')"></button>
         
-        <div class="container">
+        <div class="container my-5">
             <div class="row">
-              <div class="col-md-12">
-                <h2>Create a Poll</h2>
-                <form>
-                  <div class="form-group">
-                    <label for="poll-title">Title:</label>
-                    <input type="text" class="form-control" id="poll-title" placeholder="Enter poll title">
+              <div class="col-md-8 offset-md-2">
+                <br><br><br>
+                <div class="card">
+                  <div class="card-header">
+                    <h2>Create a Poll</h2>
                   </div>
-                  <div class="form-group">
-                    <label for="poll-option1">Option 1:</label>
-                    <input type="text" class="form-control poll-option" id="poll-option1" placeholder="Enter option">
+                  <div class="card-body">
+                    <form onsubmit="submitPoll();return false">
+                      <div class="form-group">
+                        <label for="poll-title">Title:</label>
+                        <input type="text" class="form-control" id="poll-title" placeholder="Enter poll title">
+                      </div>
+                      <div class="form-group">
+                        <label for="poll-option1">Option 1:</label>
+                        <input type="text" class="form-control poll-option" id="poll-option1" placeholder="Enter option">
+                      </div>
+                      <div class="form-group">
+                        <label for="poll-option2">Option 2:</label>
+                        <input type="text" class="form-control poll-option" id="poll-option2" placeholder="Enter option">
+                      </div>
+                      <div class="form-group" id="pollOptions">
+                        <!-- additional poll options will be added here dynamically -->
+                      </div>
+
+                      <table>
+                        <tr>
+                            <td><button type="button" class="btn btn-primary" id="add-poll-option-btn" onclick="addPollOption()"> ➕ Increase Options</button></td>
+                            <td><button type="button" class="btn btn-primary" id="add-poll-option-btn" onclick="ReducePollOptions()"> ➖  Reduce Options</button></td>
+                            <td><button type="submit" class="btn btn-success" id="create-poll-option-btn">Create Poll</button></td>
+                        </tr>
+                      </table>
+                    </form>
                   </div>
-                  <div class="form-group">
-                    <label for="poll-option2">Option 2:</label>
-                    <input type="text" class="form-control poll-option" id="poll-option2" placeholder="Enter option">
-                  </div>
-                  <div class="form-group" id="poll-options">
-                    <!-- additional poll options will be added here dynamically -->
-                  </div>
-                  <button type="button" class="btn btn-primary" id="add-poll-option-btn">Add Option</button>
-                  <button type="submit" class="btn btn-success">Create Poll</button>
-                </form>
+                </div>
               </div>
             </div>
-          </div>
+        </div>
 
     </div>
 
