@@ -43,7 +43,7 @@
       
     <div id="Post_Overlay" hidden>
         
-        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="postOverlayCloseBtn" onclick="closePostOverlay()"></button>
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="postOverlayCloseBtn" onclick="closePallet('Post_Overlay')"></button>
 
         <div class="container mt-5">
 
@@ -115,12 +115,12 @@
                                             <button type="button" class="btn btn-primary me-3"><i class="bi bi-hand-thumbs-up"></i> Like</button>
                                             <button type="button" class="btn btn-secondary"><i class="bi bi-chat"></i> Comment</button>
                                         </div>
-                                        <small class="text-muted">&nbsp; Posted 2 hours ago</small>
+                                        <small class="text-muted" id="charCount">&nbsp; 0/280</small>
                                     </div>
                                 </div>
 
                             </div>
-
+                            <!-- postPreviewCard Ends -->
                         </div>
 
                     </div>
@@ -134,7 +134,7 @@
     </div>
 
     <div id="themesOverlay" hidden>
-        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="themesOverlayCloseBtn" onclick="closeThemesOverlayPallet()"></button>
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="themesOverlayCloseBtn" onclick="closePallet('themesOverlay')"></button>
         <div class="container">
             <div class="row">
                 <div class="col"><br></div>
@@ -204,7 +204,7 @@
 
     <div id="moodOverlay" hidden>
 
-        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="moodOverlayCloseBtn" onclick="closeMoodOverlayPallet()"></button>
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="moodOverlayCloseBtn" onclick="closePallet('moodOverlay')"></button>
 
         <div class="container">
 
@@ -257,6 +257,38 @@
             </div>
 
         </div>
+
+    </div>
+
+    <div id="PollOverlay">
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="moodOverlayCloseBtn" onclick="closePallet('PollOverlay')"></button>
+        
+        <div class="container">
+            <div class="row">
+              <div class="col-md-12">
+                <h2>Create a Poll</h2>
+                <form>
+                  <div class="form-group">
+                    <label for="poll-title">Title:</label>
+                    <input type="text" class="form-control" id="poll-title" placeholder="Enter poll title">
+                  </div>
+                  <div class="form-group">
+                    <label for="poll-option1">Option 1:</label>
+                    <input type="text" class="form-control poll-option" id="poll-option1" placeholder="Enter option">
+                  </div>
+                  <div class="form-group">
+                    <label for="poll-option2">Option 2:</label>
+                    <input type="text" class="form-control poll-option" id="poll-option2" placeholder="Enter option">
+                  </div>
+                  <div class="form-group" id="poll-options">
+                    <!-- additional poll options will be added here dynamically -->
+                  </div>
+                  <button type="button" class="btn btn-primary" id="add-poll-option-btn">Add Option</button>
+                  <button type="submit" class="btn btn-success">Create Poll</button>
+                </form>
+              </div>
+            </div>
+          </div>
 
     </div>
 

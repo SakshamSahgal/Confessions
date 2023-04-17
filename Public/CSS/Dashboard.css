@@ -11,7 +11,7 @@
     border: 2px solid black;
 }
 
-#Post_Overlay,#themesOverlay,#moodOverlay/*CSS for load overlay div */
+#Post_Overlay,#themesOverlay,#moodOverlay,#PollOverlay/*CSS for load overlay div */
 {
     height: 100%;
     width: 100%;
@@ -80,4 +80,23 @@
 .highlight-on-hover:hover {
     background-color: rgb(94, 255, 0);
     opacity: 0.8;
+  }
+
+
+  /* poll */
+
+  #poll-options {
+    margin-top: 10px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  #add-poll-option-btn {
+    margin-top: 10px;
+  }
+  
+  .poll-option-delete-btn {
+    margin-top: 10px;
   }
