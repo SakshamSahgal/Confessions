@@ -9,6 +9,7 @@ let headerThemes = {
 }
 
 let previewPost = {
+    placeholderText : document.getElementById("postTextPreview").innerText,
     previewHeader : document.getElementById("previewPostCardHeader"),
     previewProfilePicture : document.getElementById("previewProfilePicture"),
     previewName : document.getElementById("previewName"),
@@ -24,6 +25,8 @@ let Moods = {
     moodTabContent : document.getElementById("moodTabContent"),
     moodBadgeHolderDiv : document.getElementById("moodBadgeHolderDiv")
 }
+
+
 
 function Logout()
 {
@@ -72,72 +75,73 @@ function Fetch_Dashboard() //function called at the page load [fetches dashboard
     }
 }
 
-// function Post_it()
-// {
-//     if(Cookies.get("Session_ID") == undefined)
-//         location.href = "./index.html";
-//     else
-//     {
-//         loadOverlay.hidden = false;
-
-//         let JSON_to_Send = {
-//             Visibility : document.getElementById("visibility_Select").value,
-//             Content : document.getElementById("Post_Content").value
-//         }
-
-//         axios.post('/Post_it_api', JSON_to_Send, {headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
-//             console.log(response.data);
-//             loadOverlay.hidden = true;
-//             alert(response.data.Description);
-//         })
-//     }
-// }
-
-
- //accessing postTextPreview 
- let postTextPreview = document.getElementById("postTextPreview");
-
- postTextPreview.addEventListener("focusin",()=>{
-    if(postTextPreview.textContent == "I am feeling happy today....")
+function Post_it()
+{
+    if(Cookies.get("Session_ID") == undefined)
+        location.href = "./index.html";
+    else
     {
-         postTextPreview.textContent = ""
-         if(postTextPreview.classList.contains("postTextPreviewPlaceHolder"))
-             postTextPreview.classList.remove("postTextPreviewPlaceHolder")
-         if(postTextPreview.classList.contains("postTextPreviewContent") == false)
-             postTextPreview.classList.add("postTextPreviewContent")
+        //loadOverlay.hidden = false;
+
+        let postJSON = {
+            visibility : document.getElementById("visibility_Select").value,
+            content : (document.getElementById("postTextPreview").innerText == previewPost.placeholderText) ? '' : (document.getElementById("postTextPreview").innerText),
+            moodBadge : (document.getElementById("moodBadgeHolderDiv").hidden) ? 'N/A' : document.getElementById("moodBadge").innerText,
+            headerThemeBackground : (document.getElementById("previewPostCardHeader").style.backgroundImage),
+            usernameFontColor : (document.getElementById("previewName").style.color),
+            emailFontColor : (document.getElementById("previewEmail").style.color)
+        }
+
+        console.log(postJSON)
+
+        // axios.post('/Post_it_api', JSON_to_Send, {headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+        //     console.log(response.data);
+        //     loadOverlay.hidden = true;
+        //     alert(response.data.Description);
+        // })
     }
-    else if(postTextPreview.textContent == "")
+}
+
+
+ previewPost.postTextPreview.addEventListener("focusin",()=>{
+    if(previewPost.postTextPreview.textContent == previewPost.placeholderText)
     {
-         postTextPreview.textContent = "I am feeling happy today...."
-         if(postTextPreview.classList.contains("postTextPreviewPlaceHolder") == false)
-             postTextPreview.classList.add("postTextPreviewPlaceHolder")
-         if(postTextPreview.classList.contains("postTextPreviewContent"))
-             postTextPreview.classList.remove("postTextPreviewContent")
+            previewPost.postTextPreview.textContent = ""
+         if(previewPost.postTextPreview.classList.contains("postTextPreviewPlaceHolder"))
+            previewPost.postTextPreview.classList.remove("postTextPreviewPlaceHolder")
+         if(previewPost.postTextPreview.classList.contains("postTextPreviewContent") == false)
+            previewPost.postTextPreview.classList.add("postTextPreviewContent")
+    }
+    else if(previewPost.postTextPreview.textContent == "")
+    {
+            previewPost.postTextPreview.textContent = previewPost.placeholderText
+         if(previewPost.postTextPreview.classList.contains("postTextPreviewPlaceHolder") == false)
+            previewPost.postTextPreview.classList.add("postTextPreviewPlaceHolder")
+         if(previewPost.postTextPreview.classList.contains("postTextPreviewContent"))
+            previewPost.postTextPreview.classList.remove("postTextPreviewContent")
     }
  })
 
- postTextPreview.addEventListener("focusout",()=>{
-    if(postTextPreview.textContent == "I am feeling happy today....")
+ previewPost.postTextPreview.addEventListener("focusout",()=>{
+    if(previewPost.postTextPreview.textContent == previewPost.placeholderText)
     {
-         if(!postTextPreview.classList.contains("postTextPreviewPlaceHolder"))
-             postTextPreview.classList.add("postTextPreviewPlaceHolder")
-         if(postTextPreview.classList.contains("postTextPreviewContent"))
-             postTextPreview.classList.remove("postTextPreviewContent")
+         if(!previewPost.postTextPreview.classList.contains("postTextPreviewPlaceHolder"))
+            previewPost.postTextPreview.classList.add("postTextPreviewPlaceHolder")
+         if(previewPost.postTextPreview.classList.contains("postTextPreviewContent"))
+            previewPost.postTextPreview.classList.remove("postTextPreviewContent")
     }
-    else if(postTextPreview.textContent == "")
+    else if(previewPost.postTextPreview.textContent == "")
     {
-         postTextPreview.textContent = "I am feeling happy today...."
-         if(!postTextPreview.classList.contains("postTextPreviewPlaceHolder"))
-             postTextPreview.classList.add("postTextPreviewPlaceHolder")
-         if(postTextPreview.classList.contains("postTextPreviewContent"))
-             postTextPreview.classList.remove("postTextPreviewContent")
+            previewPost.postTextPreview.textContent = previewPost.placeholderText
+         if(!previewPost.postTextPreview.classList.contains("postTextPreviewPlaceHolder"))
+            previewPost.postTextPreview.classList.add("postTextPreviewPlaceHolder")
+         if(previewPost.postTextPreview.classList.contains("postTextPreviewContent"))
+            previewPost.postTextPreview.classList.remove("postTextPreviewContent")
     }
  })
 
  postTextPreview.addEventListener("input",()=>{ //function called when user enters anything on the preview post
-    
-    console.log("called");
-    console.log(previewPost.postTextPreview.textContent.length)
+    // console.log(previewPost.postTextPreview.textContent.length)
     previewPost.charCount.innerText = previewPost.postTextPreview.textContent.length + "/" + 280;
  })
  
@@ -211,7 +215,7 @@ function Fetch_Dashboard() //function called at the page load [fetches dashboard
 function selectHeader(headerData) { 
     //selectedHeaderData = JSON.parse(headerData)
     console.log(headerData.path)
-    previewPost.previewHeader.style.backgroundImage = "url('" + headerData.path + "')";
+    previewPost.previewHeader.style.backgroundImage = `url(${headerData.path})`;
     previewPost.previewName.style.color = headerData.HeaderFontColor;
     previewPost.previewEmail.style.color = headerData.HeaderFontColor;
     headerThemes.themePallet.hidden = true;
@@ -303,8 +307,6 @@ function displayHeaders(headersJSON){
                                     </div>`;
 
             document.getElementById(ThemeName).innerHTML += thisHeaderStyle;
-
-
         })
       }
 
