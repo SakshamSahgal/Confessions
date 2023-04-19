@@ -33,10 +33,11 @@ let poll = {
 }
 
 let post = {
+    postProfilePicture : document.getElementById("postProfilePicture"),
     postText : document.getElementById("postText"),
     postName : document.getElementById("postName"),
     postEmail : document.getElementById("postEmail"),
-    postcharCount : document.getElementById("postcharCount")
+    postcharCount : document.getElementById("postcharCount"),
 }
 
 function Logout()
@@ -456,4 +457,15 @@ function fetchPost()
 
 fetchPost(); //function that fetches the content from the backend
 Fetch_Dashboard();
+
+//react 
+
+
+// When the user clicks a reaction button, handle the reaction
+function react(emoji) {
+    // Handle the reaction
+    alert(emoji)
+}
+
+
 

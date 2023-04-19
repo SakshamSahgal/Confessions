@@ -4,12 +4,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap CSS CDN -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     
-    <!-- Bootstrap JS -->
+    <!-- Bootstrap JS CDN-->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -18,8 +18,6 @@
     <link rel="stylesheet" href="CSS/Dashboard.css">
 </head>
 <body>
-    <!-- For Bootstrap import via CDN -->
-    
         
     <div id="links_holder">
         <a href="./users.html">Users</a>
@@ -31,18 +29,23 @@
         <img src="./GUI_Resources/loading.gif" id="loading_img">
     </div>
     
+    <!--  -->
     <div>
         <br>
         <div class="container mt-5" style="width: 55%">
             <div class="row">
                 <button class="btn btn-lg btn-primary" onclick="viewPallet('createPallet')"> Create </button> 
             </div>
-            <div class="row my-5">
+            <div class="row">
+                <br><br>
+            </div>
+            <div class="row">
                 <div class="col">
+                    <!-- Post -->
                     <div id="Post" class="d-flex justify-content-center align-items-center">
                             
-                        <!-- Post -->
-                        <div class="card" style="max-width: 80vw;min-width: 300px">
+                         <!-- Post card starts -->
+                        <div class="card" id="postCard" style="max-width: 80vw;min-width: 300px">
                             
                             <div class="card-header" id="previewPostCardHeader">
                                 <div class="d-flex align-items-center">
@@ -63,21 +66,32 @@
                             <div class="card-footer">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <button type="button" class="btn btn-primary me-3"><i class="bi bi-hand-thumbs-up"></i>Like</button>
-                                        <button type="button" class="btn btn-secondary"><i class="bi bi-chat"></i>Comment</button>
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary dropdown-toggle" type="button" id="reactionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-emoji-smile"></i>React</button>
+                                            <button type="button" class="btn btn-secondary"><i class="bi bi-chat"></i>Comment</button>
+                                            <div class="dropdown-menu" aria-labelledby="reactionDropdown">
+                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('🤬')"> 🤬 Angry </button></a>
+                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😢')"> 😢 Sad </button></a>
+                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😍')"> 😍 Love </button></a>
+                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😆')"> 😆 Laugh </button></a>
+                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('🤩')"> 🤩 Excited </button></a>
+                                            </div>
+                                        </div>
                                     </div>
                                     <small class="text-muted" id="postcharCount">&nbsp; 0/280</small>
                                 </div>
                             </div>
                         </div>
-                        <!-- postPreviewCard Ends -->
-                        
+                        <!-- Post Card Ends --> 
                     </div>
+
                 </div>
             </div>
         </div>
-  
     </div>
+
+
+   
       
     <div id="createPallet" hidden>
 
