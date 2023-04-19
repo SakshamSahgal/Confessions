@@ -16,14 +16,16 @@ let previewPost = {
     previewEmail : document.getElementById("previewEmail"),
     moodBadge : document.getElementById("moodBadge"),
     charCount : document.getElementById("charCount"),
-    postTextPreview : document.getElementById("postTextPreview")
+    postTextPreview : document.getElementById("postTextPreview"),
+    selectedHeaderBackground : ''
 }
 
 let Moods = {
     moodPallet : document.getElementById("moodOverlay"),
     moodTabList : document.getElementById("moodTabList"),
     moodTabContent : document.getElementById("moodTabContent"),
-    moodBadgeHolderDiv : document.getElementById("moodBadgeHolderDiv")
+    moodBadgeHolderDiv : document.getElementById("moodBadgeHolderDiv"),
+    moodBadge : document.getElementById("moodBadge")
 }
 
 //poll
@@ -87,32 +89,7 @@ function Fetch_Dashboard() //function called at the page load [fetches dashboard
     }
 }
 
-function Post_it()
-{
-    if(Cookies.get("Session_ID") == undefined)
-        location.href = "./index.html";
-    else
-    {
-        //loadOverlay.hidden = false;
 
-        let postJSON = {
-            visibility : document.getElementById("visibility_Select").value,
-            content : (document.getElementById("postTextPreview").innerText == previewPost.placeholderText) ? '' : (document.getElementById("postTextPreview").innerText),
-            moodBadge : (document.getElementById("moodBadgeHolderDiv").hidden) ? 'N/A' : document.getElementById("moodBadge").innerText,
-            headerThemeBackground : (document.getElementById("previewPostCardHeader").style.backgroundImage),
-            usernameFontColor : (document.getElementById("previewName").style.color),
-            emailFontColor : (document.getElementById("previewEmail").style.color)
-        }
-
-        console.log(postJSON)
-
-        // axios.post('/Post_it_api', JSON_to_Send, {headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
-        //     console.log(response.data);
-        //     loadOverlay.hidden = true;
-        //     alert(response.data.Description);
-        // })
-    }
-}
 
 
  previewPost.postTextPreview.addEventListener("focusin",()=>{
@@ -220,19 +197,123 @@ function Post_it()
     }
 }
 
+//Post ----------------------------------------------------------------------------------------------------------------------------------------
 
+function Post_it()
+{
+    if(Cookies.get("Session_ID") == undefined)
+        location.href = "./index.html";
+    else
+    {
+        //loadOverlay.hidden = false;
 
+        let postJSON = {
+            visibility : document.getElementById("visibility_Select").value,
+            content : (document.getElementById("postTextPreview").innerText == previewPost.placeholderText) ? '' : (document.getElementById("postTextPreview").innerText),
+            moodBadge : (Moods.moodBadgeHolderDiv.hidden == true) ? 'N/A' : Moods.moodBadge.innerText,
+            postHeader : {
+                headerThemeBackground : previewPost.selectedHeaderBackground,
+                usernameFontColor : (document.getElementById("previewName").style.color),
+                emailFontColor : (document.getElementById("previewEmail").style.color)
+            }
+        }
+
+        console.log(postJSON)
+
+        axios.post('/postIt', postJSON, {headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+            console.log(response.data);
+            loadOverlay.hidden = true;
+            //alert(response.data.Description);
+        })
+    }
+}
+
+function removeThemes() { //function called when someone presses remove header button
+    
+    previewPost.selectedHeaderBackground = ''  //assigning empty string
+    previewPost.previewEmail.style.color = ""; //setting back to default color
+    previewPost.previewName.style.color = ""; //setting back to default color
+
+    previewPost.previewHeader.style.backgroundImage = `url(${''})`; //removing background image from preview header
+    headerThemes.themePallet.hidden = true;
+}
 
 
 function selectHeader(headerData) { 
     //selectedHeaderData = JSON.parse(headerData)
     console.log(headerData.path)
+    previewPost.selectedHeaderBackground = (headerData.path.split('/').pop()).split('.')[0]  //assigning the name of the selected background [last element in the splited array of path] (after that removing the .jpg using split '.')
     previewPost.previewHeader.style.backgroundImage = `url(${headerData.path})`;
     previewPost.previewName.style.color = headerData.HeaderFontColor;
     previewPost.previewEmail.style.color = headerData.HeaderFontColor;
     headerThemes.themePallet.hidden = true;
  }
 
+
+function displayHeaders(headersJSON){
+
+    let active = false; ///used as a active flag
+    headerThemes.themeTabList.innerHTML = "" //clearing previously fetched data
+    headerThemes.themeTabContent.innerHTML = "" //clearing previously fetched data
+
+    for (let [ThemeName, themeBackgrounds] of Object.entries(headersJSON)) { //iterating over JSON keys and values
+
+        //console.log(ThemeName + ": ");
+        
+        let headerTabs;
+        let tabContentDiv;
+
+        if(active == false){
+
+            headerTabs = `<li class='nav-item'> 
+                            <a href='#${ThemeName}' class='nav-link active' data-bs-toggle='tab'> ${ThemeName}  </a> 
+                            </li>`
+            tabContentDiv = `<div class='tab-pane show active justify-content-center align-items-center' id='${ThemeName}'> 
+                            </div>`
+            
+            active = true
+        }
+        else
+        {
+            headerTabs = `<li class='nav-item'> 
+                            <a href='#${ThemeName}' class='nav-link' data-bs-toggle='tab'> ${ThemeName}  </a> 
+                            </li>`
+            tabContentDiv = `<div class='tab-pane show justify-content-center align-items-center' id='${ThemeName}'> 
+                            </div>`
+
+        }
+        
+        headerThemes.themeTabList.innerHTML += headerTabs
+        headerThemes.themeTabContent.innerHTML += tabContentDiv
+
+
+        themeBackgrounds.forEach( thisThemeBackground => { //iterating over backgrounds
+            
+            //console.log(thisThemeBackground)
+
+            let thisHeaderStyle = `<div class='row my-3'>
+                                        <div class='col' onclick='selectHeader(${JSON.stringify(thisThemeBackground)})' >
+                                            <div class='card highlight-on-hover'>
+                                                <div class='card-header' style=' background-size: cover; background-image: url(${thisThemeBackground.path});'>
+                                                    <div class='d-flex align-items-center'> 
+                                                        <img src="${dashboardFetchedData.Profile_Picture}" alt='Profile Picture' class='rounded-circle me-3 previewThemeProfilePicture' width='50'>
+                                                            <div>   
+                                                                <h5 class='m-0 headerText' style='color: ${thisThemeBackground.HeaderFontColor};'> ${dashboardFetchedData.Username} </h5>
+                                                                <small class='headerText' style=' color: ${thisThemeBackground.HeaderFontColor};'> ${dashboardFetchedData.Email} </small>
+                                                            </div> 
+                                                    </div> 
+                                                </div> 
+                                            </div> 
+                                        </div> 
+                                    </div>`;
+
+            document.getElementById(ThemeName).innerHTML += thisHeaderStyle;
+        })
+    }
+
+}
+
+ //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 function fetchMoods()
 {
@@ -253,75 +334,19 @@ function fetchMoods()
     }
 }
 
-function removeThemes() { //function called when someone presses remove header button
-    previewPost.previewHeader.style.backgroundImage = "none"; //removing background image from previewa header
-    previewPost.previewEmail.style.color = "Black"; //setting back to default color
-    previewPost.previewName.style.color = "Black"; //setting back to default color
-    headerThemes.themePallet.hidden = true;
+function removeMoodBadge() {
+    Moods.moodBadgeHolderDiv.hidden = true;
+    previewPost.moodBadge.title = 'N/A';
+    previewPost.moodBadge.innerHTML = "";
+    Moods.moodPallet.hidden = true;
 }
 
-
-function displayHeaders(headersJSON){
-
-    let active = false; ///used as a active flag
-    headerThemes.themeTabList.innerHTML = "" //clearing previously fetched data
-    headerThemes.themeTabContent.innerHTML = "" //clearing previously fetched data
-
-    for (let [ThemeName, themeBackgrounds] of Object.entries(headersJSON)) { //iterating over JSON keys and values
-
-        console.log(ThemeName + ": ");
-        
-        let headerTabs;
-        let tabContentDiv;
-
-        if(active == false){
-
-            headerTabs = `<li class='nav-item'> 
-                            <a href='#${ThemeName}' class='nav-link active' data-bs-toggle='tab'> ${ThemeName}  </a> 
-                          </li>`
-            tabContentDiv = `<div class='tab-pane show active justify-content-center align-items-center' id='${ThemeName}'> 
-                            </div>`
-            
-            active = true
-        }
-        else
-        {
-            headerTabs = `<li class='nav-item'> 
-                            <a href='#${ThemeName}' class='nav-link' data-bs-toggle='tab'> ${ThemeName}  </a> 
-                          </li>`
-            tabContentDiv = `<div class='tab-pane show justify-content-center align-items-center' id='${ThemeName}'> 
-                            </div>`
-
-        }
-       
-        headerThemes.themeTabList.innerHTML += headerTabs
-        headerThemes.themeTabContent.innerHTML += tabContentDiv
-
-
-        themeBackgrounds.forEach( thisThemeBackground => { //iterating over backgrounds
-            
-            console.log(thisThemeBackground)
-
-            let thisHeaderStyle = `<div class='row my-3'>
-                                        <div class='col' onclick='selectHeader(${JSON.stringify(thisThemeBackground)})' >
-                                            <div class='card highlight-on-hover'>
-                                                <div class='card-header' style=' background-size: cover; background-image: url(${thisThemeBackground.path});'>
-                                                    <div class='d-flex align-items-center'> 
-                                                        <img src="${dashboardFetchedData.Profile_Picture}" alt='Profile Picture' class='rounded-circle me-3 previewThemeProfilePicture' width='50'>
-                                                            <div>   
-                                                                <h5 class='m-0 headerText' style='color: "${thisThemeBackground.HeaderFontColor}";'> ${dashboardFetchedData.Username} </h5>
-                                                                <small class='headerText' style=' color: "${thisThemeBackground.HeaderFontColor}";'> ${dashboardFetchedData.Email} </small>
-                                                            </div> 
-                                                    </div> 
-                                                </div> 
-                                            </div> 
-                                        </div> 
-                                    </div>`;
-
-            document.getElementById(ThemeName).innerHTML += thisHeaderStyle;
-        })
-      }
-
+function selectMood(thisMoodJSON) { //function called when user selects a mood badge
+    console.log(thisMoodJSON);
+    Moods.moodBadgeHolderDiv.hidden = false;
+    previewPost.moodBadge.title = thisMoodJSON.name;
+    previewPost.moodBadge.innerHTML = thisMoodJSON.emoji;
+    Moods.moodPallet.hidden = true;
 }
 
 function displayMoodPallet(moods)
@@ -333,7 +358,7 @@ function displayMoodPallet(moods)
 
     for (let [moodName, entriesOfThatMood] of Object.entries(moods)) {
 
-        console.log(moodName + ": ");
+        //console.log(moodName + ": ");
         
         let MoodTabs;
         let tabContentDiv;
@@ -365,7 +390,7 @@ function displayMoodPallet(moods)
         
         entriesOfThatMood.forEach( thisMood => { //iterating over Entries in this mood
             
-            console.log(thisMood)
+            //console.log(thisMood)
             
             thisMoodBadge = `<div class= 'row my-3 bg-secondary d-flex justify-content-center align-items-center' >
                                 <div class='col highlight-on-hover d-flex justify-content-center align-items-center' onclick='selectMood(${JSON.stringify(thisMood)})'>
@@ -379,21 +404,7 @@ function displayMoodPallet(moods)
       }
 }
 
-function removeMoodBadge() {
-    
-    previewPost.moodBadge.title = "N/A";
-    previewPost.moodBadge.innerHTML = "";
-    Moods.moodBadgeHolderDiv.hidden = false;
-    Moods.moodPallet.hidden = true;
-}
 
-function selectMood(thisMoodJSON) { //function called when user selects a mood badge
-    console.log(thisMoodJSON);
-    Moods.moodBadgeHolderDiv.hidden = false;
-    previewPost.moodBadge.title = thisMoodJSON.name;
-    previewPost.moodBadge.innerHTML = thisMoodJSON.emoji;
-    Moods.moodPallet.hidden = true;
-}
 
 function closePallet(id) //function to close overlay pallets by id passed to it
 {

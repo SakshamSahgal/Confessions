@@ -183,3 +183,7 @@ app.get("/fetch_themes",(req,res) => {
 app.get("/fetchMoods",(req,res) => {
     FetchMoods(req,res);
 })
+
+app.post("/postIt",(req,res) => {
+    Post_it(req,res);
+})

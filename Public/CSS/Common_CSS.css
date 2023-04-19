@@ -19,5 +19,5 @@
 }
 
 body{
-    background-image: url(../GUI_Resources/Background.gif);
+    background-image: url('../GUI_Resources/Background.gif');
 }
