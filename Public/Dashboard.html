@@ -37,6 +37,44 @@
             <div class="row">
                 <button class="btn btn-lg btn-primary" onclick="viewPallet('createPallet')"> Create </button> 
             </div>
+            <div class="row my-5">
+                <div class="col">
+                    <div id="Post" class="d-flex justify-content-center align-items-center">
+                            
+                        <!-- Post -->
+                        <div class="card" style="max-width: 80vw;min-width: 300px">
+                            
+                            <div class="card-header" id="previewPostCardHeader">
+                                <div class="d-flex align-items-center">
+                                    <img id="postProfilePicture" src="./GUI_Resources/No_photo.gif" alt="Profile Picture" class="rounded-circle me-3" width="50">
+                                    <div>
+                                        <h5 class="m-0 headerText" id="postName">John Doe</h5>
+                                        <small class="headerText" id="postEmail">@johndoe</small>
+                                    </div>
+                                    <!-- Mood Badge -->
+                                    <div id="postMoodBadgeHolderDiv" hidden style="position: absolute;right: 8;"><span class="badge badge-secondary" style="font-size: 15px;"  id="postmoodBadge">  </span></div>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <p class="card-text postTextPreviewPlaceHolder" id="postText"></p>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <button type="button" class="btn btn-primary me-3"><i class="bi bi-hand-thumbs-up"></i>Like</button>
+                                        <button type="button" class="btn btn-secondary"><i class="bi bi-chat"></i>Comment</button>
+                                    </div>
+                                    <small class="text-muted" id="postcharCount">&nbsp; 0/280</small>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- postPreviewCard Ends -->
+                        
+                    </div>
+                </div>
+            </div>
         </div>
   
     </div>
@@ -134,7 +172,7 @@
                                 </div>
 
                                 <div class="card-body">
-                                    <p class="card-text postTextPreviewPlaceHolder" id="postTextPreview" contentEditable="true">I am feeling happy today....</p>
+                                    <p class="card-text postTextPreviewPlaceHolder" id="postTextPreview" contentEditable="true">Type Something Here...</p>
                                 </div>
 
                                 <div class="card-footer">
@@ -146,19 +184,21 @@
                                         <small class="text-muted" id="charCount">&nbsp; 0/280</small>
                                     </div>
                                 </div>
-
                             </div>
                             <!-- postPreviewCard Ends -->
-                            <button class="btn btn-primary" onclick="Post_it()">Post</button>
+                            
                         </div>
 
                     </div>
 
                 </div>
-
-              </div>
-              
-              
+                
+            </div>
+            <br><br>
+            <div class="row my-5">
+                <button class="btn btn-lg btn-primary" onclick="Post_it()">Post</button>
+            </div>            
+             
         </div>
     </div>
 

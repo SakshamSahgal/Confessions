@@ -26,7 +26,18 @@ let Moods = {
     moodBadgeHolderDiv : document.getElementById("moodBadgeHolderDiv")
 }
 
+//poll
 
+let poll = {
+    pollOptions : document.getElementById("pollOptions")
+}
+
+let post = {
+    postText : document.getElementById("postText"),
+    postName : document.getElementById("postName"),
+    postEmail : document.getElementById("postEmail"),
+    postcharCount : document.getElementById("postcharCount")
+}
 
 function Logout()
 {
@@ -140,7 +151,7 @@ function Post_it()
     }
  })
 
- postTextPreview.addEventListener("input",()=>{ //function called when user enters anything on the preview post
+ previewPost.postTextPreview.addEventListener("input",()=>{ //function called when user enters anything on the preview post
     // console.log(previewPost.postTextPreview.textContent.length)
     previewPost.charCount.innerText = previewPost.postTextPreview.textContent.length + "/" + 280;
  })
@@ -393,11 +404,7 @@ function viewPallet(id) //function that reveals the pallet by id passed to it
     document.getElementById(id).hidden = false;
 }
 
-//poll
 
-let poll = {
-    pollOptions : document.getElementById("pollOptions")
-}
 
 var pollOptionCount = 3;
 
@@ -429,4 +436,24 @@ function submitPoll()
     
 }
 
+
+function fetchPost()
+{
+    textgot = "asdasdsa asd asdasasdasdsa asd asdasasdasdsa asdsada "
+    post.postText.innerText = textgot
+    console.log(post.postText.textContent.length)
+
+    post.postcharCount.innerText =  (post.postText.textContent.length ) + "/280";
+
+    if (post.postText.textContent.length > 100) {
+        post.postText.style.fontSize = '18px';
+      } else if (post.postText.textContent.length > 50) {
+        post.postText.style.fontSize = '25px';
+      } else {
+        post.postText.style.fontSize = '30px';
+      }
+}
+
+fetchPost(); //function that fetches the content from the backend
 Fetch_Dashboard();
+
