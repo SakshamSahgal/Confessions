@@ -112,18 +112,32 @@ function displayPostsnPolls(posts)
         console.log(thisPost)
          if(thisPost.PostType == 'Post')
          {   
-            let thisPostHtml =  `<div class="row">
+            let thisPostHtml =  `
+                                <div class="row">
                                     <div class="col my-2">
-                                    
+
                                         <div class="card" style="max-width: 80vw;">
-                                        
+
+                                            <div class="card-header previewPostCardHeader">
+
+                                                <div class="d-flex align-items-center">
+                                                <span class="badge badge-secondary" style="font-size: 10px;">Visibility : ${thisPost.Visibility}</span><small style="font-size: 10px;position: absolute;right: 30;"> &nbsp;${Convert_Timestamp_To_Date(thisPost.Timestamp)}</small>
+                                                    <div class="dropdown" style="position: absolute;right: 8;">
+                                                        <button class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="#" onclick="deletePost('${thisPost._id}')"> Delete </a>
+                                                        </div>
+                                                    </div>
+                                                </div>   
+                                            </div>
+
                                             <div class="card-header previewPostCardHeader" style="background-image: url(${thisPost.PostHeader.HeaderThemeBackground})">
 
-                                                    <div class="d-flex align-items-center">
+                                                    <div>
                                                         <img src="${fetchedProfileData.Profile_Picture}" alt="Profile Picture" class="rounded-circle me-3" width="50">
                                                         <div>
-                                                            <h5 class="m-0 headerText" style="color: ${thisPost.PostHeader.UsernameFontColor};">${fetchedProfileData.Username}</h5>
-                                                            <small class="headerText" style="color: ${thisPost.PostHeader.EmailFontColor};">${thisPost.PostedBy}</small>
+                                                            <h5 class="m-0 headerText" style="font-size: 15px;color: ${thisPost.PostHeader.UsernameFontColor};">${(thisPost.Visibility == "Anonymous") ? "Anonymous" : fetchedProfileData.Username  }</h5>
+                                                            <small class="headerText" style="font-size: 10px;color: ${thisPost.PostHeader.EmailFontColor};">${thisPost.PostedBy}</small>
                                                         </div>
                                                         <!-- Mood Badge -->
                                                         <div style="position: absolute;right: 8;" ${returnMoodBadgeHidden(thisPost.Mood.MoodBadge)} ><span class="badge badge-secondary" style="font-size: 15px;" title='${thisPost.Mood.MoodTitle}'> ${thisPost.Mood.MoodBadge} </span></div>
@@ -137,28 +151,44 @@ function displayPostsnPolls(posts)
 
                                             <div class="card-footer">
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <div>
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-primary dropdown-toggle" type="button" id="previewreactionDropdown${idConter}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-emoji-smile"></i>React</button>
-                                                            <button type="button" class="btn btn-secondary"><i class="bi bi-chat"></i>Comment</button>
-                                                            <div class="dropdown-menu" aria-labelledby="previewreactionDropdown${idConter++}">
-                                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('🤬')"> 🤬 Angry </button></a>
-                                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😢')"> 😢 Sad </button></a>
-                                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😍')"> 😍 Love </button></a>
-                                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😆')"> 😆 Laugh </button></a>
-                                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('🤩')"> 🤩 Excited </button></a>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <button class="btn btn-sm btn-secondary" onclick=commentPost('${thisPost._id}')  ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} ><i class="bi bi-chat" style="font-size: 12px;">Comment</i></button>
+                                                        </div>
+                                                        <div class="col" >
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""}  ><i class="bi bi-emoji-smile" style="font-size: 12px;">React</i></button>
+                                                                <div class="dropdown-menu">
+                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('🤬')"> 🤬 Angry </button></a>
+                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('😢')"> 😢 Sad </button></a>
+                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('😍')"> 😍 Love </button></a>
+                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('😆')"> 😆 Laugh </button></a>
+                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('🤩')"> 🤩 Excited </button></a>
+                                                                </div>
                                                             </div>
                                                         </div>
+                                                    </div>
+                                                    <div>
                                                     </div>
                                                     <small class="text-muted">&nbsp; ${thisPost.Content.length}/280</small>
                                                 </div>
                                             </div>
-
+                                            <div class="card-footer">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="badge badge-dark"> 
+                                                        🤬 : ${thisPost.Reactions.Angry} 
+                                                        😢 : ${thisPost.Reactions.Sad} 
+                                                        😍 : ${thisPost.Reactions.Love} 
+                                                        😆 : ${thisPost.Reactions.Laugh} 
+                                                        🤩 : ${thisPost.Reactions.Excited}
+                                                        </span> 
+                                                </div>
+                                            </div>
 
                                         </div>
                                     </div>
 
-                            </div>` 
+                                </div>` 
                                 
                 document.getElementById("postsTabList").innerHTML += thisPostHtml;
          }
@@ -169,6 +199,26 @@ function displayPostsnPolls(posts)
     })
 }
 
+function deletePost(postId)
+{
+    alert(postId)
+    if(Cookies.get("Session_ID") == undefined)
+        location.href = "./index.html";
+    else
+    {
+        axios.delete('/deletePost/' + postId, {headers: {'Authorization': Cookies.get("Session_ID")}}).then(response => {
+            console.log(response.data);
+            if(response.data.Status  == "Fail" && response.data.Description == "Invalid Session") //tried to delete a post without a valid session
+                location.href = "./index.html";
+            else
+                location.reload();
+        })
+    }
+}
+
+function commentPost(postId){
+    alert(postId)
+}
 function Change_Profile_Picture() //function called when change profile picture is clicked [function displays the list of available profile pictures]
 {
    

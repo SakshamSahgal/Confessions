@@ -105,7 +105,7 @@ function Post_it(req,res) {
                         UsernameFontColor : req.body.postHeader.usernameFontColor,
                         EmailFontColor : req.body.postHeader.emailFontColor
                     },
-                    PostedBy : SessionResult[0].Email,
+                    PostedBy : (req.body.visibility == "Anonymous") ? "@anonymous" : SessionResult[0].Email,
                     Timestamp : Date.now(),
                     Reactions : {
                         'Angry' : 0,
@@ -166,4 +166,107 @@ function Post_it(req,res) {
 }
 
 
-module.exports = {Post_it};
+function deletePost(req,res)
+{
+
+    Validate_Session(req).then(SessionResult => {   
+        
+        if(SessionResult.length)
+        {
+            let userPostDB = new Datastore("./Media/" + SessionResult[0].Username + "/Posts.db");
+            userPostDB.loadDatabase();
+            
+            console.log(req.params.postId);
+            userPostDB.find({_id : req.params.postId}, (err,docs) => {
+                if(err)
+                {
+                    console.log(err);
+                    let verdict = {
+                        Status : "Fail",
+                        Description : err
+                    }
+                    res.json(verdict);
+                }
+                else
+                {
+                    if(docs.length) //that post is yours only
+                    {
+                        userPostDB.remove({_id : req.params.postId}, {}, (err, numRemoved) => {
+                            if(err)
+                            {
+                                console.log(err);
+                                let verdict = {
+                                    Status : "Fail",
+                                    Description : err
+                                }
+                                res.json(verdict);
+                            }
+                            else
+                            {
+                                console.log(numRemoved);
+                                let verdict = {
+                                    Status : "Pass",
+                                    Description :"Successfully Deleted Post"
+                                }
+                                res.json(verdict);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        let verdict = {
+                            Status : "Fail",
+                            Description : "Either You don't have access to delete this post or this post doesn't exist"
+                        }
+                        res.json(verdict);
+                    }
+                    
+                }
+            })
+        }
+        else
+        {
+            let verdict = {
+                Status : "Fail",
+                Description : "Invalid Session"
+            }
+            res.json(verdict);
+        }
+
+    
+    })
+}
+
+function reactPost(req,res)
+{
+    console.log(req.body)
+    Validate_Session(req).then(SessionResult => {
+        if(SessionResult.length)
+        {
+            let myPostsReacted = new Datastore("./Media/" + SessionResult[0].Username + "/MyPostsReacted.db");
+            myPostsReacted.loadDatabase();
+            myPostsReacted.find({PostId : req.body.postId}, (err,postMatchedArray) => {
+                
+                if(postMatchedArray.length) //already reacted to this post
+                {
+
+                }
+                else
+                {
+                    
+                }
+
+            })
+        }
+        else
+        {
+            let verdict = {
+                Status : "Fail",
+                Description : "Invalid Session"
+            }
+            res.json(verdict);
+        }
+    })
+}
+
+module.exports = {Post_it,deletePost,reactPost};

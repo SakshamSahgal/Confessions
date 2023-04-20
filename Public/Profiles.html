@@ -53,7 +53,7 @@
 
         <div class="tab-content">
 
-            <div class="tab-pane show active" id="My_Profile">
+          <div class="tab-pane show active" id="My_Profile">
                       <div class="container" align="center">
                           <div class="row">
                             <div class="col-12 border bg-light" style="--bs-bg-opacity: .6;">
@@ -85,46 +85,69 @@
                               </div>
                             </div>
                           </div>
-                            <div class="row">
-                              <div class="col-12 border bg-light">
-                                <div class="p-2" align="center">
-                                  <button class="btn btn-warning" data-bs-target="#Delete_Confirmation_Modal" data-bs-toggle="modal">   Delete My Account   </button> 
-                                </div>
-                              </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-12 border bg-light">
-
-                                <ul class="nav-tabs nav nav-justified bg-light">
-                                  <li class="nav-item">
-                                    <a href="#postsTab" class="nav-link active" data-bs-toggle="tab"> Posts  </a>
-                                  </li>
-                                  <li class="nav-item">
-                                    <a href="#PollsTab" class="nav-link" data-bs-toggle="tab"> Polls </a>
-                                  </li>
-                                </ul>
+                          <div class="row">
+                            <div class="col border bg-light">
                               
-                                <div class="tab-content">
-                                
-                                    <div class="tab-pane show active" id="postsTab">
+                              <ul class="nav-tabs nav nav-justified bg-light">
+                                <li class="nav-item">
+                                  <a href="#postsTab" class="nav-link active" data-bs-toggle="tab"> Posts  </a>
+                                </li>
+                                <li class="nav-item">
+                                  <a href="#PollsTab" class="nav-link" data-bs-toggle="tab"> Polls </a>
+                                </li>
+                              </ul>
+                            
+                              <div class="tab-content">
+                              
+                                  <div class="tab-pane show active" id="postsTab">
 
-                                      <div class="container" id="postsTabList">
-                                        
-                                      </div>
+                                    <div class="container" id="postsTabList">
                                       
-                                  </div>
+                                    </div>
+                                    
+                                </div>
 
-                                  <div class="tab-pane fade" id="PollsTab">
-                                      
-                                      
-                                      
-                                  </div>
+                                <div class="tab-pane fade" id="PollsTab">
+                                    
+                                    
+                                    
+                                </div>
 
                               </div>
                             </div>                    
-                      </div>
-            </div>
-        </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-12 border bg-light">
+                              <div class="p-2" align="center">
+                                <button class="btn btn-warning" data-bs-target="#Delete_Confirmation_Modal" data-bs-toggle="modal">   Delete My Account   </button> 
+                                   
+                                  <!-- Delete Confirmation Modal -->
+        
+                                    <div class="modal" id="Delete_Confirmation_Modal">
+                                      <div class="modal-dialog">
+                                        <div class="modal-content"> 
+                                    
+                                          <div class="modal-header" align="center">
+                                            <h3 class="text-center text-secondary"> This Action Can't Be Undone  </h3>
+                                            <button type="button" class="btn close" data-bs-dismiss="modal"> &times; </button>
+                                          </div>
+                                  
+                                          <div class="modal-body" align="center">
+                                            <p>Do you really want to delete your account ?</p>
+                                            <div>
+                                              <button class="btn btn-danger btn-sm" onclick="Delete_Account()">Yes</button>
+                                              <button class="close btn btn-primary btn-sm" data-bs-dismiss="modal"> No </button>
+                                            </div>
+                                            
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                              </div>
+                            </div>
+                          </div>
+                    </div>
+          </div>
           <div class="tab-pane fade" id="Edit_Profile">
                   <div class="p-2 bg-light" align="center">     
                     <br><br>
@@ -234,25 +257,7 @@
 
 
       
-      <!-- Delete Confirmation Modal -->
-    
-      <div class="modal" id="Delete_Confirmation_Modal">
-        <div class="modal-dialog">
-          <div class="modal-content"> 
-      
-            <div class="modal-header" align="center">
-              <h3 class="text-center text-secondary"> This Action Can't Be Undone  </h3>
-              <button type="button" class="btn close" data-bs-dismiss="modal"> &times; </button>
-            </div>
-    
-            <div class="modal-body" align="center">
-              <p>Do you really want to delete your account ?</p>
-              <button type="button" class="close btn btn-primary btn-sm" data-bs-dismiss="modal"> No </button>
-              <button class="btn btn-danger btn-sm" onclick="Delete_Account()">Yes</button>
-            </div>
-          </div>
-        </div>
-      </div>
+   
       
       <div id="profile_picture_pallet" hidden>
         <button type="button" class="btn-close btn-close-white" aria-label="Close" id="profile_pallet_close_btn" onclick="Close_Profile_Pallet()"></button>
