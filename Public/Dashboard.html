@@ -4,12 +4,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap CSS CDN -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     
-    <!-- Bootstrap JS -->
+    <!-- Bootstrap JS CDN-->
+
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -18,8 +19,6 @@
     <link rel="stylesheet" href="CSS/Dashboard.css">
 </head>
 <body>
-    <!-- For Bootstrap import via CDN -->
-    
         
     <div id="links_holder">
         <a href="./users.html">Users</a>
@@ -31,57 +30,314 @@
         <img src="./GUI_Resources/loading.gif" id="loading_img">
     </div>
     
+    <!--  -->
     <div>
         <br>
         <div class="container mt-5" style="width: 55%">
             <div class="row">
-                <button data-bs-target="#Write_a_post" data-bs-toggle="modal" class="btn btn-lg btn-primary"> Write a Post</button> 
+                <button class="btn btn-lg btn-primary" onclick="viewPallet('createPallet')"> Create </button> 
             </div>
-        </div>
-
-        <div class="modal" id="Write_a_post">
-            <div class="modal-dialog">
-                <div class="modal-content"> 
-
-                    <div class="modal-header">
-                    <!-- ADD ANYTHIING FOR HEADER HERE -->
-                    
-                        <div class="container">
-                            <div class="row align-items-center">
-                                <div class="col text-end">
-                                  <span style="font-size: 14px;">Visibility : </span>  
+            <div class="row">
+                <br><br>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <!-- Post -->
+                    <div id="Post" class="d-flex justify-content-center align-items-center">
+                            
+                         <!-- Post card starts -->
+                        <div class="card" id="postCard" style="max-width: 80vw;min-width: 300px">
+                            
+                            <div class="card-header" id="PostCardHeader">
+                                <div class="d-flex align-items-center">
+                                    <img id="postProfilePicture" src="./GUI_Resources/No_photo.gif" alt="Profile Picture" class="rounded-circle me-3" width="50">
+                                    <div>
+                                        <h5 class="m-0 headerText" id="postName">John Doe</h5>
+                                        <small class="headerText" id="postEmail">@johndoe</small>
+                                    </div>
+                                    <!-- Mood Badge -->
+                                    <div id="postMoodBadgeHolderDiv" hidden style="position: absolute;right: 8;"><span class="badge badge-secondary" style="font-size: 15px;"  id="postmoodBadge">  </span></div>
                                 </div>
-                                <div class="col">
-                                    <select id="visibility_Select" onchange="Update_Info_Details()" class="form-select" style="width:auto;" >
-                                        <option selected value="Anonymous"> Anonymous 👁️ </option>
-                                        <option value="Public"> Public 👀 </option>
-                                        <option value="Global"> Global 🌏 </option>
-                                    </select>
-                                </div>
-                                <div class="col text-end">
-                                    <button type="button" class="btn close" data-bs-dismiss="modal"> &times; </button>
+                            </div>
+
+                            <div class="card-body">
+                                <p class="card-text postTextPreviewPlaceHolder" id="postText"></p>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary dropdown-toggle" type="button" id="reactionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-emoji-smile"></i>React</button>
+                                            <button type="button" class="btn btn-secondary"><i class="bi bi-chat"></i>Comment</button>
+                                            <div class="dropdown-menu" aria-labelledby="reactionDropdown">
+                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('🤬')"> 🤬 Angry </button></a>
+                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😢')"> 😢 Sad </button></a>
+                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😍')"> 😍 Love </button></a>
+                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😆')"> 😆 Laugh </button></a>
+                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('🤩')"> 🤩 Excited </button></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted" id="postcharCount">&nbsp; 0/280</small>
                                 </div>
                             </div>
                         </div>
+                        <!-- Post Card Ends --> 
                     </div>
-                    
-                    <div class="modal-body" align="center">
-                        <form onsubmit="Post_it();return false">
-                            <p style="font-style: italic;opacity: 0.6;" id="visibility_info">[No one will know you posted this]</p>
-                            <textarea required name="" id="Post_Content" cols="35" rows="4"></textarea> <br> <br>
-                            <input type="submit" value="Post">
-                        </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+   
+      
+    <div id="createPallet" hidden>
+
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="postOverlayCloseBtn" onclick="closePallet('createPallet')"></button>
+        <br><br><br><br><br><br><br>
+        <div class="container">
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="col">
+                    <div class="container mt-5" style="width: 55%">
+                        <div class="row">
+                            <button class="btn btn-lg btn-primary" onclick="viewPallet('Post_Overlay')"> Write a Post ✏️ </button> 
+                        </div>
                     </div>
-                    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">Rules</a>
-                    <div class="collapse" id="collapseExample">
-                        <div class="card card-body">
-                            Allowed Characters : 5 to 280
+                </div>
+            </div>
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="col">
+                    <div class="container mt-5" style="width: 55%">
+                        <div class="row">
+                            <button class="btn btn-lg btn-primary" onclick="viewPallet('PollOverlay')"> Create a Poll 📊 </button> 
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-  
+
+    </div>
+
+    <div id="Post_Overlay" hidden>
+        
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="postOverlayCloseBtn" onclick="closePallet('Post_Overlay')"></button>
+
+        <div class="container mt-5">
+
+            <div class="row my-3" id="customizationPallet">
+                
+                <div class="col py-3 d-flex justify-content-center">
+                    <table>
+                        <tr>
+                            <td>
+                                <span style="font-size: 23px; color: aliceblue;">Visibility: &nbsp;</span>   
+                            </td>
+                            <td>
+                                <select id="visibility_Select" onchange="Update_Info_Details()" class="form-select" style="width:auto;" >
+                                    <option value="Anonymous"> Anonymous 👁️ </option>
+                                    <option value="Buddies-Only"> Buddies-Only 👀 </option>
+                                    <option selected value="Global"> Global 🌏 </option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table> 
+                </div>  
+                
+                <div class="col py-3 d-flex justify-content-center">
+                    <button class="btn btn-warning" onclick="FetchHeaders()">Choose Header Themes 👽 </button>
+                </div>
+                
+                <div class="col py-3 d-flex justify-content-center">
+                    <button class="btn btn-success" onclick="fetchMoods()">Choose Mood Badge 🤪 </button>
+                </div>
+
+            </div>
+
+            <div class="row my-5">
+                <div class="col d-flex justify-content-center">
+                    <p style="font-style: italic;opacity: 1; color: antiquewhite;" id="visibility_info">[Post is visible to everyone]</p>
+                </div>
+            </div>
+
+          
+            <div class="row">
+
+                <div class="col">
+
+                    <div class="container d-flex justify-content-center align-items-center">
+
+                        <div id="Post" class="d-flex justify-content-center align-items-center">
+                            
+                            <!-- postPreviewCard -->
+                            <div class="card" style="max-width: 80vw;min-width: 300px">
+                                
+                                <div class="card-header" id="previewPostCardHeader">
+                                    <div class="d-flex align-items-center">
+                                        <img id="previewProfilePicture" src="./GUI_Resources/No_photo.gif" alt="Profile Picture" class="rounded-circle me-3" width="50">
+                                        <div>
+                                            <h5 class="m-0 headerText" id="previewName">John Doe</h5>
+                                            <small class="headerText" id="previewEmail">@johndoe</small>
+                                        </div>
+                                        <!-- Mood Badge -->
+                                        <div id="moodBadgeHolderDiv" hidden style="position: absolute;right: 8;"><span class="badge badge-secondary" style="font-size: 15px;"  id="moodBadge">  </span></div>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <p class="card-text postTextPreviewPlaceHolder" id="postTextPreview" contentEditable="true">Type Something Here...</p>
+                                </div>
+
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <!-- <div class="dropdown">
+                                                <button class="btn btn-primary dropdown-toggle" type="button" id="previewreactionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-emoji-smile"></i>React</button>
+                                                <button type="button" class="btn btn-secondary"><i class="bi bi-chat"></i>Comment</button>
+                                                <div class="dropdown-menu" aria-labelledby="previewreactionDropdown">
+                                                    <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('🤬')"> 🤬 Angry </button></a>
+                                                    <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😢')"> 😢 Sad </button></a>
+                                                    <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😍')"> 😍 Love </button></a>
+                                                    <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😆')"> 😆 Laugh </button></a>
+                                                    <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('🤩')"> 🤩 Excited </button></a>
+                                                </div>
+                                            </div> -->
+                                        </div>
+                                        <small class="text-muted" id="charCount">&nbsp; 0/280</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- postPreviewCard Ends -->
+                            
+                        </div>
+
+                    </div>
+
+                </div>
+                
+            </div>
+            <br><br>
+            <div class="row my-5">
+                <button class="btn btn-lg btn-primary" onclick="Post_it()">Post</button>
+            </div>            
+             
+        </div>
+    </div>
+
+    <div id="themesOverlay" hidden>
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="themesOverlayCloseBtn" onclick="closePallet('themesOverlay')"></button>
+        <div class="container">
+            <div class="row">
+                <div class="col"><br></div>
+            </div>
+            <div class="row">
+                <div class="col d-flex justify-content-center">
+                    <button class="btn btn-danger" onclick="removeThemes()">Remove Theme</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="container my-3">
+                
+                        
+                        <ul class="nav-tabs nav nav-justified bg-light" id="themeTabList">
+
+                        </ul>
+                        
+                        
+                        <div class="tab-content" id="themeTabContent">
+                                    
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        
+    </div>
+
+    <div id="moodOverlay" hidden>
+
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="moodOverlayCloseBtn" onclick="closePallet('moodOverlay')"></button>
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col"><br></div>
+            </div>
+
+            <div class="row">
+                <div class="col d-flex justify-content-center">
+                    <button class="btn btn-danger" onclick="removeMoodBadge()">Remove Mood Badge</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="container my-3">
+                
+                        
+                         <ul class="nav-tabs nav nav-justified bg-light" id="moodTabList">
+
+                        </ul> 
+                                               
+                        <div class='tab-content' id='moodTabContent'>
+                                    
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="PollOverlay" hidden>
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="moodOverlayCloseBtn" onclick="closePallet('PollOverlay')"></button>
+        
+        <div class="container my-5">
+            <div class="row">
+              <div class="col-md-8 offset-md-2">
+                <br><br><br>
+                <div class="card">
+                  <div class="card-header">
+                    <h2>Create a Poll</h2>
+                  </div>
+                  <div class="card-body">
+                    <form onsubmit="submitPoll();return false">
+                      <div class="form-group">
+                        <label for="poll-title">Title:</label>
+                        <input type="text" class="form-control" id="poll-title" placeholder="Enter poll title">
+                      </div>
+                      <div class="form-group">
+                        <label for="poll-option1">Option 1:</label>
+                        <input type="text" class="form-control poll-option" id="poll-option1" placeholder="Enter option">
+                      </div>
+                      <div class="form-group">
+                        <label for="poll-option2">Option 2:</label>
+                        <input type="text" class="form-control poll-option" id="poll-option2" placeholder="Enter option">
+                      </div>
+                      <div class="form-group" id="pollOptions">
+                        <!-- additional poll options will be added here dynamically -->
+                      </div>
+
+                      <table>
+                        <tr>
+                            <td><button type="button" class="btn btn-primary" id="add-poll-option-btn" onclick="addPollOption()"> ➕ Increase Options</button></td>
+                            <td><button type="button" class="btn btn-primary" id="add-poll-option-btn" onclick="ReducePollOptions()"> ➖  Reduce Options</button></td>
+                            <td><button type="submit" class="btn btn-success" id="create-poll-option-btn">Create Poll</button></td>
+                        </tr>
+                      </table>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+
     </div>
 
 </body>

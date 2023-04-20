@@ -1,0 +1,95 @@
+{
+    "Happy": [
+      {
+        "emoji": "\ud83d\ude00",
+        "name": "Grinning Face"
+      },
+      {
+        "emoji": "\ud83d\ude01",
+        "name": "Beaming Face With Smiling Eyes"
+      },
+      {
+        "emoji": "\ud83d\ude03",
+        "name": "Grinning Face With Big Eyes"
+      },
+      {
+        "emoji": "\ud83d\ude04",
+        "name": "Grinning Face With Smiling Eyes"
+      },
+      {
+        "emoji": "\ud83d\ude06",
+        "name": "Grinning Squinting Face"
+      },
+      {
+        "emoji": "\ud83d\ude0a",
+        "name": "Smiling Face With Smiling Eyes"
+      },
+      {
+        "emoji": "\ud83d\ude0d",
+        "name": "Smiling Face With Heart-Eyes"
+      }
+    ],
+    "Sad": [
+      {
+        "emoji": "\ud83d\ude14",
+        "name": "Pensive Face"
+      },
+      {
+        "emoji": "\ud83d\ude22",
+        "name": "Crying Face"
+      },
+      {
+        "emoji": "\ud83d\ude2d",
+        "name": "Loudly Crying Face"
+      }
+    ],
+    "Angry": [
+      {
+        "emoji": "\ud83d\ude20",
+        "name": "Angry Face"
+      },
+      {
+        "emoji": "\ud83e\udd2c",
+        "name": "Face With Symbols On Mouth"
+      }
+    ],
+    "Excited": [
+      {
+        "emoji": "\ud83e\udd29",
+        "name": "Star-Struck"
+      },
+      {
+        "emoji": "\ud83d\ude32",
+        "name": "Astonished Face"
+      },
+      {
+        "emoji": "\ud83e\udd73",
+        "name": "Partying Face"
+      }
+    ],
+    "Confused": [
+      {
+        "emoji": "\ud83d\ude15",
+        "name": "Confused Face"
+      },
+      {
+        "emoji": "\ud83e\udd14",
+        "name": "Thinking Face"
+      }
+    ],
+    "Love": [
+      {
+        "emoji": "\u2764\ufe0f",
+        "name": "Red Heart"
+      },
+      {
+        "emoji": "\ud83d\udc95",
+        "name": "Two Hearts"
+      },
+      {
+        "emoji": "\ud83d\ude18",
+        "name": "Face Blowing a Kiss"
+      }
+    ]
+  }
+  

@@ -1,0 +1,39 @@
+{
+    "Dark" : {
+        "bulbAtNight" : {
+            "headerFontColor" : "white"
+        },
+        "cloudDust" : {
+           "headerFontColor" : "white"
+        },
+        "darkMan" : {
+            "headerFontColor" : "white"
+         },
+         "lightning" : {
+            "headerFontColor" : "white"
+         },
+         "Xface" : {
+            "headerFontColor" : "white"
+         }
+    },
+    "Light" : {
+        "clouds" : {
+            "headerFontColor" : "black"
+        },
+        "cloudsLighter" : {
+           "headerFontColor" : "black"
+        },
+        "Hope" : {
+            "headerFontColor" : "black"
+         },
+         "island" : {
+            "headerFontColor" : "black"
+         },
+         "lake" : {
+            "headerFontColor" : "black"
+         },
+         "Sand" : {
+            "headerFontColor" : "black"
+         }
+    }
+}

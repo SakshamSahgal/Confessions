@@ -42,14 +42,22 @@ function Profile_Page(req,res)
         
         if(session_match_array.length) //session Matched
         {
-            let verdict = {
-                Status : "Pass",
-                Profile_Picture : session_match_array[0].Profile_Picture,
-                Bio : (session_match_array[0].Bio == "") ? "N/A" : session_match_array[0].Bio,
-                Gender : (session_match_array[0].Gender == "") ? "Not Specified" : session_match_array[0].Gender,
-                Username : session_match_array[0].Username,
-            }
-            res.json(verdict);
+            let Posts = new Datastore("./Media/" + session_match_array[0].Username + "/Posts.db");
+            Posts.loadDatabase();
+            Posts.find({},(err,postsArray) => {
+                let verdict = {
+                    Status : "Pass",
+                    Profile_Picture : session_match_array[0].Profile_Picture,
+                    Bio : (session_match_array[0].Bio == "") ? "N/A" : session_match_array[0].Bio,
+                    Gender : (session_match_array[0].Gender == "") ? "Not Specified" : session_match_array[0].Gender,
+                    Username : session_match_array[0].Username,
+                    Posts : postsArray
+                }
+                res.json(verdict);
+            })
+
+
+           
         }
         else
         {
