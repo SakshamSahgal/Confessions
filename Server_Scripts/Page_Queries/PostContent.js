@@ -4,76 +4,6 @@ const fs = require("fs");
 //Dotenv
 require("dotenv").config();//reading the .env file
 
-// function Post_it(req,res)
-// {
-//     console.log(req.body)
-//     Validate_Session(req).then( (SessionResult) => {
-
-//         if(SessionResult.length)
-//         {
-//             if(req.body.Visibility == "Anonymous" || req.body.Visibility == "Public")
-//             {
-//                 if(req.body.Content.length >= 5 && req.body.Content.length <= 280)
-//                 {
-//                     let json_to_post = {
-//                         Timestamp : Date.now(),
-//                         Content : req.body.Content,
-//                         Visibility : req.body.Visibility
-//                     }
-
-//                     let posts_db_dir = "./Media/" + SessionResult[0].Username + "/Posts.db";
-//                     const posts_db = new Datastore(posts_db_dir);
-//                     posts_db.loadDatabase();
-//                     posts_db.insert(json_to_post);
-//                     let verdict = {
-//                         Status : "Pass",
-//                         Description : "Successfully Posted!"
-//                     }
-//                     res.json(verdict);
-//                 }
-//                 else
-//                 {
-//                     if(req.body.Content.length < 5)
-//                     {
-//                         let verdict = {
-//                             Status : "Fail",
-//                             Description : "Content Length < 5"
-//                         }
-//                         res.json(verdict);
-//                     }
-//                     else
-//                     {
-//                         let verdict = {
-//                             Status : "Fail",
-//                             Description : "Content Length > 280"
-//                         }
-//                         res.json(verdict);
-//                     }
-//                 }
-//             }
-//             else
-//             {
-//                 let verdict = {
-//                     Status : "Fail",
-//                     Description : "Visibility Undefined"
-//                 }
-//                 res.json(verdict);
-//             }    
-//         }
-//         else
-//         {
-//             let verdict = {
-//                 Status : "Fail",
-//                 Description : "Invalid Session"
-//             }
-//             res.json(verdict);
-//         }
-
-
-//     }) 
-//}
-
-
 function validateHeader(postHeader){ //function that checks if the header bg and the header font colors are actually valid is actually valid 
     
     if(postHeader.headerThemeBackground == '' && postHeader.usernameFontColor == '' && postHeader.emailFontColor == '') //no header selected
@@ -111,22 +41,82 @@ function validateMoodBadge(moodBadge){ //function that validates the mood badge 
     return false;
 }
 
+function validateVisibility(visibility){
+    return ( ["Anonymous","Buddies-Only","Global"].includes(visibility) ); //checking if the visibility is any one of the three
+}
 
 function Post_it(req,res) { 
+
     Validate_Session(req).then(SessionResult => {
 
         if(SessionResult.length)
         {
             console.log(req.body)
-            console.log(validateHeader(req.body.postHeader))
-            let verdict = {
-                check : {
-                    headerValid : validateHeader(req.body.postHeader),
-                    ContentValid : validateContent(req.body.content) ,
-                    moodValid : validateMoodBadge(req.body.moodBadge),
-                }
+
+            let check = {
+                headerValid : validateHeader(req.body.postHeader),
+                ContentValid : validateContent(req.body.content) ,
+                moodValid : validateMoodBadge(req.body.moodBadge),
+                visibilityValid : validateVisibility(req.body.visibility)
             }
-            res.json(verdict)
+
+            if(check.headerValid && check.ContentValid && check.moodValid && check.visibilityValid) //Everything is valid
+            {
+
+                let userPostDB = new Datastore("./Media/" + SessionResult[0].Username + "/Posts.db");
+                userPostDB.loadDatabase();
+                let postJSON = req.body;
+
+                postJSON = {
+                    PostType : "Post",
+                    Visibility : req.body.visibility,
+                    Content : req.body.content,
+                    MoodBadge : req.body.moodBadge,
+                    PostHeader : {
+                        HeaderThemeBackground : req.body.postHeader.headerThemeBackground,
+                        UsernameFontColor : req.body.postHeader.usernameFontColor,
+                        EmailFontColor : req.body.postHeader.emailFontColor
+                    },
+                    PostedBy : SessionResult[0].Email,
+                    Timestamp : Date.now()
+                }
+                
+                console.log(postJSON)
+
+                userPostDB.insert(postJSON,(err,newDoc) => {
+
+                    if(err)
+                    {
+                        console.log(err);
+
+                        let verdict = {
+                            Status : "fail",
+                            Description : err
+                        }
+                        res.json(verdict)
+                    }
+                    else
+                    {
+                        let verdict = {
+                            Status : "Pass",
+                            Description : "Successfully Posted",
+                            Check : check
+                        }
+                        res.json(verdict)
+                    }
+                })
+
+            }
+            else
+            {
+                let verdict = {
+                    status : "Fail",
+                    Description : "One or more post format is wrong",
+                    check : check
+                }
+                res.json(verdict)
+            }
+            
         }
         else
         {
@@ -138,7 +128,7 @@ function Post_it(req,res) {
         }
 
     })
- }
+}
 
 
 module.exports = {Post_it};

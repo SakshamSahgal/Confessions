@@ -3,7 +3,7 @@
 {
     height: 100%;
     width: 100%;
-    z-index: 3;
+    z-index: 5;
     position: fixed; /* Stay in place */
     left: 0;
     top: 0;

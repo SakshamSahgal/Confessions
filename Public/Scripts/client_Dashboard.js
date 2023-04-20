@@ -147,7 +147,7 @@ function Fetch_Dashboard() //function called at the page load [fetches dashboard
     image.src = 'new-image.jpg';
     });
 
-     if(document.getElementById("visibility_Select").value == "Public")
+     if(document.getElementById("visibility_Select").value == "Buddies-Only")
      {
         previewName.textContent = dashboardFetchedData.Username;
         previewEmail.textContent = dashboardFetchedData.Email;
@@ -161,7 +161,7 @@ function Fetch_Dashboard() //function called at the page load [fetches dashboard
         previewEmail.textContent = dashboardFetchedData.Email;
         previewProfilePicture.src = dashboardFetchedData.Profile_Picture;
         previewThemeProfilePicture.src = dashboardFetchedData.Profile_Picture;
-        visibilityInfo.innerHTML = "[Post is visible to everyone]"
+        visibilityInfo.innerHTML = "[Post is visible to anyone who visits your profile]"
      }
      else
      {
@@ -219,7 +219,7 @@ function Post_it()
         }
 
         console.log(postJSON)
-
+        loadOverlay.hidden = false;
         axios.post('/postIt', postJSON, {headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
             console.log(response.data);
             loadOverlay.hidden = true;
