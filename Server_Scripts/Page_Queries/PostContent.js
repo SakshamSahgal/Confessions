@@ -18,6 +18,19 @@ function validateHeader(postHeader){ //function that checks if the header bg and
     return false;
 }
 
+function getHeaderBackgroundPath(postHeader)
+{
+    if(postHeader.headerThemeBackground == '' && postHeader.usernameFontColor == '' && postHeader.emailFontColor == '') //no header selected
+        return '';
+
+    let bgJSON = JSON.parse(fs.readFileSync("./Customization_Datasets/Backgrounds.json","ascii"));
+    //console.log(bgJSON)
+    for (let [ThemeName, themeBackgrounds] of Object.entries(bgJSON)) { //iterating over the themes
+        if(  themeBackgrounds[postHeader.headerThemeBackground] != undefined && themeBackgrounds[postHeader.headerThemeBackground].headerFontColor == postHeader.emailFontColor &&  themeBackgrounds[postHeader.headerThemeBackground].headerFontColor == postHeader.usernameFontColor)
+            return `./GUI_Resources/Backgrounds/${ThemeName}/${postHeader.headerThemeBackground}.jpg`
+    }
+}
+
 function validateContent(content){ //function that validates the content inputed
 
     if(content.length >= process.env.Min_Content_Length && content.length <= process.env.Max_Content_Length)
@@ -28,7 +41,7 @@ function validateContent(content){ //function that validates the content inputed
 
 function validateMoodBadge(moodBadge){ //function that validates the mood badge for any hazards
 
-    if(moodBadge == 'N/A')
+    if(moodBadge == '') //no mood badge selected
         return true;
 
     let moods = JSON.parse(fs.readFileSync("./Customization_Datasets/Moods.json","ascii"))
@@ -39,6 +52,18 @@ function validateMoodBadge(moodBadge){ //function that validates the mood badge 
             return true;
     }
     return false;
+}
+
+function getMoodTitle(moodBadge)
+{
+    if(moodBadge == '') //no mood badge selected
+        return "";
+
+    let moods = JSON.parse(fs.readFileSync("./Customization_Datasets/Moods.json","ascii"))
+
+    for(let [moodTheme , thisThemeArray] of Object.entries(moods)) //iterating over emoji database
+        return (thisThemeArray.find(obj => obj.emoji == moodBadge)).name //finding this emoji name in DB
+
 }
 
 function validateVisibility(visibility){
@@ -54,7 +79,7 @@ function Post_it(req,res) {
             console.log(req.body)
 
             let check = {
-                headerValid : validateHeader(req.body.postHeader),
+                headerValid : (validateHeader(req.body.postHeader)) ,
                 ContentValid : validateContent(req.body.content) ,
                 moodValid : validateMoodBadge(req.body.moodBadge),
                 visibilityValid : validateVisibility(req.body.visibility)
@@ -71,14 +96,24 @@ function Post_it(req,res) {
                     PostType : "Post",
                     Visibility : req.body.visibility,
                     Content : req.body.content,
-                    MoodBadge : req.body.moodBadge,
+                    Mood : {
+                        MoodBadge : req.body.moodBadge,
+                        MoodTitle : getMoodTitle(req.body.moodBadge)  
+                    },
                     PostHeader : {
-                        HeaderThemeBackground : req.body.postHeader.headerThemeBackground,
+                        HeaderThemeBackground : getHeaderBackgroundPath(req.body.postHeader),
                         UsernameFontColor : req.body.postHeader.usernameFontColor,
                         EmailFontColor : req.body.postHeader.emailFontColor
                     },
                     PostedBy : SessionResult[0].Email,
-                    Timestamp : Date.now()
+                    Timestamp : Date.now(),
+                    Reactions : {
+                        'Angry' : 0,
+                        'Sad' : 0,
+                        'Love' : 0,
+                        'Laugh' : 0,
+                        'Excited' : 0
+                    }
                 }
                 
                 console.log(postJSON)

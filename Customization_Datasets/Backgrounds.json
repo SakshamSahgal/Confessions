@@ -2,7 +2,7 @@
     "Dark" : {
         "bulbAtNight" : {
             "headerFontColor" : "white"
-        },
+          },
         "cloudDust" : {
            "headerFontColor" : "white"
         },

@@ -1,7 +1,7 @@
 let loadOverlay = document.getElementById("Load_overlay");
 let Profile_Picture_Pallet =  document.getElementById("profile_picture_pallet");
 let Buddy_Requests_Pallet = document.getElementById("Buddy_Requests_Pallet");
-
+let fetchedProfileData; //data fetched stored globally
 
 function Logout()
 {
@@ -74,7 +74,10 @@ function Get_Profile_Data() //function called at the loading of page [fetches th
         loadOverlay.hidden = false;
 
         axios.get('/Profile_Page_api', {headers: {'Authorization': Cookies.get("Session_ID")}}).then(response => {
-            console.log(response.data);
+            
+            console.log(response.data); 
+            fetchedProfileData = response.data;
+            
             loadOverlay.hidden = true;
 
             if(response.data.Status != "Pass")
@@ -87,11 +90,84 @@ function Get_Profile_Data() //function called at the loading of page [fetches th
                 document.getElementById("Username").textContent = response.data.Username;
                 document.getElementById("profile_picture").src = response.data.Profile_Picture; //top right photo
                 initialize_edit_data(response.data.Username,response.data.Bio,response.data.Gender);
+                displayPostsnPolls(response.data.Posts)
             }
         })
     }
 }
 
+function returnMoodBadgeHidden(moodBadge)
+{
+    if(moodBadge == '')
+        return "hidden"
+    else
+        return ""
+}
+
+function displayPostsnPolls(posts)
+{
+    var idConter=0;
+    posts.forEach( thisPost => {
+        
+        console.log(thisPost)
+         if(thisPost.PostType == 'Post')
+         {   
+            let thisPostHtml =  `<div class="row">
+                                    <div class="col my-2">
+                                    
+                                        <div class="card" style="max-width: 80vw;">
+                                        
+                                            <div class="card-header previewPostCardHeader" style="background-image: url(${thisPost.PostHeader.HeaderThemeBackground})">
+
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="${fetchedProfileData.Profile_Picture}" alt="Profile Picture" class="rounded-circle me-3" width="50">
+                                                        <div>
+                                                            <h5 class="m-0 headerText" style="color: ${thisPost.PostHeader.UsernameFontColor};">${fetchedProfileData.Username}</h5>
+                                                            <small class="headerText" style="color: ${thisPost.PostHeader.EmailFontColor};">${thisPost.PostedBy}</small>
+                                                        </div>
+                                                        <!-- Mood Badge -->
+                                                        <div style="position: absolute;right: 8;" ${returnMoodBadgeHidden(thisPost.Mood.MoodBadge)} ><span class="badge badge-secondary" style="font-size: 15px;" title='${thisPost.Mood.MoodTitle}'> ${thisPost.Mood.MoodBadge} </span></div>
+                                                    </div>   
+                                                    
+                                            </div>
+
+                                            <div class="card-body">
+                                                <p class="card-text postTextPreviewPlaceHolder">${thisPost.Content}</p>
+                                            </div>
+
+                                            <div class="card-footer">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-primary dropdown-toggle" type="button" id="previewreactionDropdown${idConter}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-emoji-smile"></i>React</button>
+                                                            <button type="button" class="btn btn-secondary"><i class="bi bi-chat"></i>Comment</button>
+                                                            <div class="dropdown-menu" aria-labelledby="previewreactionDropdown${idConter++}">
+                                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('🤬')"> 🤬 Angry </button></a>
+                                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😢')"> 😢 Sad </button></a>
+                                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😍')"> 😍 Love </button></a>
+                                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😆')"> 😆 Laugh </button></a>
+                                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('🤩')"> 🤩 Excited </button></a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <small class="text-muted">&nbsp; ${thisPost.Content.length}/280</small>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+
+                            </div>` 
+                                
+                document.getElementById("postsTabList").innerHTML += thisPostHtml;
+         }
+         else
+         {
+
+         }
+    })
+}
 
 function Change_Profile_Picture() //function called when change profile picture is clicked [function displays the list of available profile pictures]
 {

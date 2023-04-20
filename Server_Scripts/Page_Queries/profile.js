@@ -54,10 +54,7 @@ function Profile_Page(req,res)
                     Posts : postsArray
                 }
                 res.json(verdict);
-            })
-
-
-           
+            })           
         }
         else
         {

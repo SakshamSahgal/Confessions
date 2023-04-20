@@ -210,7 +210,7 @@ function Post_it()
         let postJSON = {
             visibility : document.getElementById("visibility_Select").value,
             content : (document.getElementById("postTextPreview").innerText == previewPost.placeholderText) ? '' : (document.getElementById("postTextPreview").innerText),
-            moodBadge : (Moods.moodBadgeHolderDiv.hidden == true) ? 'N/A' : Moods.moodBadge.innerText,
+            moodBadge : (Moods.moodBadgeHolderDiv.hidden == true) ? '' : Moods.moodBadge.innerText,
             postHeader : {
                 headerThemeBackground : previewPost.selectedHeaderBackground,
                 usernameFontColor : (document.getElementById("previewName").style.color),
