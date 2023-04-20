@@ -96,13 +96,7 @@ function Get_Profile_Data() //function called at the loading of page [fetches th
     }
 }
 
-function returnMoodBadgeHidden(moodBadge)
-{
-    if(moodBadge == '')
-        return "hidden"
-    else
-        return ""
-}
+
 
 function displayPostsnPolls(posts)
 {
@@ -140,7 +134,7 @@ function displayPostsnPolls(posts)
                                                             <small class="headerText" style="font-size: 10px;color: ${thisPost.PostHeader.EmailFontColor};">${thisPost.PostedBy}</small>
                                                         </div>
                                                         <!-- Mood Badge -->
-                                                        <div style="position: absolute;right: 8;" ${returnMoodBadgeHidden(thisPost.Mood.MoodBadge)} ><span class="badge badge-secondary" style="font-size: 15px;" title='${thisPost.Mood.MoodTitle}'> ${thisPost.Mood.MoodBadge} </span></div>
+                                                        <div style="position: absolute;right: 8;" ${(thisPost.Mood.MoodBadge == "") ? "hidden" : ""} ><span class="badge badge-secondary" style="font-size: 15px;" title='${thisPost.Mood.MoodTitle}'> ${thisPost.Mood.MoodBadge} </span></div>
                                                     </div>   
                                                     
                                             </div>

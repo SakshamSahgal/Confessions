@@ -1,7 +1,7 @@
 let loadOverlay = document.getElementById("Load_overlay");
 let Confessions_Pallet =  document.getElementById("Confessions_Pallet");
 
-
+let fetchedProfileData; //variable to store the fetched profile data
 
 function Logout()
 {
@@ -22,6 +22,19 @@ function Logout()
     }
 }
 
+function Convert_Timestamp_To_Date(Timestamp) //function that converts timestamp to date
+{
+    let date = new Date(Timestamp);
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+    let hour = date.getHours();
+    let minute = date.getMinutes();
+    let second = date.getSeconds();
+    return `${day}/${month}/${year} ${hour}:${minute}:${second}`;
+}
+
+
 function Fetch_Profile_Page() //funtion fetches the static profile data and displays it on the UI
 {   
     if(Cookies.get("Session_ID") == undefined)
@@ -34,8 +47,9 @@ function Fetch_Profile_Page() //funtion fetches the static profile data and disp
 
         axios.get('/Profiles/' + Username, {headers: {'Authorization': Cookies.get("Session_ID") }}).then(response => {
             console.log(response.data);
-
+            fetchedProfileData = response.data; //storing the fetched profile data
             loadOverlay.hidden = true; //hiding the load overlay
+            displayPostsnPolls(response.data.Posts);
             if(response.data.Status == "Pass")
             {
                 document.getElementById("Profile_Photo").src = "../" + (response.data.His_Profile_Picture);
@@ -91,6 +105,96 @@ function Fetch_Profile_Page() //funtion fetches the static profile data and disp
         })
     }
 }
+
+function displayPostsnPolls(posts)
+{
+    var idConter=0;
+    posts.forEach( thisPost => {
+        
+        console.log(thisPost)
+         if(thisPost.PostType == 'Post')
+         {   
+            let thisPostHtml =  `
+                                <div class="row">
+                                    <div class="col my-2">
+
+                                        <div class="card" style="max-width: 80vw;">
+
+                                            <div class="card-header previewPostCardHeader">
+
+                                                <div class="d-flex align-items-center">
+                                                    <span class="badge badge-secondary" style="font-size: 10px;">Visibility : ${thisPost.Visibility}</span><small style="font-size: 10px;position: absolute;right: 30;"> &nbsp;${Convert_Timestamp_To_Date(thisPost.Timestamp)}</small>
+                                                </div>   
+                                            </div>
+
+                                            <div class="card-header previewPostCardHeader" style="background-image: url(../${thisPost.PostHeader.HeaderThemeBackground})">
+
+                                                    <div>
+                                                        <img src="../${fetchedProfileData.His_Profile_Picture}" alt="Profile Picture" class="rounded-circle me-3" width="50">
+                                                        <div>
+                                                            <h5 class="m-0 headerText" style="font-size: 15px;color: ${thisPost.PostHeader.UsernameFontColor};">${(thisPost.Visibility == "Anonymous") ? "Anonymous" : fetchedProfileData.Username  }</h5>
+                                                            <small class="headerText" style="font-size: 10px;color: ${thisPost.PostHeader.EmailFontColor};">${thisPost.PostedBy}</small>
+                                                        </div>
+                                                        <!-- Mood Badge -->
+                                                        <div style="position: absolute;right: 8;" ${(thisPost.Mood.MoodBadge == "") ? "hidden" : ""} ><span class="badge badge-secondary" style="font-size: 15px;" title='${thisPost.Mood.MoodTitle}'> ${thisPost.Mood.MoodBadge} </span></div>
+                                                    </div>   
+                                                    
+                                            </div>
+
+                                            <div class="card-body">
+                                                <p class="card-text postTextPreviewPlaceHolder">${thisPost.Content}</p>
+                                            </div>
+
+                                            <div class="card-footer">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <button class="btn btn-sm btn-secondary" onclick=commentPost('${thisPost._id}')  ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} ><i class="bi bi-chat" style="font-size: 12px;">Comment</i></button>
+                                                        </div>
+                                                        <div class="col" >
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""}  ><i class="bi bi-emoji-smile" style="font-size: 12px;">React</i></button>
+                                                                <div class="dropdown-menu">
+                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('🤬')"> 🤬 Angry </button></a>
+                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('😢')"> 😢 Sad </button></a>
+                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('😍')"> 😍 Love </button></a>
+                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('😆')"> 😆 Laugh </button></a>
+                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('🤩')"> 🤩 Excited </button></a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                    </div>
+                                                    <small class="text-muted">&nbsp; ${thisPost.Content.length}/280</small>
+                                                </div>
+                                            </div>
+                                            <div class="card-footer">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="badge badge-dark"> 
+                                                        🤬 : ${thisPost.Reactions.Angry} 
+                                                        😢 : ${thisPost.Reactions.Sad} 
+                                                        😍 : ${thisPost.Reactions.Love} 
+                                                        😆 : ${thisPost.Reactions.Laugh} 
+                                                        🤩 : ${thisPost.Reactions.Excited}
+                                                        </span> 
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>` 
+                                
+                document.getElementById("postsTabList").innerHTML += thisPostHtml;
+         }
+         else
+         {
+
+         }
+    })
+}
+
 
 function Submit_Confession() //function called when user submits an anonymous confession form
 {

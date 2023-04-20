@@ -439,7 +439,16 @@ function Fetch_Static_Profile(req,res,username)
 
                             Get_Buddy_Btn_Status(Session_Result[0],username_match_array[0].Email).then(btn_status => {
                                 verdict.Buddy_Btn_Status = btn_status;
-                                res.json(verdict);
+                                getPosts(username,Session_Result).then(postsVerdict => {
+                                    
+                                    if(postsVerdict.Status == "Pass")
+                                        verdict.Posts = postsVerdict.Posts;
+                                    else
+                                        verdict.Posts = [];
+                                    
+                                    res.json(verdict);
+                                });
+                                
                             })
                     }
                     else
@@ -465,6 +474,65 @@ function Fetch_Static_Profile(req,res,username)
     })
         
 }
+
+async function getPosts(hisUsername,MySession)
+{
+    let ans = await new Promise((resolve, reject) => {
+        
+        let users = new Datastore("./Database/users.db");
+        users.loadDatabase();
+        users.find({Username : hisUsername},(err,username_match_array) => { //find his email through his username
+            
+            if(username_match_array.length) //this is a valid username
+            {
+                let hisEmail = username_match_array[0].Email;
+    
+                if(MySession[0].Buddies.includes(hisEmail)) //he is my My Bubby
+                {
+                    let posts = new Datastore("./Media/" + hisUsername + "/posts.db");
+                    posts.loadDatabase();
+                    posts.find({Visibility : "Global" },(err,postsArrayGlobal) => {
+                        
+                        posts.find({Visibility : "Buddies-Only" },(err,postsArrayBuddies) => {
+                                
+                                let verdict = {
+                                    Status : "Pass",
+                                    Posts : postsArrayGlobal.concat(postsArrayBuddies)
+                                }
+                                resolve(verdict);
+                        })
+                        
+                    })
+                }
+                else //we are not buddies
+                {
+                    let posts = new Datastore("./Media/" + hisUsername + "/posts.db");
+                    posts.loadDatabase();
+                    posts.find({Visibility : "Global" },(err,posts_array) => {
+                        
+                        let verdict = {
+                            Status : "Pass",
+                            Posts : posts_array
+                        }
+                        resolve(verdict);
+                    })
+                }
+            }
+            else
+            {
+                let verdict={
+                    Status : "Fail",
+                    Description : "Invalid Username"
+                }
+                resolve(verdict);
+            }
+        })    
+
+    });
+    return ans;
+
+}
+
 
 function Update_Password(req,res)
 {
@@ -531,5 +599,6 @@ function Update_Password(req,res)
         }
     })
 }
+
 
 module.exports = {Return_Static_Profile_Page,Fetch_Static_Profile,Update_Gender,Update_Username,Update_Bio,Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo,Update_Password};

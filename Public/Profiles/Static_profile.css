@@ -48,3 +48,26 @@ body{
     background-image: url(../GUI_Resources/Background.gif);
 }
 
+
+
+.previewPostCardHeader{
+    /* background-image: url("Backgrounds/Dark/bulbAtNight.jpg"); */
+    background-size: cover;
+}
+/* reaction btns */
+.reaction-btn {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    margin: 10px;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.reaction-btn:hover {
+    transform: scale(1.1);
+}
+
+
