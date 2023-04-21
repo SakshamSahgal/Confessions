@@ -113,70 +113,79 @@ function displayPostsnPolls(posts)
         
         console.log(thisPost)
          if(thisPost.PostType == 'Post')
-         {   
+         {
             let thisPostHtml =  `
                                 <div class="row">
-                                    <div class="col my-5">
-                                        <div class="card" style="max-width: 80vw; border:5px solid black">
-                                            <div class="card-header previewPostCardHeader">
-                                                <div class="d-flex align-items-center">
-                                                    <span class="badge badge-secondary" style="font-size: 10px;">Visibility : ${thisPost.Visibility}</span><small style="font-size: 10px;position: absolute;right: 30;"> &nbsp;${Convert_Timestamp_To_Date(thisPost.Timestamp)}</small>
-                                                </div>   
-                                            </div>
-                                            <div class="card-header previewPostCardHeader" style="background-image: url(../${thisPost.PostHeader.HeaderThemeBackground})">
+                                <div class="col my-5">
+
+                                    <div class="card" style="max-width: 80vw; border:5px solid black">
+
+                                        <div class="card-header previewPostCardHeader">
+
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge badge-secondary" style="font-size: 10px;">Visibility : ${thisPost.Visibility}</span><small style="font-size: 10px;position: absolute;right: 30;"> &nbsp;${Convert_Timestamp_To_Date(thisPost.Timestamp)}</small>
+                                            </div>   
+                                        </div>
+
+                                        <div class="card-header previewPostCardHeader" style="background-image: url(../${thisPost.PostHeader.HeaderThemeBackground})">
+
+                                                <div>
+                                                    <img src="../${thisPost.Profile_Picture}" alt="Profile Picture" class="rounded-circle me-3" width="50">
                                                     <div>
-                                                        <img src="../${thisPost.Profile_Picture}" alt="Profile Picture" class="rounded-circle me-3" width="50">
-                                                        <div>
-                                                            <a ${ (thisPost.Username == "Anonymous") ? "" : ("href='/Profiles/" + thisPost.Username + "'")  } class="m-0 headerText" style="font-size: 15px;color: ${thisPost.PostHeader.UsernameFontColor};">${(thisPost.Visibility == "Anonymous") ? "Anonymous" : thisPost.Username  }</a>
-                                                            <br>
-                                                            <small class="headerText" style="font-size: 10px;color: ${thisPost.PostHeader.EmailFontColor};">${thisPost.PostedBy}</small>
-                                                        </div>
-                                                        <!-- Mood Badge -->
-                                                        <div style="position: absolute;right: 8;" ${(thisPost.Mood.MoodBadge == "") ? "hidden" : ""} ><span class="badge badge-secondary" style="font-size: 15px;" title='${thisPost.Mood.MoodTitle}'> ${thisPost.Mood.MoodBadge} </span></div>
-                                                    </div>   
-                                                    
-                                            </div>
-                                            <div class="card-body">
-                                                <p class="card-text postTextPreviewPlaceHolder">${thisPost.Content}</p>
-                                            </div>
-                                            <div class="card-footer">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <button class="btn btn-sm btn-secondary" onclick=commentPost('${thisPost._id}')  ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} ><i class="bi bi-chat" style="font-size: 12px;">Comment</i></button>
-                                                        </div>
-                                                        <div class="col" >
-                                                            <div class="dropdown">
-                                                                <button class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""}  ><i class="bi bi-emoji-smile" style="font-size: 12px;">React</i></button>
-                                                                <div class="dropdown-menu">
-                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('🤬')"> 🤬 Angry </button></a>
-                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('😢')"> 😢 Sad </button></a>
-                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('😍')"> 😍 Love </button></a>
-                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('😆')"> 😆 Laugh </button></a>
-                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('🤩')"> 🤩 Excited </button></a>
-                                                                </div>
+                                                        <a ${ (thisPost.Username == "Anonymous") ? "" : ("href='/Profiles/" + thisPost.Username + "'")  } class="m-0 headerText" style="font-size: 15px;color: ${thisPost.PostHeader.UsernameFontColor};">${(thisPost.Visibility == "Anonymous") ? "Anonymous" : thisPost.Username  }</a>
+                                                        <br>
+                                                        <small class="headerText" style="font-size: 10px;color: ${thisPost.PostHeader.EmailFontColor};">${thisPost.PostedBy}</small>
+                                                    </div>
+                                                    <!-- Mood Badge -->
+                                                    <div style="position: absolute;right: 8;" ${(thisPost.Mood.MoodBadge == "") ? "hidden" : ""} ><span class="badge badge-secondary" style="font-size: 15px;" title='${thisPost.Mood.MoodTitle}'> ${thisPost.Mood.MoodBadge} </span></div>
+                                                </div>   
+                                                
+                                        </div>
+
+                                        <div class="card-body">
+                                            <p class="card-text postTextPreviewPlaceHolder">${thisPost.Content}</p>
+                                        </div>
+
+                                        <div class="card-footer">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <button class="btn btn-sm btn-secondary" onclick=commentPost('${thisPost._id}')  ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} ><i class="bi bi-chat" style="font-size: 12px;">Comment</i></button>
+                                                    </div>
+                                                    <div class="col" >
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""}  ><i class="bi bi-emoji-smile" style="font-size: 12px;">React</i></button>
+                                                            <div class="dropdown-menu">
+                                                                <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Angry','${thisPost._id}','${thisPost.Username}')"> 🤬 Angry </button></a>
+                                                                <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Sad','${thisPost._id}','${thisPost.Username}')"> 😢 Sad </button></a>
+                                                                <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Love','${thisPost._id}','${thisPost.Username}')"> 😍 Love </button></a>
+                                                                <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Laugh','${thisPost._id}','${thisPost.Username}')"> 😆 Laugh </button></a>
+                                                                <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Excited','${thisPost._id}','${thisPost.Username}')"> 🤩 Excited </button></a>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div>
-                                                    </div>
-                                                    <small class="text-muted">&nbsp; ${thisPost.Content.length}/280</small>
                                                 </div>
-                                            </div>
-                                            <div class="card-footer">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                        <span class="badge badge-dark"> 
-                                                        🤬 : ${thisPost.Reactions.Angry} 
-                                                        😢 : ${thisPost.Reactions.Sad} 
-                                                        😍 : ${thisPost.Reactions.Love} 
-                                                        😆 : ${thisPost.Reactions.Laugh} 
-                                                        🤩 : ${thisPost.Reactions.Excited}
-                                                        </span> 
+                                                <div>
                                                 </div>
+                                                <small class="text-muted">&nbsp; ${thisPost.Content.length}/280</small>
                                             </div>
                                         </div>
+                                        <div class="card-footer">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="badge badge-dark"> 
+                                                    🤬 : <span id='${thisPost._id}_Angry'> ${thisPost.Reactions.Angry.length} </span> 
+                                                    😢 : <span id='${thisPost._id}_Sad'> ${thisPost.Reactions.Sad.length} </span> 
+                                                    😍 : <span id='${thisPost._id}_Love'> ${thisPost.Reactions.Love.length} </span> 
+                                                    😆 : <span id='${thisPost._id}_Laugh'> ${thisPost.Reactions.Laugh.length} </span> 
+                                                    🤩 : <span id='${thisPost._id}_Excited'> ${thisPost.Reactions.Excited.length} </span> 
+                                                    </span> 
+                                            </div>
+                                        </div>
+
                                     </div>
-                                </div>` 
+                                </div>
+
+                            </div>` 
                                 
                 document.getElementById("postsTabList").innerHTML += thisPostHtml;
          }
@@ -185,6 +194,43 @@ function displayPostsnPolls(posts)
 
          }
     })
+}
+
+function react(reaction,postID,postedBy)
+{
+    // alert(reaction + " " + postID)
+    if(Cookies.get("Session_ID") == undefined)
+        location.href = "./index.html";
+    else
+    {
+
+        let reactJSON = {
+            postedBy : postedBy,
+            postID : postID,
+            Reaction : reaction
+        }
+
+        console.log(reactJSON)
+        loadOverlay.hidden = false;
+        axios.put('/reactPost', reactJSON, {headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+            console.log(response.data);
+            loadOverlay.hidden = true;
+            
+            if(response.data.Status == "Fail")
+                alert(response.data.Description)
+            else
+            {
+                //update the reaction count
+                document.getElementById(postID + "_Angry").innerText = response.data.NewReactions.Angry.length;
+                document.getElementById(postID + "_Sad").innerText = response.data.NewReactions.Sad.length
+                document.getElementById(postID + "_Love").innerText = response.data.NewReactions.Love.length
+                document.getElementById(postID + "_Laugh").innerText = response.data.NewReactions.Laugh.length
+                document.getElementById(postID + "_Excited").innerText = response.data.NewReactions.Excited.length
+            }
+
+
+        })
+    }
 }
 
 

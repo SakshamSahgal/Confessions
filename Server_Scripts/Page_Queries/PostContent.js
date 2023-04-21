@@ -112,12 +112,13 @@ function Post_it(req,res) {
                     PostedBy : (req.body.visibility == "Anonymous") ? "@anonymous" : SessionResult[0].Email,
                     Timestamp : Date.now(),
                     Reactions : {
-                        'Angry' : 0,
-                        'Sad' : 0,
-                        'Love' : 0,
-                        'Laugh' : 0,
-                        'Excited' : 0
-                    }
+                        'Angry' : [],
+                        'Sad' : [],
+                        'Love' : [],
+                        'Laugh' : [],
+                        'Excited' : []
+                    },
+                    Comments : []
                 }
                 
                 console.log(postJSON)
@@ -241,26 +242,158 @@ function deletePost(req,res)
     })
 }
 
+function ValidateReaction(reaction)
+{
+    return(["Angry","Sad","Love","Laugh","Excited"].includes(reaction))
+}
+
+
+
+
+
+
+
+// req.body = {
+//         postedBy : postedBy,
+//         postID : postID,
+//         Reaction : reaction
+// }
+
 function reactPost(req,res)
 {
-    console.log(req.body)
     Validate_Session(req).then(SessionResult => {
-        if(SessionResult.length)
+        if(SessionResult.length) //session is valid
         {
-            let myPostsReacted = new Datastore("./Media/" + SessionResult[0].Username + "/MyPostsReacted.db");
-            myPostsReacted.loadDatabase();
-            myPostsReacted.find({PostId : req.body.postId}, (err,postMatchedArray) => {
-                
-                if(postMatchedArray.length) //already reacted to this post
-                {
+            if(ValidateReaction(req.body.Reaction)) //reaction is valid
+            {
+                let userDB = new Datastore("./Database/users.db");
+                userDB.loadDatabase();
+                userDB.find({Username : req.body.postedBy},(err,userMatchArray) => {
+    
+                        if(userMatchArray.length) //that user exists
+                        {
+                            let postDB = new Datastore("./Media/" + req.body.postedBy + "/posts.db");
+                            postDB.loadDatabase();
+                            postDB.find({_id : req.body.postID},(err,postmatchArray) => {
+    
+                                    if(err)
+                                    {
+                                        let verdict = {
+                                            Status : "Fail",
+                                            Description : err
+                                        }
+                                        res.json(verdict);
+                                    }
+                                    else
+                                    {
+                                        if(postmatchArray.length) //if that post exists
+                                        { 
+                                            let myEmail = SessionResult[0].Email;
 
-                }
-                else
-                {
-                    
-                }
+                                            let reactionsEmailArray = []
+                                            
+                                            reactionsEmailArray = reactionsEmailArray.concat(postmatchArray[0].Reactions["Angry"])
+                                            reactionsEmailArray = reactionsEmailArray.concat(postmatchArray[0].Reactions["Sad"])
+                                            reactionsEmailArray = reactionsEmailArray.concat(postmatchArray[0].Reactions["Love"])
+                                            reactionsEmailArray = reactionsEmailArray.concat(postmatchArray[0].Reactions["Laugh"])
+                                            reactionsEmailArray = reactionsEmailArray.concat(postmatchArray[0].Reactions["Excited"])
 
-            })
+                                            let postCopy = JSON.parse(JSON.stringify(postmatchArray[0]))
+
+                                            if(reactionsEmailArray.includes(myEmail)) //i have already reacted this
+                                            {
+                                                
+                                                if(postCopy.Reactions["Angry"].includes(myEmail))
+                                                    postCopy.Reactions["Angry"].splice(postCopy.Reactions["Angry"].indexOf(myEmail),1)
+                                                if(postCopy.Reactions["Sad"].includes(myEmail))
+                                                    postCopy.Reactions["Sad"].splice(postCopy.Reactions["Sad"].indexOf(myEmail),1)
+                                                if(postCopy.Reactions["Love"].includes(myEmail))
+                                                    postCopy.Reactions["Love"].splice(postCopy.Reactions["Love"].indexOf(myEmail),1)
+                                                if(postCopy.Reactions["Laugh"].includes(myEmail))
+                                                    postCopy.Reactions["Laugh"].splice(postCopy.Reactions["Laugh"].indexOf(myEmail),1)
+                                                if(postCopy.Reactions["Excited"].includes(myEmail))
+                                                    postCopy.Reactions["Excited"].splice(postCopy.Reactions["Excited"].indexOf(myEmail),1)
+                                                
+                                                postCopy.Reactions[req.body.Reaction].push(myEmail)
+
+                                                postDB.loadDatabase();
+                                                postDB.update(postmatchArray[0],postCopy,{},(err,numReplaced) => {
+                                                        
+                                                        if(err)
+                                                        {
+                                                            let verdict = {
+                                                                Status : "Fail",
+                                                                Description : err
+                                                            }
+                                                            res.json(verdict);
+                                                        }
+                                                        else
+                                                        {
+                                                            console.log("Successfully replaced " + numReplaced + "While Reacting")
+                                                            let verdict = {
+                                                                Status : "Pass",
+                                                                Description : "Successfully Re-Reacted",
+                                                                NewReactions : postCopy.Reactions
+                                                            }
+                                                            res.json(verdict);
+                                                        }
+                                                })
+                                            }
+                                            else
+                                            {
+                                                postCopy.Reactions[req.body.Reaction].push(myEmail)
+                                                postDB.loadDatabase();
+                                                postDB.update(postmatchArray[0],postCopy,{},(err,numReplaced) => {
+                                                    
+                                                    if(err)
+                                                    {
+                                                        let verdict = {
+                                                            Status : "Fail",
+                                                            Description : err
+                                                        }
+                                                        res.json(verdict);
+                                                    }
+                                                    else
+                                                    {
+                                                        console.log("Successfully replaced " + numReplaced + "While Reacting")
+                                                        let verdict = {
+                                                            Status : "Pass",
+                                                            Description : "Successfully Reacted",
+                                                            NewReactions : postCopy.Reactions
+                                                        }
+                                                        res.json(verdict);
+                                                    }
+
+                                                })
+                                            }
+                                        }
+                                        else
+                                        {
+                                            let verdict = {
+                                                Status : "Fail",
+                                                Description : "The post doesn't Exists"
+                                            }
+                                            res.json(verdict);
+                                        }
+                                    }
+    
+                            })
+                        }
+                        else
+                        {
+                            let verdict = {
+                                Status : "Fail",
+                                Description : "The User who Posted Doesn't Exists"
+                            }
+                            res.json(verdict);
+                        }
+                })
+            }
+            else
+            {
+
+            }
+            
         }
         else
         {

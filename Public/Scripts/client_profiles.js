@@ -154,11 +154,11 @@ function displayPostsnPolls(posts)
                                                         <div class="dropdown">
                                                             <button class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""}  ><i class="bi bi-emoji-smile" style="font-size: 12px;">React</i></button>
                                                             <div class="dropdown-menu">
-                                                                <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('🤬')"> 🤬 Angry </button></a>
-                                                                <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('😢')"> 😢 Sad </button></a>
-                                                                <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('😍')"> 😍 Love </button></a>
-                                                                <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('😆')"> 😆 Laugh </button></a>
-                                                                <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('🤩')"> 🤩 Excited </button></a>
+                                                                <a class="dropdown-item"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Angry','${thisPost._id}','${thisPost.Username}')"> 🤬 Angry </button></a>
+                                                                <a class="dropdown-item"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Sad','${thisPost._id}','${thisPost.Username}')"> 😢 Sad </button></a>
+                                                                <a class="dropdown-item"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Love','${thisPost._id}','${thisPost.Username}')"> 😍 Love </button></a>
+                                                                <a class="dropdown-item"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Laugh','${thisPost._id}','${thisPost.Username}')"> 😆 Laugh </button></a>
+                                                                <a class="dropdown-item"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Excited','${thisPost._id}','${thisPost.Username}')"> 🤩 Excited </button></a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -170,13 +170,13 @@ function displayPostsnPolls(posts)
                                         </div>
                                         <div class="card-footer">
                                             <div class="d-flex justify-content-between align-items-center">
-                                                    <span class="badge badge-dark"> 
-                                                    🤬 : ${thisPost.Reactions.Angry} 
-                                                    😢 : ${thisPost.Reactions.Sad} 
-                                                    😍 : ${thisPost.Reactions.Love} 
-                                                    😆 : ${thisPost.Reactions.Laugh} 
-                                                    🤩 : ${thisPost.Reactions.Excited}
-                                                    </span> 
+                                                <span class="badge badge-dark"> 
+                                                🤬 : <span id='${thisPost._id}_Angry'> ${thisPost.Reactions.Angry.length} </span> 
+                                                😢 : <span id='${thisPost._id}_Sad'> ${thisPost.Reactions.Sad.length} </span> 
+                                                😍 : <span id='${thisPost._id}_Love'> ${thisPost.Reactions.Love.length} </span> 
+                                                😆 : <span id='${thisPost._id}_Laugh'> ${thisPost.Reactions.Laugh.length} </span> 
+                                                🤩 : <span id='${thisPost._id}_Excited'> ${thisPost.Reactions.Excited.length} </span> 
+                                                </span> 
                                             </div>
                                         </div>
 
@@ -192,6 +192,43 @@ function displayPostsnPolls(posts)
 
          }
     })
+}
+
+function react(reaction,postID,postedBy)
+{
+    // alert(reaction + " " + postID)
+    if(Cookies.get("Session_ID") == undefined)
+        location.href = "./index.html";
+    else
+    {
+
+        let reactJSON = {
+            postedBy : postedBy,
+            postID : postID,
+            Reaction : reaction
+        }
+
+        console.log(reactJSON)
+        loadOverlay.hidden = false;
+        axios.put('/reactPost', reactJSON, {headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+            console.log(response.data);
+            loadOverlay.hidden = true;
+            
+            if(response.data.Status == "Fail")
+                alert(response.data.Description)
+            else
+            {
+                //update the reaction count
+                document.getElementById(postID + "_Angry").innerText = response.data.NewReactions.Angry.length;
+                document.getElementById(postID + "_Sad").innerText = response.data.NewReactions.Sad.length
+                document.getElementById(postID + "_Love").innerText = response.data.NewReactions.Love.length
+                document.getElementById(postID + "_Laugh").innerText = response.data.NewReactions.Laugh.length
+                document.getElementById(postID + "_Excited").innerText = response.data.NewReactions.Excited.length
+            }
+
+
+        })
+    }
 }
 
 function deletePost(postId)
