@@ -463,6 +463,9 @@ function Convert_Timestamp_To_Date(Timestamp) //function that converts timestamp
 
 function displayPostsnPolls(posts)
 {
+
+    posts.sort(() => Math.random() - 0.5); //randomizing the posts on client side
+
     posts.forEach( thisPost => {
         
         console.log(thisPost)
@@ -472,7 +475,7 @@ function displayPostsnPolls(posts)
                                 <div class="row">
                                     <div class="col my-5">
 
-                                        <div class="card" style="max-width: 80vw;">
+                                        <div class="card" style="max-width: 80vw; border:5px solid black">
 
                                             <div class="card-header previewPostCardHeader">
 

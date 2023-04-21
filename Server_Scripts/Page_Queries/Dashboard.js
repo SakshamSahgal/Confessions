@@ -77,7 +77,7 @@ async function FetchPosts(req)
                                     }
 
                                     fetchedPostsArray = fetchedPostsArray.concat(globalPostsArrayCopy); //concatenating the global posts of this user to the fetchedPostsArray
-                                    console.log(fetchedPostsArray)
+                                    //console.log(fetchedPostsArray)
                                     usersCovered++;
                                     console.log("aaiya 2.5 " + usersCovered)
                                     if(usersCovered == usersArray.length) //if all the Global posts are fetched
