@@ -60,10 +60,14 @@ function getMoodTitle(moodBadge)
         return "";
 
     let moods = JSON.parse(fs.readFileSync("./Customization_Datasets/Moods.json","ascii"))
+    
+    console.log(moods)
 
     for(let [moodTheme , thisThemeArray] of Object.entries(moods)) //iterating over emoji database
-        return (thisThemeArray.find(obj => obj.emoji == moodBadge)).name //finding this emoji name in DB
-
+    {
+        if(thisThemeArray.find(obj => obj.emoji == moodBadge) != undefined) //finding this emoji in DB
+            return (thisThemeArray.find(obj => obj.emoji == moodBadge)).name //finding this emoji name in DB
+    }
 }
 
 function validateVisibility(visibility){

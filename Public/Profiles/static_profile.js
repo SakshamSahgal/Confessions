@@ -108,7 +108,6 @@ function Fetch_Profile_Page() //funtion fetches the static profile data and disp
 
 function displayPostsnPolls(posts)
 {
-    var idConter=0;
     posts.forEach( thisPost => {
         
         console.log(thisPost)

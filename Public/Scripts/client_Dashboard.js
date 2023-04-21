@@ -81,7 +81,7 @@ function Fetch_Dashboard() //function called at the page load [fetches dashboard
                 previewPost.previewProfilePicture.src = response.data.Profile_Picture; //setting the preview post profile picture
                 previewPost.previewName.textContent = response.data.Username;
                 previewPost.previewEmail.textContent = response.data.Email;
-                // document.getElementsByClassName("previewThemeProfilePicture").src = response.data.Profile_Picture;
+                displayPostsnPolls(response.data.PostsArray);
             }
             else
                 alert(response.data.Description);
@@ -448,32 +448,106 @@ function submitPoll()
     
 }
 
-
-function fetchPost()
+function Convert_Timestamp_To_Date(Timestamp) //function that converts timestamp to date
 {
-    textgot = "asdasdsa asd asdasasdasdsa asd asdasasdasdsa asdsada "
-    post.postText.innerText = textgot
-    console.log(post.postText.textContent.length)
-
-    post.postcharCount.innerText =  (post.postText.textContent.length ) + "/280";
-
-    if (post.postText.textContent.length > 100) {
-        post.postText.style.fontSize = '18px';
-      } else if (post.postText.textContent.length > 50) {
-        post.postText.style.fontSize = '25px';
-      } else {
-        post.postText.style.fontSize = '30px';
-      }
+    let date = new Date(Timestamp);
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+    let hour = date.getHours();
+    let minute = date.getMinutes();
+    let second = date.getSeconds();
+    return `${day}/${month}/${year} ${hour}:${minute}:${second}`;
 }
 
-fetchPost(); //function that fetches the content from the backend
+
+function displayPostsnPolls(posts)
+{
+    posts.forEach( thisPost => {
+        
+        console.log(thisPost)
+         if(thisPost.PostType == 'Post')
+         {   
+            let thisPostHtml =  `
+                                <div class="row">
+                                    <div class="col my-5">
+
+                                        <div class="card" style="max-width: 80vw;">
+
+                                            <div class="card-header previewPostCardHeader">
+
+                                                <div class="d-flex align-items-center">
+                                                    <span class="badge badge-secondary" style="font-size: 10px;">Visibility : ${thisPost.Visibility}</span><small style="font-size: 10px;position: absolute;right: 30;"> &nbsp;${Convert_Timestamp_To_Date(thisPost.Timestamp)}</small>
+                                                </div>   
+                                            </div>
+
+                                            <div class="card-header previewPostCardHeader" style="background-image: url(../${thisPost.PostHeader.HeaderThemeBackground})">
+
+                                                    <div>
+                                                        <img src="../${thisPost.Profile_Picture}" alt="Profile Picture" class="rounded-circle me-3" width="50">
+                                                        <div>
+                                                            <h5 class="m-0 headerText" style="font-size: 15px;color: ${thisPost.PostHeader.UsernameFontColor};">${(thisPost.Visibility == "Anonymous") ? "Anonymous" : thisPost.Username  }</h5>
+                                                            <small class="headerText" style="font-size: 10px;color: ${thisPost.PostHeader.EmailFontColor};">${thisPost.PostedBy}</small>
+                                                        </div>
+                                                        <!-- Mood Badge -->
+                                                        <div style="position: absolute;right: 8;" ${(thisPost.Mood.MoodBadge == "") ? "hidden" : ""} ><span class="badge badge-secondary" style="font-size: 15px;" title='${thisPost.Mood.MoodTitle}'> ${thisPost.Mood.MoodBadge} </span></div>
+                                                    </div>   
+                                                    
+                                            </div>
+
+                                            <div class="card-body">
+                                                <p class="card-text postTextPreviewPlaceHolder">${thisPost.Content}</p>
+                                            </div>
+
+                                            <div class="card-footer">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <button class="btn btn-sm btn-secondary" onclick=commentPost('${thisPost._id}')  ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} ><i class="bi bi-chat" style="font-size: 12px;">Comment</i></button>
+                                                        </div>
+                                                        <div class="col" >
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""}  ><i class="bi bi-emoji-smile" style="font-size: 12px;">React</i></button>
+                                                                <div class="dropdown-menu">
+                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('🤬')"> 🤬 Angry </button></a>
+                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('😢')"> 😢 Sad </button></a>
+                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('😍')"> 😍 Love </button></a>
+                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('😆')"> 😆 Laugh </button></a>
+                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('🤩')"> 🤩 Excited </button></a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                    </div>
+                                                    <small class="text-muted">&nbsp; ${thisPost.Content.length}/280</small>
+                                                </div>
+                                            </div>
+                                            <div class="card-footer">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="badge badge-dark"> 
+                                                        🤬 : ${thisPost.Reactions.Angry} 
+                                                        😢 : ${thisPost.Reactions.Sad} 
+                                                        😍 : ${thisPost.Reactions.Love} 
+                                                        😆 : ${thisPost.Reactions.Laugh} 
+                                                        🤩 : ${thisPost.Reactions.Excited}
+                                                        </span> 
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>` 
+                                
+                document.getElementById("postsList").innerHTML += thisPostHtml;
+         }
+         else
+         {
+
+         }
+    })
+}
+
 Fetch_Dashboard();
 
-//react 
-
-
-// When the user clicks a reaction button, handle the reaction
-function react(emoji) {
-    // Handle the reaction
-    alert(emoji)
-}

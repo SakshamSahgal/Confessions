@@ -33,61 +33,15 @@
     <!--  -->
     <div>
         <br>
-        <div class="container mt-5" style="width: 55%">
-            <div class="row">
+        <div class="container mt-5" align="center">
+            <div class="row my-5">
                 <button class="btn btn-lg btn-primary" onclick="viewPallet('createPallet')"> Create </button> 
             </div>
-            <div class="row">
-                <br><br>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <!-- Post -->
-                    <div id="Post" class="d-flex justify-content-center align-items-center">
-                            
-                         <!-- Post card starts -->
-                        <div class="card" id="postCard" style="max-width: 80vw;min-width: 300px">
-                            
-                            <div class="card-header" id="PostCardHeader">
-                                <div class="d-flex align-items-center">
-                                    <img id="postProfilePicture" src="./GUI_Resources/No_photo.gif" alt="Profile Picture" class="rounded-circle me-3" width="50">
-                                    <div>
-                                        <h5 class="m-0 headerText" id="postName">John Doe</h5>
-                                        <small class="headerText" id="postEmail">@johndoe</small>
-                                    </div>
-                                    <!-- Mood Badge -->
-                                    <div id="postMoodBadgeHolderDiv" hidden style="position: absolute;right: 8;"><span class="badge badge-secondary" style="font-size: 15px;"  id="postmoodBadge"></span></div>
-                                </div>
-                            </div>
+            <div class="row g-1 my-3">
+                <div class="col border bg-light" id="postsList">
 
-                            <div class="card-body">
-                                <p class="card-text postTextPreviewPlaceHolder" id="postText"></p>
-                            </div>
-
-                            <div class="card-footer">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <div class="dropdown">
-                                            <button class="btn btn-primary dropdown-toggle" type="button" id="reactionDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-emoji-smile"></i>React</button>
-                                            <button type="button" class="btn btn-secondary"><i class="bi bi-chat"></i>Comment</button>
-                                            <div class="dropdown-menu" aria-labelledby="reactionDropdown">
-                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('🤬')"> 🤬 Angry </button></a>
-                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😢')"> 😢 Sad </button></a>
-                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😍')"> 😍 Love </button></a>
-                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('😆')"> 😆 Laugh </button></a>
-                                                <a class="dropdown-item" href="#"><button style="font-size: 20px;" class="reaction-btn" onclick="react('🤩')"> 🤩 Excited </button></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <small class="text-muted" id="postcharCount">&nbsp; 0/280</small>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Post Card Ends --> 
-                    </div>
-
-                </div>
-            </div>
+                </div>                    
+              </div>
         </div>
     </div>
 
