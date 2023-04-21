@@ -52,6 +52,7 @@ function Fetch_Profile_Page() //funtion fetches the static profile data and disp
             
             if(response.data.Status == "Pass")
             {
+                displayPostsnPolls(response.data.Posts);
                 document.getElementById("Profile_Photo").src = "../" + (response.data.His_Profile_Picture);
                 document.getElementById("Username").textContent = response.data.Username;
                 document.getElementById("user_bio").textContent = response.data.Bio;
@@ -59,7 +60,6 @@ function Fetch_Profile_Page() //funtion fetches the static profile data and disp
                 document.getElementById("User_Email").textContent = response.data.Email;
                 document.getElementById("Activity_Status").textContent = response.data.Activity_Status;
                 document.getElementById("profile_picture").src = "../" + response.data.My_Profile_Picture;
-                displayPostsnPolls(response.data.Posts);
                 
                 if(response.data.Activity_Status == "Online")
                     document.getElementById("Activity_Status").style="color: green;";
@@ -116,23 +116,19 @@ function displayPostsnPolls(posts)
          {   
             let thisPostHtml =  `
                                 <div class="row">
-                                    <div class="col my-2">
-
-                                        <div class="card" style="max-width: 80vw;">
-
+                                    <div class="col my-5">
+                                        <div class="card" style="max-width: 80vw; border:5px solid black">
                                             <div class="card-header previewPostCardHeader">
-
                                                 <div class="d-flex align-items-center">
                                                     <span class="badge badge-secondary" style="font-size: 10px;">Visibility : ${thisPost.Visibility}</span><small style="font-size: 10px;position: absolute;right: 30;"> &nbsp;${Convert_Timestamp_To_Date(thisPost.Timestamp)}</small>
                                                 </div>   
                                             </div>
-
                                             <div class="card-header previewPostCardHeader" style="background-image: url(../${thisPost.PostHeader.HeaderThemeBackground})">
-
                                                     <div>
-                                                        <img src="../${fetchedProfileData.His_Profile_Picture}" alt="Profile Picture" class="rounded-circle me-3" width="50">
+                                                        <img src="../${thisPost.Profile_Picture}" alt="Profile Picture" class="rounded-circle me-3" width="50">
                                                         <div>
-                                                            <h5 class="m-0 headerText" style="font-size: 15px;color: ${thisPost.PostHeader.UsernameFontColor};">${(thisPost.Visibility == "Anonymous") ? "Anonymous" : fetchedProfileData.Username  }</h5>
+                                                            <a ${ (thisPost.Username == "Anonymous") ? "" : ("href='/Profiles/" + thisPost.Username + "'")  } class="m-0 headerText" style="font-size: 15px;color: ${thisPost.PostHeader.UsernameFontColor};">${(thisPost.Visibility == "Anonymous") ? "Anonymous" : thisPost.Username  }</a>
+                                                            <br>
                                                             <small class="headerText" style="font-size: 10px;color: ${thisPost.PostHeader.EmailFontColor};">${thisPost.PostedBy}</small>
                                                         </div>
                                                         <!-- Mood Badge -->
@@ -140,11 +136,9 @@ function displayPostsnPolls(posts)
                                                     </div>   
                                                     
                                             </div>
-
                                             <div class="card-body">
                                                 <p class="card-text postTextPreviewPlaceHolder">${thisPost.Content}</p>
                                             </div>
-
                                             <div class="card-footer">
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <div class="row">
@@ -180,10 +174,8 @@ function displayPostsnPolls(posts)
                                                         </span> 
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
-
                                 </div>` 
                                 
                 document.getElementById("postsTabList").innerHTML += thisPostHtml;

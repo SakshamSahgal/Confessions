@@ -45,13 +45,23 @@ function Profile_Page(req,res)
             let Posts = new Datastore("./Media/" + session_match_array[0].Username + "/Posts.db");
             Posts.loadDatabase();
             Posts.find({},(err,postsArray) => {
+
+                let postsArrayCopy = JSON.parse(JSON.stringify(postsArray));
+                
+                for(var i=0;i<postsArrayCopy.length;i++)
+                {
+                    postsArrayCopy[i].PostedBy = (postsArrayCopy[i].Visibility == "Anonymous") ? "@anonymous" : postsArrayCopy[i].PostedBy; 
+                    postsArrayCopy[i].Username = (postsArrayCopy[i].Visibility == "Anonymous") ? "Anonymous" : session_match_array[0].Username; 
+                    postsArrayCopy[i].Profile_Picture = (postsArrayCopy[i].Visibility == "Anonymous") ? "./GUI_Resources/anonymous2.jpg" : session_match_array[0].Profile_Picture; 
+                }
+
                 let verdict = {
                     Status : "Pass",
                     Profile_Picture : session_match_array[0].Profile_Picture,
                     Bio : (session_match_array[0].Bio == "") ? "N/A" : session_match_array[0].Bio,
                     Gender : (session_match_array[0].Gender == "") ? "Not Specified" : session_match_array[0].Gender,
                     Username : session_match_array[0].Username,
-                    Posts : postsArray
+                    Posts : postsArrayCopy
                 }
                 res.json(verdict);
             })           
@@ -438,15 +448,14 @@ function Fetch_Static_Profile(req,res,username)
                             }
 
                             Get_Buddy_Btn_Status(Session_Result[0],username_match_array[0].Email).then(btn_status => {
+                                
                                 verdict.Buddy_Btn_Status = btn_status;
-                                getPosts(username,Session_Result).then(postsVerdict => {
+                                
+                                getPosts(username,username_match_array[0].Email,username_match_array[0].Profile_Picture,Session_Result[0].Buddies).then(postsReturned => {
                                     
-                                    if(postsVerdict.Status == "Pass")
-                                        verdict.Posts = postsVerdict.Posts;
-                                    else
-                                        verdict.Posts = [];
-                                    
+                                    verdict.Posts = postsReturned;
                                     res.json(verdict);
+
                                 });
                                 
                             })
@@ -475,59 +484,33 @@ function Fetch_Static_Profile(req,res,username)
         
 }
 
-async function getPosts(hisUsername,MySession)
+async function getPosts(hisUsername,hisEmail,hisProfilePicture,myBuddies) //function that returns his posts when i visit his profile
 {
     let ans = await new Promise((resolve, reject) => {
-        
-        let users = new Datastore("./Database/users.db");
-        users.loadDatabase();
-        users.find({Username : hisUsername},(err,username_match_array) => { //find his email through his username
-            
-            if(username_match_array.length) //this is a valid username
-            {
-                let hisEmail = username_match_array[0].Email;
-    
-                if(MySession[0].Buddies.includes(hisEmail)) //he is my My Bubby
-                {
-                    let posts = new Datastore("./Media/" + hisUsername + "/posts.db");
-                    posts.loadDatabase();
-                    posts.find({Visibility : "Global" },(err,postsArrayGlobal) => {
-                        
-                        posts.find({Visibility : "Buddies-Only" },(err,postsArrayBuddies) => {
-                                
-                                let verdict = {
-                                    Status : "Pass",
-                                    Posts : postsArrayGlobal.concat(postsArrayBuddies)
-                                }
-                                resolve(verdict);
-                        })
-                        
-                    })
-                }
-                else //we are not buddies
-                {
-                    let posts = new Datastore("./Media/" + hisUsername + "/posts.db");
-                    posts.loadDatabase();
-                    posts.find({Visibility : "Global" },(err,posts_array) => {
-                        
-                        let verdict = {
-                            Status : "Pass",
-                            Posts : posts_array
-                        }
-                        resolve(verdict);
-                    })
-                }
-            }
+        let hisPostsDB = new Datastore("./Media/" + hisUsername + "/posts.db");
+        hisPostsDB.loadDatabase();
+        hisPostsDB.find({},(err,allPostsArray) => {
+
+            if(allPostsArray.length == 0)
+                resolve([])
             else
             {
-                let verdict={
-                    Status : "Fail",
-                    Description : "Invalid Username"
+                let allPostsArrayCopy = JSON.parse(JSON.stringify(allPostsArray))
+                let toViewPostsArray = []
+                for(var i=0;i<allPostsArrayCopy.length;i++)
+                {
+                    if( (allPostsArrayCopy[i].Visibility == "Buddies-Only" && myBuddies.includes(hisEmail)) || (allPostsArrayCopy[i].Visibility == "Global" ) )
+                    {
+                        allPostsArrayCopy[i].Username = hisUsername;
+                        allPostsArrayCopy[i].Profile_Picture = hisProfilePicture;
+                        toViewPostsArray.push(allPostsArrayCopy[i])
+                    }
                 }
-                resolve(verdict);
-            }
-        })    
 
+                resolve(toViewPostsArray)
+            }
+
+        })
     });
     return ans;
 

@@ -445,7 +445,7 @@ function ReducePollOptions()
 
 function submitPoll()
 {
-    
+    alert("This Feature is under Development");
 }
 
 function Convert_Timestamp_To_Date(Timestamp) //function that converts timestamp to date

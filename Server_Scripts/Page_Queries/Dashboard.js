@@ -56,7 +56,7 @@ async function getAllGlobalPosts()
 
                     thisusersPostsDB.find({Visibility : "Global"},(err,globalPostsArray) => { //fetching all Global posts of this user
                         
-                        let globalPostsArrayCopy = globalPostsArray;
+                        let globalPostsArrayCopy = JSON.parse(JSON.stringify(globalPostsArray));
 
                         for(var j=0;j<globalPostsArrayCopy.length;j++)
                         {
@@ -98,18 +98,18 @@ async function getAllAnonymousPosts()
                     let thisusersPostsDB = new Datastore("./Media/" + thisusersUsername + "/posts.db");
                     thisusersPostsDB.loadDatabase();
 
-                    thisusersPostsDB.find({Visibility : "Anonymous"},(err,globalPostsArray) => { //fetching all Global posts of this user
+                    thisusersPostsDB.find({Visibility : "Anonymous"},(err,AnonymousPostsArray) => { //fetching all Global posts of this user
                         
-                        let globalPostsArrayCopy = globalPostsArray;
+                        let AnonymousPostsArrayCopy = JSON.parse(JSON.stringify(AnonymousPostsArray));
 
-                        for(var j=0;j<globalPostsArrayCopy.length;j++)
+                        for(var j=0;j<AnonymousPostsArrayCopy.length;j++)
                         {
-                            globalPostsArrayCopy[j].PostedBy = "@anonymous"; //removing the postedBy(email) from each anonymous post of this user
-                            globalPostsArrayCopy[j].Username = "Anonymous"; //removing the username from each anonymous post of this user
-                            globalPostsArrayCopy[j].Profile_Picture = "./GUI_Resources/anonymous2.jpg"; //removing the profile picture from each anonymous post of this user
+                            AnonymousPostsArrayCopy[j].PostedBy = "@anonymous"; //removing the postedBy(email) from each anonymous post of this user
+                            AnonymousPostsArrayCopy[j].Username = "Anonymous"; //removing the username from each anonymous post of this user
+                            AnonymousPostsArrayCopy[j].Profile_Picture = "./GUI_Resources/anonymous2.jpg"; //removing the profile picture from each anonymous post of this user
                         }
 
-                        AnonymousPosts = AnonymousPosts.concat(globalPostsArrayCopy);
+                        AnonymousPosts = AnonymousPosts.concat(AnonymousPostsArrayCopy);
 
                         usersCovered++;
                         
@@ -148,7 +148,7 @@ async function getAllBuddyOnlyPosts(buddiesArray)
                     thisBuddyPostsDB.loadDatabase();
                     thisBuddyPostsDB.find({Visibility : "Buddies-Only"},(err,BuddyOnlyPostsArray) => { //fetching all the `buddy's only` posts
                         
-                        let BuddyOnlyPostsArrayCopy = BuddyOnlyPostsArray; //copying the buddy's only posts array
+                        let BuddyOnlyPostsArrayCopy = JSON.parse(JSON.stringify(BuddyOnlyPostsArray)); //copying the buddy's only posts array
     
                         for(var j=0;j<BuddyOnlyPostsArrayCopy.length;j++) //adding the buddy's username and profile picture to each post
                         {
