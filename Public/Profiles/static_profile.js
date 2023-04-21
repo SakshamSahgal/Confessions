@@ -49,7 +49,7 @@ function Fetch_Profile_Page() //funtion fetches the static profile data and disp
             console.log(response.data);
             fetchedProfileData = response.data; //storing the fetched profile data
             loadOverlay.hidden = true; //hiding the load overlay
-            displayPostsnPolls(response.data.Posts);
+            
             if(response.data.Status == "Pass")
             {
                 document.getElementById("Profile_Photo").src = "../" + (response.data.His_Profile_Picture);
@@ -59,6 +59,7 @@ function Fetch_Profile_Page() //funtion fetches the static profile data and disp
                 document.getElementById("User_Email").textContent = response.data.Email;
                 document.getElementById("Activity_Status").textContent = response.data.Activity_Status;
                 document.getElementById("profile_picture").src = "../" + response.data.My_Profile_Picture;
+                displayPostsnPolls(response.data.Posts);
                 
                 if(response.data.Activity_Status == "Online")
                     document.getElementById("Activity_Status").style="color: green;";

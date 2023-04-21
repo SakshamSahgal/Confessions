@@ -17,11 +17,8 @@ function Fetch_Dashboard(req,res)
                 Username : Session_Result[0].Username
             }
 
-            FetchPosts(req).then( (fetchPostsResponse) => { //fetching all the viewable posts
-                if(fetchPostsResponse.Status == "Pass")
-                    verdict.PostsArray = fetchPostsResponse.fetchedPostsArray;
-                else
-                    verdict.PostsArray = [];
+            FetchPosts(Session_Result[0].Buddies).then( (fetchedArray) => { //fetching all the viewable posts
+                verdict.PostsArray = fetchedArray;
                 res.json(verdict);
             })          
         }
@@ -36,120 +33,163 @@ function Fetch_Dashboard(req,res)
     })
 }
 
-async function FetchPosts(req)
+
+async function getAllGlobalPosts()
+{
+    let ans = await new Promise((resolve, reject) => {
+        let globalPosts = []; //array that stores all global posts
+        let usersDB = new Datastore("./Database/users.db");
+        usersDB.loadDatabase();
+        usersDB.find({},(err,usersArray) => { //fetching all users
+            if(usersArray.length == 0) //if no users exist
+                resolve([])
+            else
+            {
+                let usersCovered = 0;
+                for(var i=0;i<usersArray.length;i++)
+                {
+                    let thisusersUsername = usersArray[i].Username;                 //username of this user
+                    let thisusersProfilePicture = usersArray[i].Profile_Picture;    //profile picture of this user
+
+                    let thisusersPostsDB = new Datastore("./Media/" + thisusersUsername + "/posts.db");
+                    thisusersPostsDB.loadDatabase();
+
+                    thisusersPostsDB.find({Visibility : "Global"},(err,globalPostsArray) => { //fetching all Global posts of this user
+                        
+                        let globalPostsArrayCopy = globalPostsArray;
+
+                        for(var j=0;j<globalPostsArrayCopy.length;j++)
+                        {
+                            globalPostsArrayCopy[j].Username = thisusersUsername; //adding username to each post of this user
+                            globalPostsArrayCopy[j].Profile_Picture = thisusersProfilePicture; //adding profile picture to each post of this user
+                        }
+
+                        globalPosts = globalPosts.concat(globalPostsArrayCopy);
+
+                        usersCovered++;
+
+                        if(usersCovered == usersArray.length)
+                            resolve(globalPosts);
+                    })
+                }
+            }
+                
+        })
+    })
+    return ans;
+}
+
+async function getAllAnonymousPosts()
+{
+    let ans = await new Promise((resolve, reject) => {
+        let AnonymousPosts = []; //array that stores all Anonymous posts
+        let usersDB = new Datastore("./Database/users.db");
+        usersDB.loadDatabase();
+        usersDB.find({},(err,usersArray) => { //fetching all users
+            if(usersArray.length == 0) //if no users exist
+                resolve([])
+            else
+            {
+                let usersCovered = 0;
+                for(var i=0;i<usersArray.length;i++)
+                {
+                    let thisusersUsername = usersArray[i].Username;                 //username of this user
+
+                    let thisusersPostsDB = new Datastore("./Media/" + thisusersUsername + "/posts.db");
+                    thisusersPostsDB.loadDatabase();
+
+                    thisusersPostsDB.find({Visibility : "Anonymous"},(err,globalPostsArray) => { //fetching all Global posts of this user
+                        
+                        let globalPostsArrayCopy = globalPostsArray;
+
+                        for(var j=0;j<globalPostsArrayCopy.length;j++)
+                        {
+                            globalPostsArrayCopy[j].PostedBy = "@anonymous"; //removing the postedBy(email) from each anonymous post of this user
+                            globalPostsArrayCopy[j].Username = "Anonymous"; //removing the username from each anonymous post of this user
+                            globalPostsArrayCopy[j].Profile_Picture = "./GUI_Resources/anonymous2.jpg"; //removing the profile picture from each anonymous post of this user
+                        }
+
+                        AnonymousPosts = AnonymousPosts.concat(globalPostsArrayCopy);
+
+                        usersCovered++;
+                        
+                        if(usersCovered == usersArray.length)
+                            resolve(AnonymousPosts);
+                    })
+                }
+            }   
+        })
+    })
+    return ans;
+}
+
+
+async function getAllBuddyOnlyPosts(buddiesArray)
+{   
+    let ans = await new Promise((resolve, reject) => {
+        let BuddyOnlyPosts = []; //array that stores all Buddy-Only posts
+        
+        if(buddiesArray.length == 0) //if no buddies exist
+            resolve([])
+        else
+        {
+            let buddiesCovered = 0;
+            for(var buddyIndex = 0;buddyIndex < buddiesArray.length;buddyIndex++)    //iterating over all the buddies of this user
+            {
+                let thisBuddyEmail = buddiesArray[buddyIndex];
+                let usersDB = new Datastore("./Database/users.db");
+                usersDB.loadDatabase();
+                usersDB.find({Email : thisBuddyEmail},(err,buddyArray) => { //fetching the buddy's username using his Email from the User's DB
+    
+                    let thisBuddyUsername = buddyArray[0].Username; //getting the buddy's username
+                    let thisBuddyProfilePicture = buddyArray[0].Profile_Picture; //getting the buddy's profile picture
+                    
+                    let thisBuddyPostsDB = new Datastore("./Media/" + thisBuddyUsername + "/posts.db"); //accessing the buddy's posts DB
+                    thisBuddyPostsDB.loadDatabase();
+                    thisBuddyPostsDB.find({Visibility : "Buddies-Only"},(err,BuddyOnlyPostsArray) => { //fetching all the `buddy's only` posts
+                        
+                        let BuddyOnlyPostsArrayCopy = BuddyOnlyPostsArray; //copying the buddy's only posts array
+    
+                        for(var j=0;j<BuddyOnlyPostsArrayCopy.length;j++) //adding the buddy's username and profile picture to each post
+                        {
+                            BuddyOnlyPostsArrayCopy[j].Username = thisBuddyUsername;
+                            BuddyOnlyPostsArrayCopy[j].Profile_Picture = thisBuddyProfilePicture;
+                        }
+    
+                        BuddyOnlyPosts = BuddyOnlyPosts.concat(BuddyOnlyPostsArrayCopy); //concatenating the buddy's only posts to the fetchedPostsArray
+                        buddiesCovered++;
+    
+                        if(buddiesCovered == buddiesArray.length) //if all the buddy's only posts are fetched
+                           resolve(BuddyOnlyPosts)
+                    })
+    
+                })
+            }
+        }
+    })
+    return ans;
+}
+
+
+async function FetchPosts(buddiesArray)
 {
     let ans = await new Promise((resolve, reject) => {
 
-        Validate_Session(req).then( Session_Result => {
-                
-                if(Session_Result.length) //If Session Exists
-                {
-                    let fetchedPostsArray = []; //array that stores all the posts to be fetched
-    
-                    let usersDB = new Datastore("./Database/users.db");
-                    usersDB.loadDatabase();
-                    usersDB.find({},(err,usersArray) => { //fetching all users
-                        
-                        if(usersArray.length == 0) //if no users exist
-                        {
-                            let verdict = {
-                                Status : "Pass",
-                                fetchedPostsArray : []
-                            }
-                            resolve(verdict);
-                        }
-                        else
-                        {
-                            let usersCovered = 0;
-                            for(var i=0;i<usersArray.length;i++)
-                            {
-                                let thisusersUsername = usersArray[i].Username;
-                                let thisusersProfilePicture = usersArray[i].Profile_Picture;
-                                let thisusersPostsDB = new Datastore("./Media/" + thisusersUsername + "/posts.db");
-                                thisusersPostsDB.loadDatabase();
-                                thisusersPostsDB.find({Visibility : "Global"},(err,globalPostsArray) => { //fetching all Global posts of this user
-                                    
-                                    let globalPostsArrayCopy = globalPostsArray;
-                                    for(var j=0;j<globalPostsArrayCopy.length;j++)
-                                    {
-                                        globalPostsArrayCopy[j].Username = thisusersUsername;
-                                        globalPostsArrayCopy[j].Profile_Picture = thisusersProfilePicture;
-                                    }
-
-                                    fetchedPostsArray = fetchedPostsArray.concat(globalPostsArrayCopy); //concatenating the global posts of this user to the fetchedPostsArray
-                                    //console.log(fetchedPostsArray)
-                                    usersCovered++;
-                                    console.log("aaiya 2.5 " + usersCovered)
-                                    if(usersCovered == usersArray.length) //if all the Global posts are fetched
-                                    {
-                                        if(Session_Result[0].Buddies.length == 0) //if the user has no buddies
-                                        {
-                                            console.log("aaiya3")
-                                            let verdict = {
-                                                Status : "Pass",
-                                                fetchedPostsArray : fetchedPostsArray
-                                            }
-                                            resolve(verdict);
-                                        }
-                                        else
-                                        {
-                                            let buddiesCovered = 0;
-                                            for(var buddyIndex = 0;buddyIndex < Session_Result[0].Buddies.length;buddyIndex++)    //iterating over all the buddies of this user
-                                            {
-                                                let thisBuddyEmail = Session_Result[0].Buddies[buddyIndex];
-                                                let usersDB = new Datastore("./Database/users.db");
-                                                usersDB.loadDatabase();
-                                                usersDB.find({Email : thisBuddyEmail},(err,buddyArray) => { //fetching the buddy's username using his Email from the User's DB
-            
-                                                    let thisBuddyUsername = buddyArray[0].Username; //getting the buddy's username
-                                                    let thisBuddyProfilePicture = buddyArray[0].Profile_Picture; //getting the buddy's profile picture
-                                                    
-                                                    let thisBuddyPostsDB = new Datastore("./Media/" + thisBuddyUsername + "/posts.db"); //accessing the buddy's posts DB
-                                                    thisBuddyPostsDB.loadDatabase();
-                                                    thisBuddyPostsDB.find({Visibility : "Buddies-Only"},(err,BuddyOnlyPostsArray) => { //fetching all the `buddy's only` posts
-                                                        
-                                                        let BuddyOnlyPostsArrayCopy = BuddyOnlyPostsArray; //copying the buddy's only posts array
-
-                                                        for(var k=0;k<BuddyOnlyPostsArrayCopy.length;k++) //adding the buddy's username and profile picture to each post
-                                                        {
-                                                            BuddyOnlyPostsArrayCopy[k].Username = thisBuddyUsername;
-                                                            BuddyOnlyPostsArrayCopy[k].Profile_Picture = thisBuddyProfilePicture;
-                                                        }
-
-                                                        fetchedPostsArray = fetchedPostsArray.concat(BuddyOnlyPostsArrayCopy); //concatenating the buddy's only posts to the fetchedPostsArray
-                                                        buddiesCovered++;
-
-                                                        if(buddiesCovered == Session_Result[0].Buddies.length) //if all the buddy's only posts are fetched
-                                                        {
-                                                            let verdict = {
-                                                                Status : "Pass",
-                                                                fetchedPostsArray : fetchedPostsArray
-                                                            }
-                                                            resolve(verdict);
-                                                        }
-            
-                                                    })
-            
-                                                })
-                                            }
-                                        }
-                                    }
-        
-                                })
-                            }
-                        }
-                    })
-                }
-                else
-                {
-                    let verdict={
-                        Status : "Fail",
-                        Description : "Invalid Session"
-                    }
-                    resolve(verdict);
-                }
+        let postArray = []
+        getAllGlobalPosts().then(globalPostsArray => {
+            console.log(globalPostsArray)
+            PostsArray = postArray.concat(globalPostsArray);
+            getAllAnonymousPosts().then(anonymousPostsArray => {
+                console.log(anonymousPostsArray)
+                PostsArray = PostsArray.concat(anonymousPostsArray);
+                getAllBuddyOnlyPosts(buddiesArray).then(buddyOnlyPostsArray => {
+                    console.log(buddyOnlyPostsArray)
+                    PostsArray = PostsArray.concat(buddyOnlyPostsArray);
+                    resolve(PostsArray);
+                })
+            })
         })
-    });
+    })
 
     return ans;
 }
