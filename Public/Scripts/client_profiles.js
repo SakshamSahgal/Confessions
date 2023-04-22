@@ -148,7 +148,7 @@ function displayPostsnPolls(posts)
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div class="row">
                                                     <div class="col">
-                                                        <button class="btn btn-sm btn-secondary" onclick=commentPost('${thisPost._id}')  ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} ><i class="bi bi-chat" style="font-size: 12px;">Comment</i></button>
+                                                        <button class="btn btn-sm btn-secondary" onclick="viewComments('${thisPost._id}','${thisPost.Username}')"  ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} ><i class="bi bi-chat" style="font-size: 12px;">Comment</i></button>
                                                     </div>
                                                     <div class="col" >
                                                         <div class="dropdown">
@@ -194,42 +194,7 @@ function displayPostsnPolls(posts)
     })
 }
 
-function react(reaction,postID,postedBy)
-{
-    // alert(reaction + " " + postID)
-    if(Cookies.get("Session_ID") == undefined)
-        location.href = "./index.html";
-    else
-    {
 
-        let reactJSON = {
-            postedBy : postedBy,
-            postID : postID,
-            Reaction : reaction
-        }
-
-        console.log(reactJSON)
-        loadOverlay.hidden = false;
-        axios.put('/reactPost', reactJSON, {headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
-            console.log(response.data);
-            loadOverlay.hidden = true;
-            
-            if(response.data.Status == "Fail")
-                alert(response.data.Description)
-            else
-            {
-                //update the reaction count
-                document.getElementById(postID + "_Angry").innerText = response.data.NewReactions.Angry.length;
-                document.getElementById(postID + "_Sad").innerText = response.data.NewReactions.Sad.length
-                document.getElementById(postID + "_Love").innerText = response.data.NewReactions.Love.length
-                document.getElementById(postID + "_Laugh").innerText = response.data.NewReactions.Laugh.length
-                document.getElementById(postID + "_Excited").innerText = response.data.NewReactions.Excited.length
-            }
-
-
-        })
-    }
-}
 
 function deletePost(postId)
 {
@@ -251,6 +216,7 @@ function deletePost(postId)
 function commentPost(postId){
     alert(postId)
 }
+
 function Change_Profile_Picture() //function called when change profile picture is clicked [function displays the list of available profile pictures]
 {
    

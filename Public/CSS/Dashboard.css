@@ -77,7 +77,7 @@
     color: rgb(0, 0, 0);
 }
 
-#themesOverlayCloseBtn,#postOverlayCloseBtn,#moodOverlayCloseBtn{
+.CloseBtn{
     position: absolute;
     left : 95%;
     top: 2%;

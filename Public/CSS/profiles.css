@@ -1,4 +1,4 @@
-#profile_picture_pallet /*CSS for profile pallet overlay*/
+#profile_picture_pallet,#commentPallet /*CSS for profile pallet overlay*/
 {
     height: 100%;
     width: 100%;
@@ -24,8 +24,7 @@
     top: 100%;
 }
 
-#profile_pallet_close_btn,#Confessions_Pallet_close_btn,#Buddy_Requests_Pallet_close_btn /* CSS for the profile pallet top right close button*/
-{
+.CloseBtn{
     position: absolute;
     left : 95%;
     top: 2%;

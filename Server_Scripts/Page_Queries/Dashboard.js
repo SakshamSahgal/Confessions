@@ -186,6 +186,8 @@ async function FetchPosts(buddiesArray)
                 getAllBuddyOnlyPosts(buddiesArray).then(buddyOnlyPostsArray => {
                     console.log(buddyOnlyPostsArray)
                     PostsArray = PostsArray.concat(buddyOnlyPostsArray);
+                    for(var i=0;i<PostsArray.length;i++)
+                        delete PostsArray[i].Comments; //removing the comments from each post so that it can be fetched when needed
                     resolve(PostsArray);
                 })
             })
@@ -276,55 +278,108 @@ function FetchMoods(req,res)
 }
 
 
-//req.body = {
-    //     postedBy : postedBy,
+
+
+async function modifyComments(CommentArray) //this function is passed comments array of a post and it adds Username and Profile picture to each comment
+{
+    let ans = new Promise((resolve,reject) => {
+
+        let CommentsCovered = 0;
+
+        for(var i=0;i<commentArray.length;i++)
+        {
+            let usersDB = new Datastore("./Database/users.db");
+            usersDB.loadDatabase();
+            usersDB.find({Email : commentArray[i].CommentedBy},(err,userArray) => {
+                
+                if(usersArray.length)
+                {
+                    commentArray[i].Username = userArray[0].Username;
+                    commentArray[i].Profile_Picture = userArray[0].Profile_Picture;
+                }
+                else
+                {
+                    commentArray[i].Username = "Unknown Username";
+                    commentArray[i].Profile_Picture = "";
+                }
+
+                CommentsCovered++;
+                if(CommentsCovered == commentArray.length)
+                    resolve(commentArray)
+
+            })
+        }
+    })
+    return ans;
+}
+
+
+//comment = {
+    //     postPostedBy : Username,
     //     postID : postID,
     //     Comment : comment
 //}
 
-function CommentPost(req,res)
+function CommentPost(req,res) //function is called when a user comments on a post
 {
     Validate_Session(req).then(SessionResult => { //validate session
-        if(SessionResult.length)    //if Session Exists
+        if(SessionResult.length)    //if Session Exists [means the user posting the comment exists and is logged in]
         {
-            let userDB = new Datastore("./Database/users.db");
-            userDB.loadDatabase();
-            userDB.find({Username : req.body.postedBy},(err,userMatchArray) => {
-               
-                if(userMatchArray.length) //if that user exists
+            let usersDB = new Datastore("./Database/users.db"); //accessing the users DB
+            usersDB.loadDatabase();
+            usersDB.find({Username : req.body.postPostedBy},(err,userArray) => { 
+
+                if(userArray.length) //user posting the post exists
                 {
-                    let postDB = new Datastore("./Media/" + req.body.postedBy + "/posts.db");
+                    let postDB = new Datastore("./Media/" + req.body.postPostedBy + "/posts.db"); //accessing the posts DB
                     postDB.loadDatabase();
                     postDB.find({_id : req.body.postID},(err,postMatchArray) => {
-                        if(postMatchArray.length) //that post exists
+                        if(postMatchArray.length) //post exists therefore postID is valid
                         {
-                            let commentJSON = {
-                                Comment : req.body.Comment,
-                                CommentedBy : SessionResult[0].Email,
-                                CommentedAt : Date.now(),
-                                commentId : uuidv4()
-                            }
-                            
-                            console.log(commentJSON)
+                            if(req.body.Comment.length >= 1 && req.body.Comment.length <= 280) //valid Comment Length
+                            {
+                                let commentJSON = {
+                                    Comment : req.body.Comment,
+                                    CommentedBy : SessionResult[0].Email,
+                                    CommentedAt : Date.now(),
+                                    commentId : uuidv4()
+                                }
+                                let postCopy = JSON.parse(JSON.stringify(postMatchArray[0]));
+                                postCopy.Comments.push(commentJSON);
 
-                            let postCopy = JSON.parse(JSON.stringify(postMatchArray[0]))
-                            postCopy.Comments.push(commentJSON)
-                            postDB.loadDatabase()
-                            postDB.update(postMatchArray[0],postCopy,{},(err,numReplaced) => {
-                                console.log("Successfully replaced " + numReplaced + "While Commenting")
+                                postDB.update(postMatchArray[0],postCopy,(err,numReplaced) => {
+                                    if(err)
+                                    {
+                                        let verdict = {
+                                            Status : "Fail",
+                                            Desciption : err
+                                        }
+                                        res.json(verdict);
+                                    }
+                                    else
+                                    {
+                                        let verdict = {
+                                            Status : "Pass",
+                                            Description : "Commented Successfully"
+                                        }
+                                        res.json(verdict);
+                                    }
+                                })
+                            }
+                            else
+                            {
                                 let verdict = {
-                                    Status : "Pass",
-                                    Description : "Successfully Commented",
-                                    NewComments : postCopy.Comments
+                                    Status : "Fail",
+                                    Description : "Comment Length Should Be Between 1 and 280 Characters"
                                 }
                                 res.json(verdict);
-                            })
+                            }
                         }
                         else
                         {
                             let verdict = {
                                 Status : "Fail",
-                                Description : "The post doesn't Exists"
+                                Description : "Post Does Not Exist"
                             }
                             res.json(verdict);
                         }
@@ -334,7 +389,7 @@ function CommentPost(req,res)
                 {
                     let verdict = {
                         Status : "Fail",
-                        Description : "The User who Posted Doesn't Exists"
+                        Description : "User Posting the Post Does Not Exist"
                     }
                     res.json(verdict);
                 }

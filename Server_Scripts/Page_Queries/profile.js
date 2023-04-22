@@ -36,7 +36,7 @@ function validate_password(str)
         return "Invalid Password";
 }
 
-function Profile_Page(req,res)
+function Profile_Page(req,res) //function that fethces own profile page data
 {
     Validate_Session(req).then((session_match_array)=>{
         
@@ -53,6 +53,7 @@ function Profile_Page(req,res)
                     postsArrayCopy[i].PostedBy = (postsArrayCopy[i].Visibility == "Anonymous") ? "@anonymous" : postsArrayCopy[i].PostedBy; 
                     postsArrayCopy[i].Username = (postsArrayCopy[i].Visibility == "Anonymous") ? "Anonymous" : session_match_array[0].Username; 
                     postsArrayCopy[i].Profile_Picture = (postsArrayCopy[i].Visibility == "Anonymous") ? "./GUI_Resources/anonymous2.jpg" : session_match_array[0].Profile_Picture; 
+                    delete postsArrayCopy[i].Comments;
                 }
 
                 let verdict = {
@@ -415,7 +416,7 @@ function Return_Static_Profile_Page(username,res)
     })
 }
 
-function Fetch_Static_Profile(req,res,username)
+function Fetch_Static_Profile(req,res,username) //function that fetches the static profile page data
 {
     Validate_Session(req).then(Session_Result => {
         
@@ -453,7 +454,11 @@ function Fetch_Static_Profile(req,res,username)
                                 
                                 getPosts(username,username_match_array[0].Email,username_match_array[0].Profile_Picture,Session_Result[0].Buddies).then(postsReturned => {
                                     
+                                    for(var i=0;i<postsReturned.length;i++)
+                                        delete postsReturned[i].Comments; //removing the comments from each post so that it can be fetched when needed
+                                        
                                     verdict.Posts = postsReturned;
+
                                     res.json(verdict);
 
                                 });

@@ -405,11 +405,6 @@ function displayMoodPallet(moods)
 
 
 
-function closePallet(id) //function to close overlay pallets by id passed to it
-{
-    document.getElementById(id).hidden = true;
-}
-
 function viewPallet(id) //function that reveals the pallet by id passed to it
 {
     document.getElementById(id).hidden = false;
@@ -506,17 +501,17 @@ function displayPostsnPolls(posts)
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <div class="row">
                                                         <div class="col">
-                                                            <button class="btn btn-sm btn-secondary" onclick=viewComments('${JSON.stringify(thisPost.Comments)}')  ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} ><i class="bi bi-chat" style="font-size: 12px;">Comment</i></button>
+                                                            <button class="btn btn-sm btn-secondary" onclick="viewComments('${thisPost._id}','${thisPost.Username}')"  ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} ><i class="bi bi-chat" style="font-size: 12px;">Comment</i></button>
                                                         </div>
                                                         <div class="col" >
                                                             <div class="dropdown">
                                                                 <button class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""}  ><i class="bi bi-emoji-smile" style="font-size: 12px;">React</i></button>
                                                                 <div class="dropdown-menu">
-                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Angry','${thisPost._id}','${thisPost.Username}')"> 🤬 Angry </button></a>
-                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Sad','${thisPost._id}','${thisPost.Username}')"> 😢 Sad </button></a>
-                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Love','${thisPost._id}','${thisPost.Username}')"> 😍 Love </button></a>
-                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Laugh','${thisPost._id}','${thisPost.Username}')"> 😆 Laugh </button></a>
-                                                                    <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Excited','${thisPost._id}','${thisPost.Username}')"> 🤩 Excited </button></a>
+                                                                    <a class="dropdown-item"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Angry','${thisPost._id}','${thisPost.Username}')"> 🤬 Angry </button></a>
+                                                                    <a class="dropdown-item"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Sad','${thisPost._id}','${thisPost.Username}')"> 😢 Sad </button></a>
+                                                                    <a class="dropdown-item"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Love','${thisPost._id}','${thisPost.Username}')"> 😍 Love </button></a>
+                                                                    <a class="dropdown-item"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Laugh','${thisPost._id}','${thisPost.Username}')"> 😆 Laugh </button></a>
+                                                                    <a class="dropdown-item"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Excited','${thisPost._id}','${thisPost.Username}')"> 🤩 Excited </button></a>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -553,90 +548,49 @@ function displayPostsnPolls(posts)
 }
 
 
-function viewComments(CommentsArray) //function that displays the comments
-{
-    document.getElementById("commentPallet").hidden = false;
-    CommentsArray = JSON.parse(CommentsArray)
-    CommentsArray.forEach(thisComment => {
-        let DisplayComments = `
-                                <div class="card" style="max-width: 80vw; border:5px solid black">
+// function viewComments(CommentsArray) //function that displays the comments
+// {
+//     document.getElementById("commentPallet").hidden = false;
+//     CommentsArray = JSON.parse(CommentsArray)
+//     CommentsArray.forEach(thisComment => {
+//         let DisplayComments = `
+//                                 <div class="card" style="max-width: 80vw; border:5px solid black">
     
-                                        <div class="card-header previewPostCardHeader">
+//                                         <div class="card-header previewPostCardHeader">
 
-                                                <div>
+//                                                 <div>
 
-                                                    <table>
-                                                        <tr> 
-                                                            <td> <img src="../${thisComment.Profile_Picture}" alt="Profile Picture" class="rounded-circle me-3" width="30"> </td> 
-                                                            <td> 
-                                                                <div>
-                                                                    <a href='/Profiles/"${thisComment.Username}'  class="m-0 headerText" style="font-size: 15px;">${thisComment.Username}</a>
-                                                                    <br>
-                                                                    <small class="headerText" style="font-size: 10px;">${thisComment.CommentedBy}</small>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
+//                                                     <table>
+//                                                         <tr> 
+//                                                             <td> <img src="../${thisComment.Profile_Picture}" alt="Profile Picture" class="rounded-circle me-3" width="30"> </td> 
+//                                                             <td> 
+//                                                                 <div>
+//                                                                     <a href='/Profiles/"${thisComment.Username}'  class="m-0 headerText" style="font-size: 15px;">${thisComment.Username}</a>
+//                                                                     <br>
+//                                                                     <small class="headerText" style="font-size: 10px;">${thisComment.CommentedBy}</small>
+//                                                                 </div>
+//                                                             </td>
+//                                                         </tr>
+//                                                     </table>
                                                     
                                                 
-                                                </div>   
+//                                                 </div>   
                                                 
-                                        </div>
+//                                         </div>
 
-                                        <div class="card-body">
-                                            <p class="card-text postTextPreviewPlaceHolder">${thisComment.Comment}</p>
-                                        </div>
-                                        <div class="card-footer">
-                                            <div class="d-flex align-items-center">
-                                            <small style="font-size: 10px;position: absolute;right: 30;"> &nbsp;${Convert_Timestamp_To_Date(thisComment.CommentedAt)}</small>
-                                            </div>
-                                        </div>
-                                </div>`;
-        document.getElementById("commentsList").innerHTML += DisplayComments;
-    })
-}
+//                                         <div class="card-body">
+//                                             <p class="card-text postTextPreviewPlaceHolder">${thisComment.Comment}</p>
+//                                         </div>
+//                                         <div class="card-footer">
+//                                             <div class="d-flex align-items-center">
+//                                             <small style="font-size: 10px;position: absolute;right: 30;"> &nbsp;${Convert_Timestamp_To_Date(thisComment.CommentedAt)}</small>
+//                                             </div>
+//                                         </div>
+//                                 </div>`;
+//         document.getElementById("commentsList").innerHTML += DisplayComments;
+//     })
+// }
 
-function PostComment()
-{
-    let comment = document.getElementById("commentBox").value;
-}
-
-function react(reaction,postID,postedBy)
-{
-    // alert(reaction + " " + postID)
-    if(Cookies.get("Session_ID") == undefined)
-        location.href = "./index.html";
-    else
-    {
-
-        let reactJSON = {
-            postedBy : postedBy,
-            postID : postID,
-            Reaction : reaction
-        }
-
-        console.log(reactJSON)
-        loadOverlay.hidden = false;
-        axios.put('/reactPost', reactJSON, {headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
-            console.log(response.data);
-            loadOverlay.hidden = true;
-            
-            if(response.data.Status == "Fail")
-                alert(response.data.Description)
-            else
-            {
-                //update the reaction count
-                document.getElementById(postID + "_Angry").innerText = response.data.NewReactions.Angry.length;
-                document.getElementById(postID + "_Sad").innerText = response.data.NewReactions.Sad.length
-                document.getElementById(postID + "_Love").innerText = response.data.NewReactions.Love.length
-                document.getElementById(postID + "_Laugh").innerText = response.data.NewReactions.Laugh.length
-                document.getElementById(postID + "_Excited").innerText = response.data.NewReactions.Excited.length
-            }
-
-
-        })
-    }
-}
 
 Fetch_Dashboard();
 

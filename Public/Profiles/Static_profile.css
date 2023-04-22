@@ -1,4 +1,4 @@
-#Confessions_Pallet /*CSS for profile pallet overlay*/
+#Confessions_Pallet,#commentPallet /*CSS for profile pallet overlay*/
 {
     height: 100%;
     width: 100%;
@@ -37,7 +37,7 @@
     top: 100%;
 }
 
-#Confessions_Pallet_btn /* CSS for the profile pallet top right close button*/
+.CloseBtn /* CSS for the profile pallet top right close button*/
 {
     position: absolute;
     left : 95%;
