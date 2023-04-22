@@ -11,7 +11,7 @@
     border: 2px solid black;
 }
 
-#Post_Overlay,#themesOverlay,#moodOverlay,#PollOverlay,#createPallet /*CSS for load overlay div */
+#Post_Overlay,#themesOverlay,#moodOverlay,#PollOverlay,#createPallet,#commentPallet /*CSS for load overlay div */
 {
     height: 100%;
     width: 100%;

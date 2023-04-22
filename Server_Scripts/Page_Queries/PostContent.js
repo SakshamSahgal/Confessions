@@ -1,8 +1,23 @@
 const { Validate_Session } = require("../Auth/validate_session.js");
 const Datastore = require("nedb"); //including the nedb node package for database 
+
 const fs = require("fs");
 //Dotenv
 require("dotenv").config();//reading the .env file
+
+
+function getHeaderBackgroundPath(postHeader)
+{
+    if(postHeader.headerThemeBackground == '' && postHeader.usernameFontColor == '' && postHeader.emailFontColor == '') //no header selected
+    return '';
+    
+    let bgJSON = JSON.parse(fs.readFileSync("./Customization_Datasets/Backgrounds.json","ascii"));
+    //console.log(bgJSON)
+    for (let [ThemeName, themeBackgrounds] of Object.entries(bgJSON)) { //iterating over the themes
+        if(  themeBackgrounds[postHeader.headerThemeBackground] != undefined && themeBackgrounds[postHeader.headerThemeBackground].headerFontColor == postHeader.emailFontColor &&  themeBackgrounds[postHeader.headerThemeBackground].headerFontColor == postHeader.usernameFontColor)
+        return `./GUI_Resources/Backgrounds/${ThemeName}/${postHeader.headerThemeBackground}.jpg`
+    }
+}
 
 function validateHeader(postHeader){ //function that checks if the header bg and the header font colors are actually valid is actually valid 
     
@@ -18,25 +33,12 @@ function validateHeader(postHeader){ //function that checks if the header bg and
     return false;
 }
 
-function getHeaderBackgroundPath(postHeader)
-{
-    if(postHeader.headerThemeBackground == '' && postHeader.usernameFontColor == '' && postHeader.emailFontColor == '') //no header selected
-        return '';
-
-    let bgJSON = JSON.parse(fs.readFileSync("./Customization_Datasets/Backgrounds.json","ascii"));
-    //console.log(bgJSON)
-    for (let [ThemeName, themeBackgrounds] of Object.entries(bgJSON)) { //iterating over the themes
-        if(  themeBackgrounds[postHeader.headerThemeBackground] != undefined && themeBackgrounds[postHeader.headerThemeBackground].headerFontColor == postHeader.emailFontColor &&  themeBackgrounds[postHeader.headerThemeBackground].headerFontColor == postHeader.usernameFontColor)
-            return `./GUI_Resources/Backgrounds/${ThemeName}/${postHeader.headerThemeBackground}.jpg`
-    }
-}
-
 function validateContent(content){ //function that validates the content inputed
-
+    
     if(content.length >= process.env.Min_Content_Length && content.length <= process.env.Max_Content_Length)
-        return true;
+    return true;
     else
-        return false;
+    return false;
 }
 
 function validateMoodBadge(moodBadge){ //function that validates the mood badge for any hazards
@@ -54,6 +56,16 @@ function validateMoodBadge(moodBadge){ //function that validates the mood badge 
     return false;
 }
 
+function validateVisibility(visibility){
+    return ( ["Anonymous","Buddies-Only","Global"].includes(visibility) ); //checking if the visibility is any one of the three
+}
+
+function ValidateReaction(reaction)
+{
+    return(["Angry","Sad","Love","Laugh","Excited"].includes(reaction))
+}
+
+
 function getMoodTitle(moodBadge)
 {
     if(moodBadge == '') //no mood badge selected
@@ -70,9 +82,6 @@ function getMoodTitle(moodBadge)
     }
 }
 
-function validateVisibility(visibility){
-    return ( ["Anonymous","Buddies-Only","Global"].includes(visibility) ); //checking if the visibility is any one of the three
-}
 
 function Post_it(req,res) { 
 
@@ -242,16 +251,6 @@ function deletePost(req,res)
     })
 }
 
-function ValidateReaction(reaction)
-{
-    return(["Angry","Sad","Love","Laugh","Excited"].includes(reaction))
-}
-
-
-
-
-
-
 
 // req.body = {
 //         postedBy : postedBy,
@@ -393,7 +392,6 @@ function reactPost(req,res)
             {
 
             }
-            
         }
         else
         {
@@ -405,5 +403,9 @@ function reactPost(req,res)
         }
     })
 }
+
+
+
+
 
 module.exports = {Post_it,deletePost,reactPost};

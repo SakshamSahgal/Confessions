@@ -3,6 +3,7 @@ const { response } = require("express");
 const {Validate_Session} = require("../Auth/validate_session.js");
 const fs = require("fs")
 const Datastore = require("nedb"); //including the nedb node package for database 
+const { v4: uuidv4 } = require('uuid'); //including uuidv4 to add create a unique comment ID
 
 function Fetch_Dashboard(req,res)
 {
@@ -274,4 +275,80 @@ function FetchMoods(req,res)
     })
 }
 
-module.exports = {FetchMoods,Fetch_All_Themes,Fetch_Dashboard}
+
+//req.body = {
+    //     postedBy : postedBy,
+    //     postID : postID,
+    //     Comment : comment
+//}
+
+function CommentPost(req,res)
+{
+    Validate_Session(req).then(SessionResult => { //validate session
+        if(SessionResult.length)    //if Session Exists
+        {
+            let userDB = new Datastore("./Database/users.db");
+            userDB.loadDatabase();
+            userDB.find({Username : req.body.postedBy},(err,userMatchArray) => {
+               
+                if(userMatchArray.length) //if that user exists
+                {
+                    let postDB = new Datastore("./Media/" + req.body.postedBy + "/posts.db");
+                    postDB.loadDatabase();
+                    postDB.find({_id : req.body.postID},(err,postMatchArray) => {
+                        if(postMatchArray.length) //that post exists
+                        {
+                            let commentJSON = {
+                                Comment : req.body.Comment,
+                                CommentedBy : SessionResult[0].Email,
+                                CommentedAt : Date.now(),
+                                commentId : uuidv4()
+                            }
+                            
+                            console.log(commentJSON)
+
+                            let postCopy = JSON.parse(JSON.stringify(postMatchArray[0]))
+                            postCopy.Comments.push(commentJSON)
+                            postDB.loadDatabase()
+                            postDB.update(postMatchArray[0],postCopy,{},(err,numReplaced) => {
+                                console.log("Successfully replaced " + numReplaced + "While Commenting")
+                                let verdict = {
+                                    Status : "Pass",
+                                    Description : "Successfully Commented",
+                                    NewComments : postCopy.Comments
+                                }
+                                res.json(verdict);
+                            })
+                        }
+                        else
+                        {
+                            let verdict = {
+                                Status : "Fail",
+                                Description : "The post doesn't Exists"
+                            }
+                            res.json(verdict);
+                        }
+                    })
+                }
+                else
+                {
+                    let verdict = {
+                        Status : "Fail",
+                        Description : "The User who Posted Doesn't Exists"
+                    }
+                    res.json(verdict);
+                }
+            })
+        }
+        else
+        {
+            let verdict = {
+                Status : "Fail",
+                Description : "Invalid Session"
+            }
+            res.json(verdict);
+        }
+    })
+}
+
+module.exports = {FetchMoods,Fetch_All_Themes,Fetch_Dashboard,CommentPost}
