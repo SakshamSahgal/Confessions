@@ -36,48 +36,7 @@ function validate_password(str)
         return "Invalid Password";
 }
 
-function Profile_Page(req,res) //function that fethces own profile page data
-{
-    Validate_Session(req).then((session_match_array)=>{
-        
-        if(session_match_array.length) //session Matched
-        {
-            let Posts = new Datastore("./Media/" + session_match_array[0].Username + "/Posts.db");
-            Posts.loadDatabase();
-            Posts.find({},(err,postsArray) => {
 
-                let postsArrayCopy = JSON.parse(JSON.stringify(postsArray));
-                
-                for(var i=0;i<postsArrayCopy.length;i++)
-                {
-                    postsArrayCopy[i].PostedBy = (postsArrayCopy[i].Visibility == "Anonymous") ? "@anonymous" : postsArrayCopy[i].PostedBy; 
-                    postsArrayCopy[i].Username = (postsArrayCopy[i].Visibility == "Anonymous") ? "Anonymous" : session_match_array[0].Username; 
-                    postsArrayCopy[i].Profile_Picture = (postsArrayCopy[i].Visibility == "Anonymous") ? "./GUI_Resources/anonymous2.jpg" : session_match_array[0].Profile_Picture; 
-                    delete postsArrayCopy[i].Comments;
-                }
-
-                let verdict = {
-                    Status : "Pass",
-                    Profile_Picture : session_match_array[0].Profile_Picture,
-                    Bio : (session_match_array[0].Bio == "") ? "N/A" : session_match_array[0].Bio,
-                    Gender : (session_match_array[0].Gender == "") ? "Not Specified" : session_match_array[0].Gender,
-                    Username : session_match_array[0].Username,
-                    Posts : postsArrayCopy
-                }
-                res.json(verdict);
-            })           
-        }
-        else
-        {
-            let verdict = {
-                Status : "Fail",
-                Description : "Invalid Session"
-            }
-            res.json(verdict);
-        }
-
-    })
-}
 
 function Update_Profile_Picture(req,res)
 {
@@ -413,6 +372,49 @@ function Return_Static_Profile_Page(username,res)
             res.send(fs.readFileSync("./Public/Profiles/profileTemplate.html","ascii"));
         else
             res.send(fs.readFileSync("./Public/invalidResource.html","ascii"));
+    })
+}
+
+function Profile_Page(req,res) //function that fethces own profile page data
+{
+    Validate_Session(req).then((session_match_array)=>{
+        
+        if(session_match_array.length) //session Matched
+        {
+            let Posts = new Datastore("./Media/" + session_match_array[0].Username + "/Posts.db");
+            Posts.loadDatabase();
+            Posts.find({},(err,postsArray) => {
+
+                let postsArrayCopy = JSON.parse(JSON.stringify(postsArray));
+                
+                for(var i=0;i<postsArrayCopy.length;i++)
+                {
+                    postsArrayCopy[i].PostedBy = (postsArrayCopy[i].Visibility == "Anonymous") ? "@anonymous" : postsArrayCopy[i].PostedBy; 
+                    postsArrayCopy[i].Username = (postsArrayCopy[i].Visibility == "Anonymous") ? "Anonymous" : session_match_array[0].Username; 
+                    postsArrayCopy[i].Profile_Picture = (postsArrayCopy[i].Visibility == "Anonymous") ? "./GUI_Resources/anonymous2.jpg" : session_match_array[0].Profile_Picture; 
+                    delete postsArrayCopy[i].Comments;
+                }
+
+                let verdict = {
+                    Status : "Pass",
+                    Profile_Picture : session_match_array[0].Profile_Picture,
+                    Bio : (session_match_array[0].Bio == "") ? "N/A" : session_match_array[0].Bio,
+                    Gender : (session_match_array[0].Gender == "") ? "Not Specified" : session_match_array[0].Gender,
+                    Username : session_match_array[0].Username,
+                    Posts : postsArrayCopy
+                }
+                res.json(verdict);
+            })           
+        }
+        else
+        {
+            let verdict = {
+                Status : "Fail",
+                Description : "Invalid Session"
+            }
+            res.json(verdict);
+        }
+
     })
 }
 

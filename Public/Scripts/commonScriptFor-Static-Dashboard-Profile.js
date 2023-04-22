@@ -1,4 +1,6 @@
 
+let postIDGot;
+let postPostedByGot
 
 function closePallet(id) //function to close overlay pallets by id passed to it
 {
@@ -10,12 +12,51 @@ function viewComments(postID,postPostedBy) //function called when we click on co
 {
     alert(postID + " " + postPostedBy);
     document.getElementById("commentPallet").hidden = false;
+    
+    postIDGot = postID;
+    postPostedByGot = postPostedBy;
+
+    if(Cookies.get("Session_ID") == undefined)
+        location.href = "./index.html";
+    else
+    {
+        loadOverlay.hidden = false;
+        axios.get('/getComments/'+ postPostedBy +"/" + postID, {headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+            console.log(response.data);
+            loadOverlay.hidden = true;
+            if(response.data.Status == "Fail")
+                alert(response.data.Description)
+            else
+                displayComments(response.data.Comments)
+        })
+    }
 }
 
-function PostComment()
+function PostComment() //function called when we click on post comment Btn
 {
-    let comment = document.getElementById("commentBox").value;
-    document.getElementById("commentPallet").hidden = false; 
+    if(Cookies.get("Session_ID") == undefined)
+        location.href = "./index.html";
+    else
+    {
+        CommentJSON = {
+            postPostedBy : postPostedByGot,
+            postID : postIDGot,
+            comment : document.getElementById("commentBox").value
+        }
+
+        loadOverlay.hidden = false;
+
+        axios.post('/commentPost', CommentJSON, {headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+            
+            loadOverlay.hidden = true;
+            console.log(response.data);
+
+            if(response.data.Status == "Fail")
+                alert(response.data.Description)
+            else
+                displayComments(response.data.NewCommentList)
+        })
+    }
 }
 
 function react(reaction,postID,postedBy) //function called when we click on any reaction Btn
@@ -51,4 +92,48 @@ function react(reaction,postID,postedBy) //function called when we click on any 
             }
         })
     }
+}
+
+
+function displayComments(CommentsArray) //function that displays the comments
+{
+    document.getElementById("commentPallet").hidden = false;
+    CommentsArray = JSON.parse(CommentsArray)
+    CommentsArray.forEach(thisComment => {
+        let DisplayComments = `
+                                <div class="card" style="max-width: 80vw; border:5px solid black">
+    
+                                        <div class="card-header previewPostCardHeader">
+
+                                                <div>
+
+                                                    <table>
+                                                        <tr> 
+                                                            <td> <img src="../${thisComment.Profile_Picture}" alt="Profile Picture" class="rounded-circle me-3" width="30"> </td> 
+                                                            <td> 
+                                                                <div>
+                                                                    <a href='/Profiles/"${thisComment.Username}'  class="m-0 headerText" style="font-size: 15px;">${thisComment.Username}</a>
+                                                                    <br>
+                                                                    <small class="headerText" style="font-size: 10px;">${thisComment.CommentedBy}</small>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    
+                                                
+                                                </div>   
+                                                
+                                        </div>
+
+                                        <div class="card-body">
+                                            <p class="card-text postTextPreviewPlaceHolder">${thisComment.Comment}</p>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="d-flex align-items-center">
+                                            <small style="font-size: 10px;position: absolute;right: 30;"> &nbsp;${Convert_Timestamp_To_Date(thisComment.CommentedAt)}</small>
+                                            </div>
+                                        </div>
+                                </div>`;
+        document.getElementById("commentsList").innerHTML += DisplayComments;
+    })
 }
