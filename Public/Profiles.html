@@ -212,7 +212,7 @@
 
       <div id="Confessions_Pallet" hidden>
 
-          <button type="button" class="btn-close btn-close-white" aria-label="Close" id="Confessions_Pallet_close_btn" onclick="Close_Confessions_Pallet()"></button>
+          <button type="button" class="btn-close btn-close-white CloseBtn" aria-label="Close" onclick="Close_Confessions_Pallet()"></button>
           
           <div class="container mt-5">
 
@@ -259,11 +259,51 @@
       </div>  
       
       <div id="profile_picture_pallet" hidden>
-        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="profile_pallet_close_btn" onclick="Close_Profile_Pallet()"></button>
+        <button type="button" class="btn-close btn-close-white CloseBtn" aria-label="Close" onclick="Close_Profile_Pallet()"></button>
         <div id="inner_pallet">
         </div>
       </div> 
-      
+
+      <div id="commentPallet" hidden>
+        <div class="container" align="center">
+            <button type="button" class="btn-close btn-close-white CloseBtn" aria-label="Close" onclick="closePallet('commentPallet')"></button>
+            <div class="row">
+                <div class="col">
+                    <br><br>
+                    <form onsubmit="PostComment();return false">
+
+                        <div class="container">
+                            <div class="row">
+                                <div class="col">
+                                    <textarea name="" id="" style="width: 100%;border-radius: 10px;" rows="1" id="commentBox"></textarea>
+                                </div>
+                            </div>
+                            <div class="row my-3">
+                                <input type="submit" value="comment">
+                            </div>
+                        </div>
+                        
+                    </form>
+                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    
+                    <div class="row">
+
+                        <div class="col my-5" id="commentsList">
+                            <!--  -->
+                            
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
     <!-- importing the JS cookie CDN -->
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
@@ -273,4 +313,5 @@
 
 
     <script src="./Scripts/client_profiles.js"></script>
+    <script src="./Scripts/commonScriptFor-Static-Dashboard-Profile.js"></script>
 </html>

@@ -24,11 +24,11 @@ const {Fetch_All_Users} = require("./Page_Queries/users.js");
 const {Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo} = require("./Page_Queries/profile.js");
 const {Delete_Account} = require("./Auth/Delete_Acc.js");
 const {Return_Static_Profile_Page,Fetch_Static_Profile,Update_Bio,Update_Username,Update_Gender,Update_Password} = require("./Page_Queries/profile.js");
-const {FetchMoods,Fetch_Dashboard,Fetch_All_Themes,CommentPost} = require("./Page_Queries/Dashboard.js");
+const {FetchMoods,Fetch_Dashboard,Fetch_All_Themes} = require("./Page_Queries/Dashboard.js");
 const {Verify_Email,Forgot_Verify_OTP,Verify_Password} = require("./Auth/Forgot_Details.js");
 const {Confess,Fetch_Confessions,Fetch_Static_Confessions_Got} = require("./Page_Queries/confessions.js");
 const {Reject_Buddy_Request,Buddy,Fetch_Buddy_Requests,Accept_Buddy_Request} = require("./Page_Queries/Buddies.js");
-const {Post_it,deletePost,reactPost} = require("./Page_Queries/PostContent.js");
+const {Post_it,deletePost,reactPost,CommentPost,GetComments} = require("./Page_Queries/PostContent.js");
 const {Return_Buddy_Request_DB} = require("./Debugging_Scripts/Return_Pending_Buddies.js");
 
 
@@ -197,6 +197,10 @@ app.put("/reactPost",(req,res) => { //post request called when user reacts to a 
 })
 
 
-app.post("/commentPost",(req,res) => {
+app.post("/commentPost",(req,res) => { //function that handles the comment post request
     CommentPost(req,res);
+})
+
+app.get("/getComments/:postPostedBy/:postID",(req,res) => { //function that handles the get comments request
+    GetComments(req,res);
 })

@@ -136,7 +136,7 @@
 
   <div id="Confessions_Pallet" hidden>
     
-    <button type="button" class="btn-close btn-close-white" id="Confessions_Pallet_btn" onclick="Close_Confession_Pallet()"></button>
+    <button type="button" class="btn-close btn-close-white CloseBtn" onclick="Close_Confession_Pallet()"></button>
     
     <div id="inner_pallet">
       <br><br>
@@ -152,6 +152,46 @@
 
   </div>
 
+  <div id="commentPallet" hidden>
+    <div class="container" align="center">
+        <button type="button" class="btn-close btn-close-white CloseBtn" aria-label="Close" id="postOverlayCloseBtn" onclick="closePallet('commentPallet')"></button>
+        <div class="row">
+            <div class="col">
+                <br><br>
+                <form onsubmit="PostComment();return false">
+
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <textarea name="" id="" style="width: 100%;border-radius: 10px;" rows="1" id="commentBox"></textarea>
+                            </div>
+                        </div>
+                        <div class="row my-3">
+                            <input type="submit" value="comment">
+                        </div>
+                    </div>
+                    
+                </form>
+                
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                
+                <div class="row">
+
+                    <div class="col my-5" id="commentsList">
+                        <!--  -->
+                        
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
 
@@ -162,3 +202,4 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js" integrity="sha512-LUKzDoJKOLqnxGWWIBM4lzRBlxcva2ZTztO8bTcWPmDSpkErWx0bSP4pdsjNH8kiHAUPaT06UXcb+vOEZH+HpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <!-- importing native scripts -->
 <script src="./static_profile.js"></script>
+<script src="../Scripts/commonScriptFor-Static-Dashboard-Profile.js"></script>

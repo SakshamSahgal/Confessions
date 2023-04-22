@@ -36,47 +36,7 @@ function validate_password(str)
         return "Invalid Password";
 }
 
-function Profile_Page(req,res)
-{
-    Validate_Session(req).then((session_match_array)=>{
-        
-        if(session_match_array.length) //session Matched
-        {
-            let Posts = new Datastore("./Media/" + session_match_array[0].Username + "/posts.db");
-            Posts.loadDatabase();
-            Posts.find({},(err,postsArray) => {
 
-                let postsArrayCopy = JSON.parse(JSON.stringify(postsArray));
-                
-                for(var i=0;i<postsArrayCopy.length;i++)
-                {
-                    postsArrayCopy[i].PostedBy = (postsArrayCopy[i].Visibility == "Anonymous") ? "@anonymous" : postsArrayCopy[i].PostedBy; 
-                    postsArrayCopy[i].Username = (postsArrayCopy[i].Visibility == "Anonymous") ? "Anonymous" : session_match_array[0].Username; 
-                    postsArrayCopy[i].Profile_Picture = (postsArrayCopy[i].Visibility == "Anonymous") ? "./GUI_Resources/anonymous2.jpg" : session_match_array[0].Profile_Picture; 
-                }
-
-                let verdict = {
-                    Status : "Pass",
-                    Profile_Picture : session_match_array[0].Profile_Picture,
-                    Bio : (session_match_array[0].Bio == "") ? "N/A" : session_match_array[0].Bio,
-                    Gender : (session_match_array[0].Gender == "") ? "Not Specified" : session_match_array[0].Gender,
-                    Username : session_match_array[0].Username,
-                    Posts : postsArrayCopy
-                }
-                res.json(verdict);
-            })           
-        }
-        else
-        {
-            let verdict = {
-                Status : "Fail",
-                Description : "Invalid Session"
-            }
-            res.json(verdict);
-        }
-
-    })
-}
 
 function Update_Profile_Picture(req,res)
 {
@@ -415,7 +375,50 @@ function Return_Static_Profile_Page(username,res)
     })
 }
 
-function Fetch_Static_Profile(req,res,username)
+function Profile_Page(req,res) //function that fethces own profile page data
+{
+    Validate_Session(req).then((session_match_array)=>{
+        
+        if(session_match_array.length) //session Matched
+        {
+            let Posts = new Datastore("./Media/" + session_match_array[0].Username + "/posts.db");
+            Posts.loadDatabase();
+            Posts.find({},(err,postsArray) => {
+
+                let postsArrayCopy = JSON.parse(JSON.stringify(postsArray));
+                
+                for(var i=0;i<postsArrayCopy.length;i++)
+                {
+                    postsArrayCopy[i].PostedBy = (postsArrayCopy[i].Visibility == "Anonymous") ? "@anonymous" : postsArrayCopy[i].PostedBy; 
+                    postsArrayCopy[i].Username = (postsArrayCopy[i].Visibility == "Anonymous") ? "Anonymous" : session_match_array[0].Username; 
+                    postsArrayCopy[i].Profile_Picture = (postsArrayCopy[i].Visibility == "Anonymous") ? "./GUI_Resources/anonymous2.jpg" : session_match_array[0].Profile_Picture; 
+                    delete postsArrayCopy[i].Comments;
+                }
+
+                let verdict = {
+                    Status : "Pass",
+                    Profile_Picture : session_match_array[0].Profile_Picture,
+                    Bio : (session_match_array[0].Bio == "") ? "N/A" : session_match_array[0].Bio,
+                    Gender : (session_match_array[0].Gender == "") ? "Not Specified" : session_match_array[0].Gender,
+                    Username : session_match_array[0].Username,
+                    Posts : postsArrayCopy
+                }
+                res.json(verdict);
+            })           
+        }
+        else
+        {
+            let verdict = {
+                Status : "Fail",
+                Description : "Invalid Session"
+            }
+            res.json(verdict);
+        }
+
+    })
+}
+
+function Fetch_Static_Profile(req,res,username) //function that fetches the static profile page data
 {
     Validate_Session(req).then(Session_Result => {
         
@@ -453,7 +456,11 @@ function Fetch_Static_Profile(req,res,username)
                                 
                                 getPosts(username,username_match_array[0].Email,username_match_array[0].Profile_Picture,Session_Result[0].Buddies).then(postsReturned => {
                                     
+                                    for(var i=0;i<postsReturned.length;i++)
+                                        delete postsReturned[i].Comments; //removing the comments from each post so that it can be fetched when needed
+                                        
                                     verdict.Posts = postsReturned;
+
                                     res.json(verdict);
 
                                 });

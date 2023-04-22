@@ -1,5 +1,6 @@
 const { Validate_Session } = require("../Auth/validate_session.js");
 const Datastore = require("nedb"); //including the nedb node package for database 
+const { v4: uuidv4 } = require('uuid'); //including uuidv4 to add create a unique comment ID
 
 const fs = require("fs");
 //Dotenv
@@ -406,6 +407,194 @@ function reactPost(req,res)
 
 
 
+//comment = {
+    //     postPostedBy : Username,
+    //     postID : postID,
+    //     comment : comment
+//}
+
+function CommentPost(req,res) //function is called when a user comments on a post
+{
+    Validate_Session(req).then(SessionResult => { //validate session
+        if(SessionResult.length)    //if Session Exists [means the user posting the comment exists and is logged in]
+        {
+            let usersDB = new Datastore("./Database/users.db"); //accessing the users DB
+            usersDB.loadDatabase();
+            usersDB.find({Username : req.body.postPostedBy},(err,userArray) => { 
+
+                if(userArray.length) //user posting the post exists
+                {
+                    let postDB = new Datastore("./Media/" + req.body.postPostedBy + "/posts.db"); //accessing the posts DB
+                    postDB.loadDatabase();
+                    postDB.find({_id : req.body.postID},(err,postMatchArray) => {
+                        if(postMatchArray.length) //post exists therefore postID is valid
+                        {
+                            if(req.body.comment.length >= 1 && req.body.comment.length <= 280) //valid Comment Length
+                            {
+                                let commentJSON = {
+                                    Comment : req.body.comment,
+                                    CommentedBy : SessionResult[0].Email,
+                                    CommentedAt : Date.now(),
+                                    commentId : uuidv4()
+                                }
+                                let postCopy = JSON.parse(JSON.stringify(postMatchArray[0]));
+                                postCopy.Comments.push(commentJSON);
+
+                                postDB.update(postMatchArray[0],postCopy,(err,numReplaced) => {
+                                    if(err)
+                                    {
+                                        let verdict = {
+                                            Status : "Fail",
+                                            Desciption : err
+                                        }
+                                        res.json(verdict);
+                                    }
+                                    else
+                                    {
+                                        let verdict = {
+                                            Status : "Pass",
+                                            Description : "Commented Successfully"
+                                        }
+
+                                        modifyComments(postCopy.Comments).then(ModifiedCommentsArray => {
+                                            verdict.NewCommentList = ModifiedCommentsArray;
+                                        })
+
+                                        res.json(verdict);
+                                    }
+                                })
+                            }
+                            else
+                            {
+                                let verdict = {
+                                    Status : "Fail",
+                                    Description : "Comment Length Should Be Between 1 and 280 Characters"
+                                }
+                                res.json(verdict);
+                            }
+                        }
+                        else
+                        {
+                            let verdict = {
+                                Status : "Fail",
+                                Description : "Post Does Not Exist"
+                            }
+                            res.json(verdict);
+                        }
+                    })
+                }
+                else
+                {
+                    let verdict = {
+                        Status : "Fail",
+                        Description : "User Posting the Post Does Not Exist"
+                    }
+                    res.json(verdict);
+                }
+            })
+        }
+        else
+        {
+            let verdict = {
+                Status : "Fail",
+                Description : "Invalid Session"
+            }
+            res.json(verdict);
+        }
+    })
+}
 
 
-module.exports = {Post_it,deletePost,reactPost};
+async function modifyComments(CommentArray) //this function is passed comments array of a post and it adds Username and Profile picture to each comment
+{
+    let ans = new Promise((resolve,reject) => {
+
+        let CommentsCovered = 0;
+
+        for(var i=0;i<commentArray.length;i++)
+        {
+            let usersDB = new Datastore("./Database/users.db");
+            usersDB.loadDatabase();
+            usersDB.find({Email : commentArray[i].CommentedBy},(err,userArray) => {
+                
+                if(usersArray.length)
+                {
+                    commentArray[i].Username = userArray[0].Username;
+                    commentArray[i].Profile_Picture = userArray[0].Profile_Picture;
+                }
+                else
+                {
+                    commentArray[i].Username = "Unknown Username";
+                    commentArray[i].Profile_Picture = "";
+                }
+
+                CommentsCovered++;
+                if(CommentsCovered == commentArray.length)
+                    resolve(commentArray)
+
+            })
+        }
+    })
+    return ans;
+}
+
+
+
+function GetComments(req,res) //this function is called when a user wants to get comments of a post
+{
+    Validate_Session(req).then(SessionResult => { //validate session
+        if(SessionResult.length) //if session exists
+        {
+            let usersDB = new Datastore("./Database/users.db"); //accessing the users DB
+            usersDB.loadDatabase();
+            usersDB.find({Username : req.params.postPostedBy},(err,userArray) => {
+                if(userArray.length)
+                {
+                    let postDB = new Datastore("./Media/" + req.params.postPostedBy + "/posts.db"); //accessing the posts DB
+                    postDB.loadDatabase();
+                    postDB.find({_id : req.params.postID},(err,postMatchArray) => {
+                        if(postMatchArray.length) //post exists therefore postID is valid
+                        {
+                            let verdict = {
+                                Status : "Pass",
+                                Description : "Successfully Retrieved Comments"
+                            }
+
+                            modifyComments(postMatchArray[0].Comments).then(ModifiedCommentsArray => {
+                                verdict.Comments = ModifiedCommentsArray;
+                                res.json(verdict);
+                            })
+                        }
+                        else
+                        {
+                            let verdict = {
+                                Status : "Fail",
+                                Description : "Post Does Not Exist"
+                            }
+                            res.json(verdict);
+                        }
+                    })
+                }
+                else
+                {
+                    let verdict = {
+                        Status : "Fail",
+                        Description : "User Posting the Post Does Not Exist"
+                    }
+                    res.json(verdict);
+                }
+                
+            })
+        }
+        else
+        {
+            let verdict = {
+                Status : "Fail",
+                Description : "Invalid Session"
+            }
+            res.json(verdict);
+        }
+    })
+}
+
+module.exports = {Post_it,deletePost,reactPost,CommentPost,modifyComments,GetComments};
