@@ -5,7 +5,7 @@ const fs = require("fs")
 const Datastore = require("nedb"); //including the nedb node package for database 
 const {modifyComments} = require("./PostContent.js");
 
-function Fetch_Dashboard(req,res)
+function Fetch_Dashboard(req,res) //function fetches dashboard data
 {
     Validate_Session(req).then( (Session_Result) => {
         

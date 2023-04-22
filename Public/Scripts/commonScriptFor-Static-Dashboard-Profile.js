@@ -1,6 +1,6 @@
 
-let postIDGot;
-let postPostedByGot
+let postIDGot="";
+let postPostedByGot="";
 
 function closePallet(id) //function to close overlay pallets by id passed to it
 {
@@ -10,7 +10,7 @@ function closePallet(id) //function to close overlay pallets by id passed to it
 
 function viewComments(postID,postPostedBy) //function called when we click on comment Btn
 {
-    alert(postID + " " + postPostedBy);
+    // alert(postID + " " + postPostedBy);
     document.getElementById("commentPallet").hidden = false;
     
     postIDGot = postID;
@@ -38,6 +38,7 @@ function PostComment() //function called when we click on post comment Btn
         location.href = "./index.html";
     else
     {
+        
         CommentJSON = {
             postPostedBy : postPostedByGot,
             postID : postIDGot,
@@ -45,8 +46,9 @@ function PostComment() //function called when we click on post comment Btn
         }
 
         loadOverlay.hidden = false;
+        console.log(CommentJSON)
 
-        axios.post('/commentPost', CommentJSON, {headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+        axios.post("/commentPost", CommentJSON, {headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
             
             loadOverlay.hidden = true;
             console.log(response.data);
@@ -98,7 +100,7 @@ function react(reaction,postID,postedBy) //function called when we click on any 
 function displayComments(CommentsArray) //function that displays the comments
 {
     document.getElementById("commentPallet").hidden = false;
-    CommentsArray = JSON.parse(CommentsArray)
+    document.getElementById("commentsList").innerHTML = ""; //clearing the comments list
     CommentsArray.forEach(thisComment => {
         let DisplayComments = `
                                 <div class="card" style="max-width: 80vw; border:5px solid black">
@@ -112,7 +114,7 @@ function displayComments(CommentsArray) //function that displays the comments
                                                             <td> <img src="../${thisComment.Profile_Picture}" alt="Profile Picture" class="rounded-circle me-3" width="30"> </td> 
                                                             <td> 
                                                                 <div>
-                                                                    <a href='/Profiles/"${thisComment.Username}'  class="m-0 headerText" style="font-size: 15px;">${thisComment.Username}</a>
+                                                                    <a href='/Profiles/${thisComment.Username}'  class="m-0 headerText" style="font-size: 15px;">${thisComment.Username}</a>
                                                                     <br>
                                                                     <small class="headerText" style="font-size: 10px;">${thisComment.CommentedBy}</small>
                                                                 </div>
@@ -134,6 +136,8 @@ function displayComments(CommentsArray) //function that displays the comments
                                             </div>
                                         </div>
                                 </div>`;
+        
+        
         document.getElementById("commentsList").innerHTML += DisplayComments;
     })
 }

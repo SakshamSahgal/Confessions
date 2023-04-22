@@ -28,7 +28,7 @@ const {FetchMoods,Fetch_Dashboard,Fetch_All_Themes} = require("./Page_Queries/Da
 const {Verify_Email,Forgot_Verify_OTP,Verify_Password} = require("./Auth/Forgot_Details.js");
 const {Confess,Fetch_Confessions,Fetch_Static_Confessions_Got} = require("./Page_Queries/confessions.js");
 const {Reject_Buddy_Request,Buddy,Fetch_Buddy_Requests,Accept_Buddy_Request} = require("./Page_Queries/Buddies.js");
-const {Post_it,deletePost,reactPost,CommentPost,GetComments} = require("./Page_Queries/PostContent.js");
+const {Post_it,deletePost,reactPost,CommentPost,modifyComments,GetComments} = require("./Page_Queries/PostContent.js");
 const {Return_Buddy_Request_DB} = require("./Debugging_Scripts/Return_Pending_Buddies.js");
 
 

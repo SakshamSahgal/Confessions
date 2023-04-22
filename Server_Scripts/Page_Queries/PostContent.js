@@ -424,9 +424,12 @@ function CommentPost(req,res) //function is called when a user comments on a pos
 
                 if(userArray.length) //user posting the post exists
                 {
+                    console.log("aaiya 1")
                     let postDB = new Datastore("./Media/" + req.body.postPostedBy + "/posts.db"); //accessing the posts DB
                     postDB.loadDatabase();
                     postDB.find({_id : req.body.postID},(err,postMatchArray) => {
+
+                        console.log("aaiya 2")
                         if(postMatchArray.length) //post exists therefore postID is valid
                         {
                             if(req.body.comment.length >= 1 && req.body.comment.length <= 280) //valid Comment Length
@@ -437,6 +440,9 @@ function CommentPost(req,res) //function is called when a user comments on a pos
                                     CommentedAt : Date.now(),
                                     commentId : uuidv4()
                                 }
+
+                                console.log("aaiya")
+
                                 let postCopy = JSON.parse(JSON.stringify(postMatchArray[0]));
                                 postCopy.Comments.push(commentJSON);
 
@@ -458,9 +464,10 @@ function CommentPost(req,res) //function is called when a user comments on a pos
 
                                         modifyComments(postCopy.Comments).then(ModifiedCommentsArray => {
                                             verdict.NewCommentList = ModifiedCommentsArray;
+                                            res.json(verdict);
                                         })
 
-                                        res.json(verdict);
+                                        
                                     }
                                 })
                             }
@@ -505,33 +512,40 @@ function CommentPost(req,res) //function is called when a user comments on a pos
 }
 
 
-async function modifyComments(CommentArray) //this function is passed comments array of a post and it adds Username and Profile picture to each comment
+async function modifyComments(commentArray) //this function is passed comments array of a post and it adds Username and Profile picture to each comment
 {
     let ans = new Promise((resolve,reject) => {
 
+        console.log("modify aaiya 0")
+
         let CommentsCovered = 0;
+        
+        if(commentArray.length == 0)
+            resolve(commentArray);
+
+        let usersDB = new Datastore("./Database/users.db");
+        usersDB.loadDatabase();
 
         for(var i=0;i<commentArray.length;i++)
         {
-            let usersDB = new Datastore("./Database/users.db");
-            usersDB.loadDatabase();
-            usersDB.find({Email : commentArray[i].CommentedBy},(err,userArray) => {
-                
-                if(usersArray.length)
-                {
-                    commentArray[i].Username = userArray[0].Username;
-                    commentArray[i].Profile_Picture = userArray[0].Profile_Picture;
-                }
-                else
-                {
-                    commentArray[i].Username = "Unknown Username";
-                    commentArray[i].Profile_Picture = "";
-                }
+            usersDB.find({Email : commentArray[i].CommentedBy},(err,userArray) => { //finding the user who commented
 
-                CommentsCovered++;
-                if(CommentsCovered == commentArray.length)
-                    resolve(commentArray)
 
+                    if(userArray.length)
+                    {
+                        commentArray[CommentsCovered].Username = userArray[0].Username;
+                        commentArray[CommentsCovered].Profile_Picture = userArray[0].Profile_Picture;
+                    }
+                    else
+                    {
+                        commentArray[CommentsCovered].Username = "Unknown Username";
+                        commentArray[CommentsCovered].Profile_Picture = "";
+                    }
+    
+                    CommentsCovered++;
+                    console.log("modify aaiya " + CommentsCovered)
+                    if(CommentsCovered == commentArray.length)
+                        resolve(commentArray)
             })
         }
     })
@@ -553,26 +567,39 @@ function GetComments(req,res) //this function is called when a user wants to get
                     let postDB = new Datastore("./Media/" + req.params.postPostedBy + "/posts.db"); //accessing the posts DB
                     postDB.loadDatabase();
                     postDB.find({_id : req.params.postID},(err,postMatchArray) => {
-                        if(postMatchArray.length) //post exists therefore postID is valid
-                        {
-                            let verdict = {
-                                Status : "Pass",
-                                Description : "Successfully Retrieved Comments"
-                            }
-
-                            modifyComments(postMatchArray[0].Comments).then(ModifiedCommentsArray => {
-                                verdict.Comments = ModifiedCommentsArray;
-                                res.json(verdict);
-                            })
-                        }
-                        else
+                        
+                        if(err)
                         {
                             let verdict = {
                                 Status : "Fail",
-                                Description : "Post Does Not Exist"
+                                Description : err
                             }
                             res.json(verdict);
                         }
+                        else
+                        {
+                            if(postMatchArray.length) //post exists therefore postID is valid
+                            {
+                                let verdict = {
+                                    Status : "Pass",
+                                    Description : "Successfully Retrieved Comments"
+                                }
+    
+                                modifyComments(postMatchArray[0].Comments).then(ModifiedCommentsArray => {
+                                    verdict.Comments = ModifiedCommentsArray;
+                                    res.json(verdict);
+                                })
+                            }
+                            else
+                            {
+                                let verdict = {
+                                    Status : "Fail",
+                                    Description : "Post Does Not Exist"
+                                }
+                                res.json(verdict);
+                            }
+                        }
+
                     })
                 }
                 else

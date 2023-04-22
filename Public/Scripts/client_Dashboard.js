@@ -548,8 +548,5 @@ function displayPostsnPolls(posts)
 }
 
 
-
-
-
 Fetch_Dashboard();
 
