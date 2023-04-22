@@ -29,7 +29,7 @@ function Return_Media_DBs(res)
     
             let Confessions_Got_DB_of_this_user = new Datastore("./Media/" + filename + "/Confessions_Got.db");
             let Confessions_Sent_DB_of_this_user = new Datastore("./Media/" + filename + "/Confessions_Sent.db");
-            let posts_DB_of_this_user = new Datastore("./Media/" + filename + "/Posts.db");
+            let posts_DB_of_this_user = new Datastore("./Media/" + filename + "/posts.db");
             let Who_Buddied_Me_DB_of_this_users = new Datastore("./Media/" + filename + "/Who_Buddied_Me.db");
     
             Confessions_Got_DB_of_this_user.loadDatabase();

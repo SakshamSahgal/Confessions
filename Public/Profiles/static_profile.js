@@ -100,7 +100,12 @@ function Fetch_Profile_Page() //funtion fetches the static profile data and disp
                 if(response.data.Description == "You are accessing your Own Profile")
                     location.href = "../Profiles.html";
                 else
+                {
                     alert(response.data.Description);
+                    if(response.data.Status == "Fail" && response.data.Description == "Invalid Session")
+                        location.href = "../index.html"
+                }   
+                    
             }
 
         })
@@ -156,11 +161,11 @@ function displayPostsnPolls(posts)
                                                         <div class="dropdown">
                                                             <button class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""}  ><i class="bi bi-emoji-smile" style="font-size: 12px;">React</i></button>
                                                             <div class="dropdown-menu">
-                                                                <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Angry','${thisPost._id}','${thisPost.Username}')"> 🤬 Angry </button></a>
-                                                                <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Sad','${thisPost._id}','${thisPost.Username}')"> 😢 Sad </button></a>
-                                                                <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Love','${thisPost._id}','${thisPost.Username}')"> 😍 Love </button></a>
-                                                                <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Laugh','${thisPost._id}','${thisPost.Username}')"> 😆 Laugh </button></a>
-                                                                <a class="dropdown-item" href="#"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Excited','${thisPost._id}','${thisPost.Username}')"> 🤩 Excited </button></a>
+                                                                <a class="dropdown-item"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Angry','${thisPost._id}','${thisPost.Username}')"> 🤬 Angry </button></a>
+                                                                <a class="dropdown-item"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Sad','${thisPost._id}','${thisPost.Username}')"> 😢 Sad </button></a>
+                                                                <a class="dropdown-item"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Love','${thisPost._id}','${thisPost.Username}')"> 😍 Love </button></a>
+                                                                <a class="dropdown-item"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Laugh','${thisPost._id}','${thisPost.Username}')"> 😆 Laugh </button></a>
+                                                                <a class="dropdown-item"><button ${(thisPost.Visibility == "Anonymous") ? "disabled" : ""} style="font-size: 20px;" class="reaction-btn" onclick="react('Excited','${thisPost._id}','${thisPost.Username}')"> 🤩 Excited </button></a>
                                                             </div>
                                                         </div>
                                                     </div>

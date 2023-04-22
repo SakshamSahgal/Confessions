@@ -101,7 +101,7 @@ function Post_it(req,res) {
             if(check.headerValid && check.ContentValid && check.moodValid && check.visibilityValid) //Everything is valid
             {
 
-                let userPostDB = new Datastore("./Media/" + SessionResult[0].Username + "/Posts.db");
+                let userPostDB = new Datastore("./Media/" + SessionResult[0].Username + "/posts.db");
                 userPostDB.loadDatabase();
                 let postJSON = req.body;
 
@@ -187,7 +187,7 @@ function deletePost(req,res)
         
         if(SessionResult.length)
         {
-            let userPostDB = new Datastore("./Media/" + SessionResult[0].Username + "/Posts.db");
+            let userPostDB = new Datastore("./Media/" + SessionResult[0].Username + "/posts.db");
             userPostDB.loadDatabase();
             
             console.log(req.params.postId);
