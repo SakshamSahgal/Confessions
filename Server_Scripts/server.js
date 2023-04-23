@@ -29,7 +29,7 @@ const {Verify_Email,Forgot_Verify_OTP,Verify_Password} = require("./Auth/Forgot_
 const {Confess,Fetch_Confessions,Fetch_Static_Confessions_Got} = require("./Page_Queries/confessions.js");
 const {Reject_Buddy_Request,Buddy,Fetch_Buddy_Requests,Accept_Buddy_Request} = require("./Page_Queries/Buddies.js");
 const {Post_it,deletePost,reactPost,CommentPost,modifyComments,GetComments} = require("./Page_Queries/PostContent.js");
-const {getGlobalDBs} = require("./Debugging_Scripts/Return_Pending_Buddies.js");
+const {getGlobalDBs} = require("./Debugging_Scripts/ReturnGlobalDBs.js");
 
 
 app.put('/validate_session_api',(req,res) => { //Checks if session cookie is valid [if it is valid , it also updates the last activity]
