@@ -19,7 +19,7 @@ const {Authorize_User} = require("./Auth/login.js");
 const {Validate_Session} = require("./Auth/validate_session.js")
 const {Logout} = require("./Auth/logout.js");
 const {Return_Media_DBs} = require("./Debugging_Scripts/Return_Media.js");
-const {Return_Users_DB} = require("./Debugging_Scripts/Return_Users.js");
+// const {Return_Users_DB} = require("./Debugging_Scripts/Return_Users.js");
 const {Fetch_All_Users} = require("./Page_Queries/users.js");
 const {Profile_Page,Fetch_Profile_Pictures,Update_Profile_Picture,Remove_Profile_Photo} = require("./Page_Queries/profile.js");
 const {Delete_Account} = require("./Auth/Delete_Acc.js");
@@ -29,7 +29,7 @@ const {Verify_Email,Forgot_Verify_OTP,Verify_Password} = require("./Auth/Forgot_
 const {Confess,Fetch_Confessions,Fetch_Static_Confessions_Got} = require("./Page_Queries/confessions.js");
 const {Reject_Buddy_Request,Buddy,Fetch_Buddy_Requests,Accept_Buddy_Request} = require("./Page_Queries/Buddies.js");
 const {Post_it,deletePost,reactPost,CommentPost,modifyComments,GetComments} = require("./Page_Queries/PostContent.js");
-const {Return_Buddy_Request_DB} = require("./Debugging_Scripts/Return_Pending_Buddies.js");
+const {getGlobalDBs} = require("./Debugging_Scripts/Return_Pending_Buddies.js");
 
 
 app.put('/validate_session_api',(req,res) => { //Checks if session cookie is valid [if it is valid , it also updates the last activity]
@@ -44,16 +44,17 @@ app.put('/validate_session_api',(req,res) => { //Checks if session cookie is val
 })
 
 
-app.get("/Get_Buddy_Request_DB",(req,res) => {
-    Return_Buddy_Request_DB(res);
-})
 
-app.get("/get_User_DB",(req,res)=>{ //only for debugging
-    Return_Users_DB(res);
+// app.get("/get_User_DB",(req,res)=>{ //for debugging
+//     Return_Users_DB(res);
+// })
+
+app.get("/getGlobalDBs",(req,res) => { //for debugging
+    getGlobalDBs(req,res);
 })
 
 app.get("/get_Media_DBs",(req,res) => { //only for debugging [returns confession got and confession sent DB of all users]
-    Return_Media_DBs(res);
+    Return_Media_DBs(req,res);
 })
 
 app.post("/Register_Email_api",(request,response) => {  //for Email Stage of registering
