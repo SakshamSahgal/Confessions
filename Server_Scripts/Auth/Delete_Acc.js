@@ -205,7 +205,7 @@ async function Erase_Buddy_List(session_matched_array)
     
                 users.loadDatabase();
                 users.find({Email : buddy_email} , (err,buddy_matched) => { //Querring his Email on the user's DB to get his username
-                    
+    
                     if(buddy_matched.length) //found my Buddy's username
                     {
                         let his_who_buddied_me_db_dir = "./Media/" + buddy_matched[0].Username + "/Who_Buddied_Me.db"; //locating his Who_Buddied_Me_DB
@@ -232,7 +232,7 @@ async function Erase_Buddy_List(session_matched_array)
                             Status : "Fail",
                             Description : "Username corresponding to " + buddy_email + " not found"
                         }
-                        resolve(verdict)
+                        reject(verdict)
                     }
     
                 })
