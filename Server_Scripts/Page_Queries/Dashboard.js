@@ -142,7 +142,7 @@ async function getAllBuddyOnlyPosts(buddiesArray)
                 usersDB.loadDatabase();
                 usersDB.find({Email : thisBuddyEmail},(err,buddyArray) => { //fetching the buddy's username using his Email from the User's DB
                     
-                    if(buddiesArray.length) //if no buddies exist
+                    if(buddyArray.length)
                     {
                         let thisBuddyUsername = buddyArray[0].Username; //getting the buddy's username
                         let thisBuddyProfilePicture = buddyArray[0].Profile_Picture; //getting the buddy's profile picture
@@ -161,8 +161,9 @@ async function getAllBuddyOnlyPosts(buddiesArray)
         
                             BuddyOnlyPosts = BuddyOnlyPosts.concat(BuddyOnlyPostsArrayCopy); //concatenating the buddy's only posts to the fetchedPostsArray
                             buddiesCovered++;
+        
                             if(buddiesCovered == buddiesArray.length) //if all the buddy's only posts are fetched
-                            resolve(BuddyOnlyPosts)
+                               resolve(BuddyOnlyPosts)
                         })
                     }
                     else
@@ -171,7 +172,8 @@ async function getAllBuddyOnlyPosts(buddiesArray)
                         if(buddiesCovered == buddiesArray.length) //if all the buddy's only posts are fetched
                             resolve(BuddyOnlyPosts)
                     }
-                        
+
+    
                 })
             }
         }
