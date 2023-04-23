@@ -5,7 +5,7 @@ const fs = require("fs")
 const Datastore = require("nedb"); //including the nedb node package for database 
 const {modifyComments} = require("./PostContent.js");
 
-function Fetch_Dashboard(req,res)
+function Fetch_Dashboard(req,res) //function fetches dashboard data
 {
     Validate_Session(req).then( (Session_Result) => {
         
@@ -141,28 +141,38 @@ async function getAllBuddyOnlyPosts(buddiesArray)
                 let usersDB = new Datastore("./Database/users.db");
                 usersDB.loadDatabase();
                 usersDB.find({Email : thisBuddyEmail},(err,buddyArray) => { //fetching the buddy's username using his Email from the User's DB
-    
-                    let thisBuddyUsername = buddyArray[0].Username; //getting the buddy's username
-                    let thisBuddyProfilePicture = buddyArray[0].Profile_Picture; //getting the buddy's profile picture
                     
-                    let thisBuddyPostsDB = new Datastore("./Media/" + thisBuddyUsername + "/posts.db"); //accessing the buddy's posts DB
-                    thisBuddyPostsDB.loadDatabase();
-                    thisBuddyPostsDB.find({Visibility : "Buddies-Only"},(err,BuddyOnlyPostsArray) => { //fetching all the `buddy's only` posts
+                    if(buddyArray.length)
+                    {
+                        let thisBuddyUsername = buddyArray[0].Username; //getting the buddy's username
+                        let thisBuddyProfilePicture = buddyArray[0].Profile_Picture; //getting the buddy's profile picture
                         
-                        let BuddyOnlyPostsArrayCopy = JSON.parse(JSON.stringify(BuddyOnlyPostsArray)); //copying the buddy's only posts array
-    
-                        for(var j=0;j<BuddyOnlyPostsArrayCopy.length;j++) //adding the buddy's username and profile picture to each post
-                        {
-                            BuddyOnlyPostsArrayCopy[j].Username = thisBuddyUsername;
-                            BuddyOnlyPostsArrayCopy[j].Profile_Picture = thisBuddyProfilePicture;
-                        }
-    
-                        BuddyOnlyPosts = BuddyOnlyPosts.concat(BuddyOnlyPostsArrayCopy); //concatenating the buddy's only posts to the fetchedPostsArray
+                        let thisBuddyPostsDB = new Datastore("./Media/" + thisBuddyUsername + "/posts.db"); //accessing the buddy's posts DB
+                        thisBuddyPostsDB.loadDatabase();
+                        thisBuddyPostsDB.find({Visibility : "Buddies-Only"},(err,BuddyOnlyPostsArray) => { //fetching all the `buddy's only` posts
+                            
+                            let BuddyOnlyPostsArrayCopy = JSON.parse(JSON.stringify(BuddyOnlyPostsArray)); //copying the buddy's only posts array
+        
+                            for(var j=0;j<BuddyOnlyPostsArrayCopy.length;j++) //adding the buddy's username and profile picture to each post
+                            {
+                                BuddyOnlyPostsArrayCopy[j].Username = thisBuddyUsername;
+                                BuddyOnlyPostsArrayCopy[j].Profile_Picture = thisBuddyProfilePicture;
+                            }
+        
+                            BuddyOnlyPosts = BuddyOnlyPosts.concat(BuddyOnlyPostsArrayCopy); //concatenating the buddy's only posts to the fetchedPostsArray
+                            buddiesCovered++;
+        
+                            if(buddiesCovered == buddiesArray.length) //if all the buddy's only posts are fetched
+                               resolve(BuddyOnlyPosts)
+                        })
+                    }
+                    else
+                    {
                         buddiesCovered++;
-    
                         if(buddiesCovered == buddiesArray.length) //if all the buddy's only posts are fetched
-                           resolve(BuddyOnlyPosts)
-                    })
+                            resolve(BuddyOnlyPosts)
+                    }
+
     
                 })
             }

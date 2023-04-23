@@ -702,4 +702,5 @@ function Reject_Buddy_Request(sender_email) {
 
   }
 
+
 Get_Profile_Data();

@@ -381,7 +381,7 @@ function Profile_Page(req,res) //function that fethces own profile page data
         
         if(session_match_array.length) //session Matched
         {
-            let Posts = new Datastore("./Media/" + session_match_array[0].Username + "/Posts.db");
+            let Posts = new Datastore("./Media/" + session_match_array[0].Username + "/posts.db");
             Posts.loadDatabase();
             Posts.find({},(err,postsArray) => {
 
