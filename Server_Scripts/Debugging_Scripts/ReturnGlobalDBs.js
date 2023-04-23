@@ -1,7 +1,7 @@
 //NEDB
 const Datastore = require("nedb"); //including the nedb node package for database 
 const bcrypt = require("bcrypt");
-
+require("dotenv").config();//reading the .env file
 
 function getGlobalDBs(req,res)
 {
@@ -9,7 +9,7 @@ function getGlobalDBs(req,res)
         res.json({Error : "Not Authorized"});
     else
     {
-        bcrypt.compare(req.headers.authorization,"$2b$10$DZfC4wnd3gD5KMnzs8FJ6ePkeoXWXDwVCOTbj0aE5WPJdcbC/l8Qy").then((IsMatched) => {
+        bcrypt.compare(req.headers.authorization,process.env.AdminHash).then((IsMatched) => {
     
             if(IsMatched)
             {

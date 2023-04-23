@@ -205,7 +205,6 @@ function Post_it()
         location.href = "./index.html";
     else
     {
-
         let postJSON = {
             visibility : document.getElementById("visibility_Select").value,
             content : (document.getElementById("postTextPreview").innerText == previewPost.placeholderText) ? '' : (document.getElementById("postTextPreview").innerText),
@@ -217,13 +216,23 @@ function Post_it()
             }
         }
 
-        console.log(postJSON)
-        loadOverlay.hidden = false;
-        axios.post('/postIt', postJSON, {headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
-            console.log(response.data);
-            loadOverlay.hidden = true;
-            //alert(response.data.Description);
-        })
+        if(postJSON.content.length < 5 || postJSON.content.length > 280)
+            alert("Post must be between 5 and 280 characters inclusive")
+        else
+        {
+            console.log(postJSON)
+            loadOverlay.hidden = false;
+            axios.post('/postIt', postJSON, {headers: {'Content-Type': 'application/json','Authorization': Cookies.get("Session_ID")}}).then(response => {
+                console.log(response.data);
+                loadOverlay.hidden = true;
+                if(response.data.status == "Fail")
+                {   
+                    alert(response.data.Description)
+                    let Description = "\nContentValid : " + response.data.check.ContentValid + " \n " + "headerValid : " + response.data.check.headerValid + " \n " + "moodValid : " + response.data.check.moodValid + " \n " + "visibilityValid : " + response.data.check.visibilityValid;
+                    alert("Post Failed : " + Description);
+                }  
+            })
+        }
     }
 }
 

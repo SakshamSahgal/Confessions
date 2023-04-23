@@ -26,9 +26,7 @@
             <li class="nav-item">
               <a href="#Signup" class="nav-link" data-bs-toggle="tab"> Signup </a>
             </li>
-            <li class="nav-item">
-              <a href="#Rules" class="nav-link" data-bs-toggle="tab"> Rules </a>
-            </li>
+
         </ul>
   
         <div class="tab-content">
@@ -73,7 +71,7 @@
         
                         <form onsubmit="Register_OTP();return false">
                         OTP : <input type="number" id="register_otp" required> <br> <br>
-                        <input type="submit" value="Send OTP">
+                        <input type="submit" value="Submit OTP recieved through Email">
                         </form>
                         
                     </div>
@@ -85,31 +83,32 @@
                         </form>
 
                     </div>
+                    <br>
+                    <div class="p-2" align="center">
+                      <div>
+                            <h3>Username Rules</h3>
+                            <p>The number of characters must be between 5 and 15.</p>
+                            <p>The string should only contain alphanumeric characters and/or underscores (_). </p>
+                            <p>The first character of the string should be alphabetic.</p>
+                      </div>
+                      <div>
+                            <h3>Password Rules</h3>
+                            <p>The minimum number of characters must be 8.</p>
+                            <p>The string must have at least one digit.</p> 
+                            <p>The string must have at least one uppercase character.</p>
+                            <p>The string must have at least one lowercase character.</p> 
+                            <p>The string must have at least one special character.</p>
+                    </div>
+                  </div>
+
             </div>
             <br><br>
 
           </div>
   
-          <div class="tab-pane fade" id="Rules">
-            
-            <div class="p-2" align="center">
-              <div>
-                    <h3>Username Rules</h3>
-                    <p>The number of characters must be between 5 and 15.</p>
-                    <p>The string should only contain alphanumeric characters and/or underscores (_). </p>
-                    <p>The first character of the string should be alphabetic.</p>
-              </div>
-              <div>
-                    <h3>Password Rules</h3>
-                    <p>The minimum number of characters must be 8.</p>
-                    <p>The string must have at least one digit.</p> 
-                    <p>The string must have at least one uppercase character.</p>
-                    <p>The string must have at least one lowercase character.</p> 
-                    <p>The string must have at least one special character.</p>
-            </div>
-          </div>
-        </div>
 
+            
+         
     
 </body>
 </html>     

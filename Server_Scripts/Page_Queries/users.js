@@ -15,7 +15,7 @@ function Fetch_All_Users(req,res)
             users_array = [] //array that contains the returing JSONs
 
             users.loadDatabase();
-            users.find({},(err,users_matched_array) => { //returning all elements from the users database
+            users.find({Registration_Status : "Registered"},(err,users_matched_array) => { //returning all elements from the users database
 
                 users_matched_array.forEach(element => { //Iterating over each user in the returned array
                     
