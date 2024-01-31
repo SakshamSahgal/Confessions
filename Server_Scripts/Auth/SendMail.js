@@ -1,5 +1,5 @@
 var nodemailer = require('nodemailer'); //using Node Mailer Module
-require("dotenv").config();//reading the .env file
+
 
 const SendMail = async (email_info,res) => { //function that sends email 
 
